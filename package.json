@@ -1,0 +1,48 @@
+{
+  "name": "flexreal",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@emotion/core": "^11.0.0",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@next/font": "13.1.6",
+    "chart.js": "^4.2.1",
+    "fft-js": "^0.0.12",
+    "lodash": "^4.17.21",
+    "next": "13.1.6",
+    "react": "18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "18.2.0",
+    "react-papaparse": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/chart.js": "^2.9.37",
+    "@types/lodash": "^4.14.191",
+    "@types/node": "^18.13.0",
+    "@types/react": "^18.0.28",
+    "@types/react-chartjs-2": "^2.5.7",
+    "@types/react-dom": "18.0.10",
+    "@typescript-eslint/eslint-plugin": "^5.51.0",
+    "@typescript-eslint/parser": "^5.51.0",
+    "eslint": "^8.34.0",
+    "eslint-config-next": "13.1.6",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-config-standard-with-typescript": "^34.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jest": "^27.2.1",
+    "eslint-plugin-n": "^15.6.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-react": "^7.32.2",
+    "typescript": "^4.9.5"
+  },
+  "resolutions": {
+    "@types/react": "17.0.2"
+  }
+}
