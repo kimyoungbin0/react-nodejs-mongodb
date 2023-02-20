@@ -1,12 +1,61 @@
-import React, { useState, useEffect, CSSProperties, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import _, { max } from "lodash";
 import {
   useCSVReader,
   lightenDarkenColor,
   formatFileSize,
 } from "react-papaparse";
-import WaveChart from "./waveChart";
-import AmpChart from "./ampChart";
+import WaveLive from "../chart/waveLive";
+import AmpLive from "../chart/ampLive";
+
+import styled from "@emotion/styled";
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+const ChartWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-width: 500px;
+  max-height: 350px;
+  border: 1px solid #cccccc;
+`;
+
+const TableWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  max-height: 350px;
+  overflow: auto;
+  border: 1px solid #cccccc;
+`;
+
+const CycleWrapper = styled.div`
+  min-width: 500px;
+  min-height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  /* border: 1px solid #cccccc; */
+`;
+
+const ControlWrapper = styled.div`
+  min-width: 300px;
+  min-height: 30px;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  /* border: 1px solid #cccccc; */
+`;
+
+const ControlButton = styled.button`
+  margin: 0 5px;
+`;
 
 const GREY = "#CCC";
 const GREY_LIGHT = "rgba(255, 255, 255, 0.4)";
@@ -47,9 +96,10 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     // height: "100%",
+    maxWidth: "800px",
     height: "100px",
     justifyContent: "center",
-    padding: 20,
+    margin: 10,
   },
   file: {
     background: "linear-gradient(to bottom, #EEE, #DDD)",
@@ -104,8 +154,7 @@ const styles = {
   },
 };
 
-export default function CSVReader() {
-  // const [chartData, setChartData] = useRecoilState(chartDataState);
+export default function DaqCsvReader() {
   const [cycle, setCycle] = useState(-1);
   const [totalCycle, setTotalCycle] = useState(0);
   const [isPause, setIsPause] = useState(true);
@@ -116,9 +165,8 @@ export default function CSVReader() {
   const [isAmpChart, setIsAmpChart] = useState(false);
   const [ampIndex, setAmpIndex] = useState([]);
   const [ampData, setAmpData] = useState([] as any);
-  const [tv, setTv] = useState(24.2);
+  const [tv, setTv] = useState(24);
   const [tvSeq, setTvSeq] = useState(5);
-  // const [iCount, setICount] = useState(144);
   const [maxAmp, setMaxAmp] = useState({ freq: 0, amp: 0 });
   const [threshold, setThreshold] = useState([] as any);
 
@@ -248,7 +296,7 @@ export default function CSVReader() {
     setOffsetData(offsetArr);
     setThreshold(createThreshold(offsetArr));
 
-    return { indexData, offsetData: offsetArr };
+    return { indexData, offsetData: chunkData };
   };
 
   const getTdAmp = (data: any) => {
@@ -288,17 +336,13 @@ export default function CSVReader() {
     setTv(event.target.value);
   };
 
-  const onClickSetTv = () => {
-    setThreshold(createThreshold(offsetData));
-  };
-
   const onChangeSeq = (event: any) => {
     setTvSeq(event.target.value);
   };
 
-  // const onClickSetSeq = () => {
-  //   setThreshold(createThreshold(offsetData));
-  // };
+  const onClickApply = () => {
+    setThreshold(createThreshold(offsetData));
+  };
 
   const onClickIsAmpChart = () => {
     setIsAmpChart(!isAmpChart);
@@ -335,7 +379,6 @@ export default function CSVReader() {
 
   const onClickWarn = (event: any) => {
     setIsPause(true);
-    console.log("current id:", event.currentTarget.id);
     setCycle(event.currentTarget.id);
   };
 
@@ -435,44 +478,42 @@ export default function CSVReader() {
           )}
         </CSVReader>
       )}
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <div style={{ minWidth: "500px" }}>
+      <Wrapper>
+        <CycleWrapper>
           cycle: {cycle} / totalCycle: {totalCycle} / count: {plotCount}
-        </div>
-        <div>
+        </CycleWrapper>
+        <ControlWrapper>
           threshold:{" "}
           <input
-            type="text"
+            id="tv"
+            type="number"
+            step={1}
             style={{ maxWidth: "60px" }}
-            value={tv}
+            defaultValue={tv}
             onChange={onChangeTv}
           />{" "}
           seq:{" "}
           <input
-            type="text"
+            id="tvSeq"
+            type="number"
+            step={1}
             style={{ maxWidth: "60px" }}
-            value={tvSeq}
+            defaultValue={tvSeq}
             onChange={onChangeSeq}
           />
-          <button onClick={onClickSetTv}>Apply</button>
-        </div>
-      </div>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <div
-          style={{
-            minWidth: "500px",
-            maxHeight: "300px",
-            border: "1px solid #cccccc",
-          }}
-        >
-          <WaveChart
+          <ControlButton onClick={onClickApply}>Apply</ControlButton>
+        </ControlWrapper>
+      </Wrapper>
+      <Wrapper>
+        <ChartWrapper>
+          <WaveLive
             index={waveIndex[cycle]}
             count={cycle}
             plots={waveData[cycle]}
           />
 
           {cycle > -1 && (
-            <div>
+            <ControlWrapper>
               <input
                 type="range"
                 min="0"
@@ -481,67 +522,60 @@ export default function CSVReader() {
                 onChange={(e) => setCycle(Number(e.target.value))}
                 style={{ width: "100%" }}
               />
-            </div>
+            </ControlWrapper>
           )}
-          <div>
+          <ControlWrapper>
             {cycle > -1 && !isPause && (
-              <button onClick={onClickPause}>Pause</button>
+              <ControlButton onClick={onClickPause}>Pause</ControlButton>
             )}
             {cycle > -1 && isPause && (
-              <button onClick={onClickPause}>Resume</button>
+              <ControlButton onClick={onClickPause}>Resume</ControlButton>
             )}
-            {cycle > -1 && <button onClick={onClickReset}>Reset</button>}
+            {cycle > -1 && (
+              <ControlButton onClick={onClickReset}>Reset</ControlButton>
+            )}
             {cycle > -1 && !isAmpChart && (
-              <button onClick={onClickIsAmpChart}>Show AmpChart</button>
+              <ControlButton onClick={onClickIsAmpChart}>
+                Show AmpChart
+              </ControlButton>
             )}
             {cycle > -1 && isAmpChart && (
-              <button onClick={onClickIsAmpChart}>Hide AmpChart</button>
+              <ControlButton onClick={onClickIsAmpChart}>
+                Hide AmpChart
+              </ControlButton>
             )}
             {cycle > -1 && isPause && (
-              <button onClick={onClickPrev}>Prev</button>
+              <ControlButton onClick={onClickPrev}>Prev</ControlButton>
             )}
             {cycle > -1 && isPause && (
-              <button onClick={onClickNext}>Next</button>
+              <ControlButton onClick={onClickNext}>Next</ControlButton>
             )}
-          </div>
-        </div>
-        <div
-          style={{
-            minWidth: "500px",
-            maxHeight: "300px",
-            border: "1px solid #cccccc",
-            overflow: "auto",
-          }}
-        >
+          </ControlWrapper>
+        </ChartWrapper>
+        <TableWrapper>
           {threshold.map((el: any, index: number) => (
             <div key={el.cycle} id={el.cycle} onClick={onClickWarn}>
               {el.warn > 0 &&
-                `${el.cycle}: ${el.maxPlot} [${el.warn}/${el.position}]`}
+                `[${el.warn}/${el.position}] ${el.cycle}: ${el.maxPlot}`}
             </div>
           ))}
-        </div>
-      </div>
+        </TableWrapper>
+      </Wrapper>
 
       {isAmpChart && (
-        <div style={{ display: "flex", flexDirection: "row" }}>
-          <div
-            style={{
-              minWidth: "500px",
-              maxHeight: "300px",
-              border: "1px solid #cccccc",
-            }}
-          >
-            maxAmp: {maxAmp.freq} / {maxAmp.amp}
-            <AmpChart index={ampIndex} count={cycle} plots={ampData} />
-          </div>
-          <div
-            style={{
-              minWidth: "500px",
-              maxHeight: "300px",
-              border: "1px solid #cccccc",
-            }}
-          ></div>
-        </div>
+        <>
+          <Wrapper>
+            <CycleWrapper>
+              maxAmp: {maxAmp.freq} / {maxAmp.amp}
+            </CycleWrapper>
+          </Wrapper>
+          <Wrapper>
+            <ChartWrapper>
+              <AmpLive index={ampIndex} count={cycle} plots={ampData} />
+            </ChartWrapper>
+            <TableWrapper></TableWrapper>
+          </Wrapper>
+        </>
       )}
     </>
   );

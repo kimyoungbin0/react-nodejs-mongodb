@@ -1,10 +1,9 @@
-import CSVReader from "./csvReader";
-import _ from "lodash";
+import DaqPage from "./daq";
 
 export default function Flexreal() {
   return (
     <>
-      <CSVReader />
+      <DaqPage />
     </>
   );
 }

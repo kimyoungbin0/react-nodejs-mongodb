@@ -11,12 +11,8 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
-export default function AmpChart(props: any) {
-  // console.log(props.plots[props.count]);
-  // console.log(props.count);
+export default function AmpLive(props: any) {
   const labels = props.index;
-  // console.log(labels);
-
   const plots = props.plots;
 
   ChartJS.register(
@@ -37,7 +33,7 @@ export default function AmpChart(props: any) {
       },
       title: {
         display: true,
-        text: "Chart.js Line Chart",
+        text: "Amplitude Frequency Chart",
       },
     },
     interaction: {
@@ -45,7 +41,7 @@ export default function AmpChart(props: any) {
     },
     animations: {
       tension: {
-        duration: 1000,
+        duration: 500,
         easing: "linear",
         from: 0.5,
         to: 0.3,
@@ -80,7 +76,7 @@ export default function AmpChart(props: any) {
     labels: labels,
     datasets: [
       {
-        label: "Dataset 1",
+        label: "Amplitude",
         // data: labels.map(() => faker.datatype.number({ min: -100, max: 100 })),
         data: plots,
         borderColor: "rgb(255, 99, 132)",

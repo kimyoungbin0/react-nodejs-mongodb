@@ -11,12 +11,8 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
-export default function WaveChart(props: any) {
-  // console.log(props.plots[props.count]);
-  // console.log(props.count);
+export default function WaveLive(props: any) {
   const labels = props.index;
-  // console.log(labels);
-
   const plots = props.plots;
 
   ChartJS.register(
@@ -37,7 +33,7 @@ export default function WaveChart(props: any) {
       },
       title: {
         display: true,
-        text: "Chart.js Line Chart",
+        text: "Voltage Wave Chart",
       },
     },
     interaction: {
@@ -45,7 +41,7 @@ export default function WaveChart(props: any) {
     },
     animations: {
       tension: {
-        duration: 1000,
+        duration: 500,
         easing: "linear",
         from: 0.5,
         to: 0.3,
@@ -55,8 +51,13 @@ export default function WaveChart(props: any) {
     scales: {
       x: {
         // min: 0,
-        // max: 50,
+        // max: props.plots,
         // stacked: true,
+        // grid: {
+        //   tick: {
+        //     stepSize: 20,
+        //   },
+        // },
       },
       y: {
         // defining min and max so hiding the dataset does not change scale range
@@ -80,7 +81,7 @@ export default function WaveChart(props: any) {
     labels: labels,
     datasets: [
       {
-        label: "Dataset 1",
+        label: "voltage",
         // data: labels.map(() => faker.datatype.number({ min: -100, max: 100 })),
         data: plots,
         borderColor: "rgb(255, 99, 132)",
