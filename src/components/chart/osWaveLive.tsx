@@ -11,7 +11,7 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
-export default function WaveLive(props: any) {
+export default function OsWaveLive(props: any) {
   const labels = props.index;
   const plots = props.plots;
 
@@ -33,7 +33,7 @@ export default function WaveLive(props: any) {
       },
       title: {
         display: true,
-        text: "Voltage Wave Chart",
+        text: "OS Voltage Wave Chart",
       },
     },
     interaction: {
@@ -59,7 +59,7 @@ export default function WaveLive(props: any) {
         // max: props.plots,
         // stacked: true,
         ticks: {
-          maxTicksLimit: Math.ceil(Number(props.plots?.length) / 10),
+          maxTicksLimit: 10,
         },
         // },
       },

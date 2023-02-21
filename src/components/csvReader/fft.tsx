@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import _ from "lodash";
-import Papa from "papaparse";
+// import Papa from "papaparse";
 import styled from "@emotion/styled";
 import AmpFft from "../chart/ampFft";
+import { checkFileExists, ReadCsv } from "../../commons/libraries/file";
+import { reduceArray } from "../../commons/libraries/array";
+import { addCommas } from "../../commons/libraries/util";
 
 const Wrapper = styled.div`
   display: flex;
@@ -51,33 +54,9 @@ const ControlButton = styled.button`
   margin: 0 5px;
 `;
 
-async function ReadCsv(url: string) {
-  const csvFilePath = url;
-  const response = await fetch(csvFilePath);
-  const reader = response.body?.getReader();
-  const result = await reader?.read();
-  const decoder = new TextDecoder("utf-8");
-  const csvText = decoder.decode(result?.value);
-  const parsedCsv = Papa.parse(csvText, {
-    header: false,
-    newline: "\n",
-    fastMode: true,
-    dynamicTyping: true,
-  });
-  return _.dropRight(_.drop(parsedCsv.data, 3), 1);
-}
-
-const reduceArray = (arr: any[], n: number) => {
-  if (n <= 1) {
-    // return _.take(arr, 1);
-    return arr;
-  }
-  return _.filter(arr, (_, i) => (i + 1) % n === 0);
-};
-
 export default function FftCsvReader() {
   const [cycle, setCycle] = useState(-1);
-  const [totalCycle, setTotalCycle] = useState(32);
+  const [cycles, setCycles] = useState(32);
   const [fftArr, setFftArr] = useState([] as any);
   const [isPause, setIsPause] = useState(true);
   const [plotCount, setPlotCount] = useState(0);
@@ -114,11 +93,18 @@ export default function FftCsvReader() {
     useEffect(() => {
       const fetchCsvData = async () => {
         const promises: any[] = [];
+        const folderPath = "/data/fft/";
+        const filePrefix = "normal_fft_";
+        // const filePrefix = "leak_fft_";
 
-        for (let i = 1; i <= totalCycle; i++) {
+        for (let i = 1; i <= cycles; i++) {
           const fileNumber = i.toString().padStart(2, "0");
-          promises.push(ReadCsv(`/data/fft/normal_fft_${fileNumber}.csv`));
-          // promises.push(ReadCsv(`/data/fft/leak_fft_${fileNumber}.csv`));
+          const fileName = `${folderPath}${filePrefix}${fileNumber}.csv`;
+
+          const isFileExist = await checkFileExists(fileName);
+          if (isFileExist) {
+            promises.push(ReadCsv(fileName));
+          }
         }
 
         const results = await Promise.all(promises);
@@ -131,6 +117,7 @@ export default function FftCsvReader() {
 
         setFftArr(result);
         setCycle(0);
+        setCycles(result.length);
         // setIsPause(false);
       };
 
@@ -145,22 +132,11 @@ export default function FftCsvReader() {
   useInterval(
     () => {
       if (!isPause && cycle > -1) {
-        setCycle((prev) => (prev + 1) % totalCycle);
+        setCycle((prev) => (prev + 1) % cycles);
       }
     },
     cycle === 0 ? 2500 : 1000
   );
-
-  // const setCycleChartArr = (cycle: number) => {
-  //   console.log("cycle: " + cycle);
-  //   const ampIndexArr = reduceArray(_.unzip(fftArr[cycle])[0], scale);
-  //   const amdDataArr = reduceArray(_.unzip(fftArr[cycle])[1], scale);
-  //   const plotCount = ampIndexArr.length;
-  //   // console.log(amdDataArr);
-  //   setAmpIndex(ampIndexArr);
-  //   setAmpData(amdDataArr);
-  //   setPlotCount(plotCount);
-  // };
 
   const setCycleChartArr = (cycle: number) => {
     const ampIndexArr = reduceArray(_.unzip(fftArr[cycle])[0], scale);
@@ -206,7 +182,7 @@ export default function FftCsvReader() {
     setMinFreq(minFreq);
     setMaxFreq(maxFreq);
     setScale(scale);
-    setCycleChartArr((cycle - 1) % totalCycle);
+    setCycleChartArr((cycle - 1) % cycles);
   };
 
   const onClickPause = () => {
@@ -217,17 +193,17 @@ export default function FftCsvReader() {
   const onClickPrev = () => {
     console.log("Prev: " + cycle);
     if (cycle > 0) {
-      setCycle((prev) => (prev - 1) % totalCycle);
-      setCycleChartArr((cycle - 1) % totalCycle);
+      setCycle((prev) => (prev - 1) % cycles);
+      setCycleChartArr((cycle - 1) % cycles);
     }
     setIsPause(true);
   };
 
   const onClickNext = () => {
     console.log("Next: " + cycle);
-    if (cycle < totalCycle - 1) {
-      setCycle((prev) => (prev % totalCycle) + 1);
-      setCycleChartArr((cycle + 1) % totalCycle);
+    if (cycle < cycles - 1) {
+      setCycle((prev) => (prev % cycles) + 1);
+      setCycleChartArr((cycle + 1) % cycles);
     }
     setIsPause(true);
   };
@@ -241,7 +217,7 @@ export default function FftCsvReader() {
     <>
       <Wrapper>
         <CycleWrapper>
-          cycle: {cycle} / totalCycle: {totalCycle} / count: {plotCount}
+          cycle: {cycle} / cycles: {cycles} / plots: {addCommas(plotCount)}
         </CycleWrapper>
         <ControlWrapper>
           minFreq:{" "}
@@ -284,11 +260,11 @@ export default function FftCsvReader() {
               <input
                 type="range"
                 min="0"
-                max={totalCycle - 1}
+                max={cycles - 1}
                 value={cycle}
                 onChange={(e) => {
                   setCycle(Number(e.target.value));
-                  setCycleChartArr(Number(e.target.value) % totalCycle);
+                  setCycleChartArr(Number(e.target.value) % cycles);
                 }}
                 style={{ width: "100%" }}
               />

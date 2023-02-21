@@ -12,16 +12,17 @@ const Wrapper = styled.div`
   padding-right: 10px;
 `;
 
-const SpanLogo = styled.span`
+const SpanLogo = styled.a`
   width: 200px;
   font-size: 1.5rem;
   font-weight: 900;
+  text-decoration: none;
 `;
 
 export default function LayoutHeader() {
   return (
     <Wrapper>
-      <SpanLogo>FlexReal v0.0.1</SpanLogo>
+      <SpanLogo href="/">FlexReal v0.0.1</SpanLogo>
     </Wrapper>
   );
 }

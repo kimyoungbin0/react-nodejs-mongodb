@@ -1,14 +1,17 @@
-import React, { useState, useEffect, CSSProperties, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import _, { max } from "lodash";
 import {
   useCSVReader,
   lightenDarkenColor,
   formatFileSize,
 } from "react-papaparse";
-import WaveLive from "../chart/waveLive";
+// import WaveLive from "../chart/waveLive";
 import AmpLive from "../chart/ampLive";
 
 import styled from "@emotion/styled";
+import OsWaveLive from "../chart/osWaveLive";
+import { reduceArray } from "../../commons/libraries/array";
+import { addCommas } from "../../commons/libraries/util";
 
 const Wrapper = styled.div`
   display: flex;
@@ -18,22 +21,31 @@ const Wrapper = styled.div`
 const ChartWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  min-width: 500px;
-  max-height: 350px;
+  min-width: 600px;
+  max-height: 370px;
   border: 1px solid #cccccc;
 `;
 
 const TableWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  min-width: 300px;
-  max-height: 350px;
+  min-width: 200px;
+  max-height: 370px;
+  padding: 5px;
+  overflow: auto;
+  border: 1px solid #cccccc;
+`;
+
+const InnerTableWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 50%;
   overflow: auto;
   border: 1px solid #cccccc;
 `;
 
 const CycleWrapper = styled.div`
-  min-width: 500px;
+  min-width: 400px;
   min-height: 30px;
   display: flex;
   flex-direction: row;
@@ -43,7 +55,7 @@ const CycleWrapper = styled.div`
 `;
 
 const ControlWrapper = styled.div`
-  min-width: 300px;
+  min-width: 400px;
   min-height: 30px;
   padding: 0 10px;
   display: flex;
@@ -66,7 +78,7 @@ const REMOVE_HOVER_COLOR_LIGHT = lightenDarkenColor(
 );
 const GREY_DIM = "#686868";
 
-const flatValue = 26;
+const flatValue = 1;
 let tdAmpData = _.fill(Array(4096 * 2), 0);
 
 function useInterval(callback: any, delay: any) {
@@ -99,7 +111,7 @@ const styles = {
     maxWidth: "800px",
     height: "100px",
     justifyContent: "center",
-    margin: 10,
+    // margin: 10,
   },
   file: {
     background: "linear-gradient(to bottom, #EEE, #DDD)",
@@ -154,21 +166,39 @@ const styles = {
   },
 };
 
+// const reduceArray = (arr: any[], n: number) => {
+//   if (n <= 1) {
+//     return arr;
+//   }
+//   return _.filter(arr, (_, i) => (i + 1) % n === 0);
+// };
+
 export default function OsCsvReader() {
   const [cycle, setCycle] = useState(-1);
-  const [totalCycle, setTotalCycle] = useState(0);
+  const [cycles, setCycles] = useState(0);
   const [isPause, setIsPause] = useState(true);
   const [plotCount, setPlotCount] = useState(0);
+  const [waveIndex, setWaveIndex] = useState([] as any);
   const [waveData, setWaveData] = useState([] as any);
   const [offsetData, setOffsetData] = useState([] as any);
-  const [waveIndex, setWaveIndex] = useState([] as any);
+  const [isScale, setIsScale] = useState(false);
+  const [scaleWaveIndex, setScaleWaveIndex] = useState([] as any);
+  const [scaleWaveData, setScaleWaveData] = useState([] as any);
+  const [scaleOffsetData, setScaleOffsetData] = useState([] as any);
   const [isAmpChart, setIsAmpChart] = useState(false);
   const [ampIndex, setAmpIndex] = useState([]);
   const [ampData, setAmpData] = useState([] as any);
+  const [tvIndex, setTvIndex] = useState([] as any);
   const [tv, setTv] = useState(24);
   const [tvSeq, setTvSeq] = useState(5);
+  const [startTv, setStartTv] = useState(0);
+  const [endTv, setEndTv] = useState(0);
+  const [minFreq, setMinFreq] = useState(0);
+  const [maxFreq, setMaxFreq] = useState(100);
+  const [scale, setScale] = useState(100);
   const [maxAmp, setMaxAmp] = useState({ freq: 0, amp: 0 });
   const [threshold, setThreshold] = useState([] as any);
+  const [isThreshold, setIsThreshold] = useState(false);
 
   const { CSVReader } = useCSVReader();
   const [zoneHover, setZoneHover] = useState(false);
@@ -218,6 +248,8 @@ export default function OsCsvReader() {
     const tvEndPointArr = _.map(arr, "cycle");
     const result = extractSubarray(tvEndPointArr, seq);
 
+    setTvIndex(result);
+
     return _.flatten(result);
   };
 
@@ -237,7 +269,7 @@ export default function OsCsvReader() {
     }
 
     const result = checkThresholdIndex(maxPlotInCycle, tvSeq);
-    console.log(result);
+    // console.log(result);
 
     let count = 1;
     let prevCycle = 0;
@@ -255,7 +287,7 @@ export default function OsCsvReader() {
       prevCycle = obj.cycle;
     });
 
-    console.log(maxPlotInCycle);
+    // console.log(maxPlotInCycle);
 
     for (let i = 1; i < maxPlotInCycle.length; i++) {
       if (maxPlotInCycle[i - 1].warn < maxPlotInCycle[i].warn) {
@@ -272,9 +304,8 @@ export default function OsCsvReader() {
 
   const chunk = (data: any[]) => {
     const unzipIndex = _.unzip(data)[0];
-    // const maxIndex: number = Number(_.max(unzipIndex));
-    const maxIndex: number = 16383;
-    const plotCount = maxIndex + 1;
+    const maxIndex: number = Number(_.max(unzipIndex));
+    const plotCount = 9999 + 1;
     setPlotCount(plotCount);
     const indexData = _.chunk(unzipIndex, plotCount).filter(
       (subArray) => subArray.length === plotCount
@@ -286,26 +317,53 @@ export default function OsCsvReader() {
       (subArray) => subArray.length === plotCount
     );
 
-    console.log(chunkData);
-    console.log(chunkData.length);
+    const offsetAvg = _.map(chunkData, (el) => _.mean(el));
 
-    // const offsetAvg = _.map(chunkData, (el) => _.mean(el));
+    let offsetArr = new Array();
+    for (let i = 0; i < offsetAvg.length; i++) {
+      const offset = _.map(chunkData[i], (el: number) => el - offsetAvg[i]);
+      offsetArr.push(offset);
+    }
 
-    // let offsetArr = new Array();
-    // for (let i = 0; i < offsetAvg.length; i++) {
-    //   const offset = _.map(chunkData[i], (el: number) => el - offsetAvg[i]);
-    //   offsetArr.push(offset);
-    // }
+    setWaveIndex(indexData);
+    setWaveData(chunkData);
+    setCycles(chunkData.length);
 
-    // setOffsetData(offsetArr);
-    // setThreshold(createThreshold(offsetArr));
+    setOffsetData(offsetArr);
+    setThreshold(createThreshold(offsetArr));
 
+    setScaleChart({
+      waveIndex: indexData,
+      waveData: chunkData,
+      offsetData: offsetArr,
+    });
     // return { indexData, offsetData: offsetArr };
+  };
 
-    setOffsetData(chunkData);
-    setThreshold(createThreshold(chunkData));
+  const setScaleChart = ({
+    waveIndex,
+    waveData,
+    offsetData,
+  }: {
+    waveIndex: any;
+    waveData: any;
+    offsetData: any;
+  }) => {
+    // console.log(waveIndex);
 
-    return { indexData, offsetData: chunkData };
+    const waveIndexArr = waveIndex.map((el: any) => reduceArray(el, scale));
+    const waveDataArr = waveData.map((el: any) => reduceArray(el, scale));
+    const offsetDataArr = offsetData.map((el: any) => reduceArray(el, scale));
+
+    // console.log("waveIndexArr: ", waveIndexArr);
+    // console.log("waveDataArr: ", waveDataArr);
+    // console.log("offsetDataArr: ", offsetDataArr);
+
+    setScaleWaveIndex(waveIndexArr);
+    setScaleWaveData(waveDataArr);
+    setScaleOffsetData(offsetDataArr);
+    setPlotCount(waveIndexArr[0].length);
+    setThreshold(createThreshold(offsetDataArr));
   };
 
   const getTdAmp = (data: any) => {
@@ -334,10 +392,12 @@ export default function OsCsvReader() {
 
   useInterval(() => {
     if (!isPause && cycle > -1) {
-      // const temp = getTdAmp(waveData[cycle % totalCycle]);
-      // setAmpIndex(temp.frequencies);
-      // setAmpData(temp.fdAmp);
-      setCycle((prev) => (prev + 1) % totalCycle);
+      const temp = getTdAmp(waveData[cycle % cycles]);
+      setAmpIndex(temp.frequencies);
+      setAmpData(temp.fdAmp);
+      setCycle((prev) => (prev + 1) % cycles);
+      if (isScale) setScaleChart({ waveIndex, waveData, offsetData });
+      setIsScale(false);
     }
   }, 1000);
 
@@ -345,12 +405,29 @@ export default function OsCsvReader() {
     setTv(event.target.value);
   };
 
-  const onClickSetTv = () => {
-    setThreshold(createThreshold(offsetData));
-  };
-
   const onChangeSeq = (event: any) => {
     setTvSeq(event.target.value);
+  };
+
+  const onClickApply = () => {
+    const minFreqInputElement = document.getElementById(
+      "minFreq"
+    ) as HTMLInputElement;
+    const maxFreqInputElement = document.getElementById(
+      "maxFreq"
+    ) as HTMLInputElement;
+    const scaleInputElement = document.getElementById(
+      "scale"
+    ) as HTMLInputElement;
+    const minFreq = parseInt(minFreqInputElement?.value || "0");
+    const maxFreq = parseInt(maxFreqInputElement?.value || "0");
+    const scale = Math.floor(parseFloat(scaleInputElement?.value || "0"));
+    setMinFreq(minFreq);
+    setMaxFreq(maxFreq);
+    setScale(scale);
+    setIsScale(true);
+    // setScaleChart({ waveIndex, waveData, offsetData });
+    // setThreshold(createThreshold(offsetData));
   };
 
   const onClickIsAmpChart = () => {
@@ -366,24 +443,36 @@ export default function OsCsvReader() {
   const onClickReset = () => {
     setCycle(-1);
     setPlotCount(0);
-    setTotalCycle(0);
+    setCycles(0);
     setAmpData([]);
+    setTvIndex([]);
+    setThreshold([]);
     tdAmpData = _.fill(Array(4096 * 2), 0);
     setIsPause(true);
+    setIsThreshold(false);
   };
 
   const onClickPrev = () => {
     console.log("Prev: " + cycle);
-    if (cycle > 0) setCycle((prev) => (prev - 1) % totalCycle);
+    if (cycle > 0) setCycle((prev) => (prev - 1) % cycles);
     // setAmpData([]);
     setIsPause(true);
   };
 
   const onClickNext = () => {
     console.log("Next: " + cycle);
-    if (cycle < totalCycle - 1) setCycle((prev) => (prev % totalCycle) + 1);
+    if (cycle < cycles - 1) setCycle((prev) => (prev % cycles) + 1);
     // setAmpData([]);
     setIsPause(true);
+  };
+
+  const onClickTv = (event: any) => {
+    const [startTv, endTv] = event.currentTarget.id.split(":");
+    setIsPause(true);
+    setIsThreshold(true);
+    setCycle(startTv);
+    setStartTv(startTv);
+    setEndTv(endTv);
   };
 
   const onClickWarn = (event: any) => {
@@ -412,14 +501,7 @@ export default function OsCsvReader() {
             setWaveData([]);
             const csvData = chunk(_.drop(results.data, 4));
             // setICount(_.max(csvData.indexData[0]));
-            let indexData = csvData.indexData;
-            let chunkedData = csvData.offsetData;
-            // console.log(indexData);
-            // console.log(chunkedData);
 
-            setWaveIndex(indexData);
-            setWaveData(chunkedData);
-            setTotalCycle(chunkedData.length);
             setZoneHover(false);
             console.timeEnd("==== onUploadAccepted ====");
           }}
@@ -489,9 +571,38 @@ export default function OsCsvReader() {
       )}
       <Wrapper>
         <CycleWrapper>
-          cycle: {cycle} / totalCycle: {totalCycle} / count: {plotCount}
+          cycle: {cycle} / cycles: {cycles} / plots: {addCommas(plotCount)}
         </CycleWrapper>
         <ControlWrapper>
+          {/* minFreq:{" "}
+          <input
+            id="minFreq"
+            type="number"
+            min={0}
+            step={1}
+            style={{ maxWidth: "60px" }}
+            defaultValue={minFreq}
+            // onChange={onChangeMaxFreq}
+          />{" "}
+          maxFreq:{" "}
+          <input
+            id="maxFreq"
+            type="number"
+            min={0}
+            step={1}
+            style={{ maxWidth: "60px" }}
+            defaultValue={maxFreq}
+            // onChange={onChangeMaxFreq}
+          />{" "} */}
+          1/scale:{" "}
+          <input
+            id="scale"
+            type="number"
+            step={1}
+            style={{ maxWidth: "60px" }}
+            defaultValue={scale}
+            // onChange={onChangeScale}
+          />
           threshold:{" "}
           <input
             id="tv"
@@ -510,15 +621,15 @@ export default function OsCsvReader() {
             defaultValue={tvSeq}
             onChange={onChangeSeq}
           />
-          <ControlButton onClick={onClickSetTv}>Apply</ControlButton>
+          <ControlButton onClick={onClickApply}>Apply</ControlButton>
         </ControlWrapper>
       </Wrapper>
       <Wrapper>
         <ChartWrapper>
-          <WaveLive
-            index={waveIndex[cycle]}
+          <OsWaveLive
+            index={scaleWaveIndex[cycle]}
             count={cycle}
-            plots={waveData[cycle]}
+            plots={scaleOffsetData[cycle]}
           />
 
           {cycle > -1 && (
@@ -526,7 +637,7 @@ export default function OsCsvReader() {
               <input
                 type="range"
                 min="0"
-                max={totalCycle - 1}
+                max={cycles - 1}
                 value={cycle}
                 onChange={(e) => setCycle(Number(e.target.value))}
                 style={{ width: "100%" }}
@@ -543,7 +654,7 @@ export default function OsCsvReader() {
             {cycle > -1 && (
               <ControlButton onClick={onClickReset}>Reset</ControlButton>
             )}
-            {cycle > -1 && !isAmpChart && (
+            {/* {cycle > -1 && !isAmpChart && (
               <ControlButton onClick={onClickIsAmpChart}>
                 Show AmpChart
               </ControlButton>
@@ -552,7 +663,7 @@ export default function OsCsvReader() {
               <ControlButton onClick={onClickIsAmpChart}>
                 Hide AmpChart
               </ControlButton>
-            )}
+            )} */}
             {cycle > -1 && isPause && (
               <ControlButton onClick={onClickPrev}>Prev</ControlButton>
             )}
@@ -562,12 +673,31 @@ export default function OsCsvReader() {
           </ControlWrapper>
         </ChartWrapper>
         <TableWrapper>
-          {threshold.map((el: any, index: number) => (
-            <div key={el.cycle} id={el.cycle} onClick={onClickWarn}>
-              {el.warn > 0 &&
-                `[${el.warn}/${el.position}] ${el.cycle}: ${el.maxPlot}`}
-            </div>
-          ))}
+          <InnerTableWrapper>
+            {tvIndex.length > 0 &&
+              tvIndex.map((el: any, index: number) => {
+                return (
+                  <div
+                    key={index}
+                    id={`${el[0]}:${el[el.length - 1]}`}
+                    onClick={onClickTv}
+                  >{`s: ${el[0]} e: ${el[el.length - 1]} seq: ${
+                    el.length
+                  }`}</div>
+                );
+              })}
+          </InnerTableWrapper>
+          <InnerTableWrapper>
+            {isThreshold &&
+              threshold.map((el: any, index: number) => (
+                <div key={el.cycle} id={el.cycle} onClick={onClickWarn}>
+                  {el.warn > 0 &&
+                    el.cycle >= startTv &&
+                    el.cycle <= endTv &&
+                    `${el.warn} (${el.cycle}): ${el.maxPlot}`}
+                </div>
+              ))}
+          </InnerTableWrapper>
         </TableWrapper>
       </Wrapper>
 

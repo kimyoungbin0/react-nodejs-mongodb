@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -53,6 +53,9 @@ export default function AmpFft(props: any) {
         // min: 0,
         // max: 100,
         // stacked: true,
+        ticks: {
+          maxTicksLimit: 20,
+        },
       },
       y: {
         // defining min and max so hiding the dataset does not change scale range

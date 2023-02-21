@@ -16,18 +16,26 @@ const MenuItem = styled.a`
   text-decoration: none;
 `;
 
+const MenuItemDeactivated = styled.a`
+  height: 40px;
+  padding: 10px;
+  font-size: 1.2rem;
+  color: lightgray;
+  text-decoration: none;
+`;
+
 export default function Menu() {
   return (
     <>
       <Wrapper>
         <MenuItem href="/daq">DAQ</MenuItem>
-        <MenuItem href="os">OS Wave</MenuItem>
-        <MenuItem href="fft">OS FFT</MenuItem>
-        <MenuItem>Transaction</MenuItem>
-        <MenuItem>Message</MenuItem>
-        <MenuItem>Devices</MenuItem>
-        <MenuItem>Statistic</MenuItem>
-        <MenuItem>Account</MenuItem>
+        <MenuItem href="/os">OS Wave</MenuItem>
+        <MenuItem href="/fft">OS FFT</MenuItem>
+        <MenuItemDeactivated>Transaction</MenuItemDeactivated>
+        <MenuItemDeactivated>Message</MenuItemDeactivated>
+        <MenuItemDeactivated>Devices</MenuItemDeactivated>
+        <MenuItemDeactivated>Statistic</MenuItemDeactivated>
+        <MenuItemDeactivated>Account</MenuItemDeactivated>
       </Wrapper>
     </>
   );
