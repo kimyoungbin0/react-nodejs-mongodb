@@ -11,7 +11,7 @@ import AmpLive from "../chart/ampLive";
 import styled from "@emotion/styled";
 import OsWaveLive from "../chart/osWaveLive";
 import { reduceArray } from "../../commons/libraries/array";
-import { addCommas } from "../../commons/libraries/util";
+import { addCommas } from "../../commons/libraries/utils";
 
 const Wrapper = styled.div`
   display: flex;

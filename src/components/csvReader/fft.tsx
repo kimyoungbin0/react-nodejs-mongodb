@@ -5,7 +5,7 @@ import styled from "@emotion/styled";
 import AmpFft from "../chart/ampFft";
 import { checkFileExists, ReadCsv } from "../../commons/libraries/file";
 import { reduceArray } from "../../commons/libraries/array";
-import { addCommas } from "../../commons/libraries/util";
+import { addCommas } from "../../commons/libraries/utils";
 
 const Wrapper = styled.div`
   display: flex;
