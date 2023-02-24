@@ -90,6 +90,40 @@ export default function FftCsvReader() {
       }
     }, [delay]);
 
+    // useEffect(() => {
+    //   const fetchCsvData = async () => {
+    //     const promises: any[] = [];
+    //     const folderPath = "/data/fft/";
+    //     const filePrefix = "normal_fft_";
+    //     // const filePrefix = "leak_fft_";
+
+    //     for (let i = 1; i <= cycles; i++) {
+    //       const fileNumber = i.toString().padStart(2, "0");
+    //       const fileName = `${folderPath}${filePrefix}${fileNumber}.csv`;
+
+    //       const isFileExist = await checkFileExists(fileName);
+    //       if (isFileExist) {
+    //         promises.push(ReadCsv(fileName));
+    //       }
+    //     }
+
+    //     const results = await Promise.all(promises);
+
+    //     return results;
+    //   };
+
+    //   const fetchData = async () => {
+    //     const result = await fetchCsvData();
+
+    //     setFftArr(result);
+    //     setCycle(0);
+    //     setCycles(result.length);
+    //     // setIsPause(false);
+    //   };
+
+    //   void fetchData();
+    // }, []);
+
     useEffect(() => {
       const fetchCsvData = async () => {
         const promises: any[] = [];
@@ -107,9 +141,13 @@ export default function FftCsvReader() {
           }
         }
 
-        const results = await Promise.all(promises);
+        const results = await Promise.allSettled(promises);
 
-        return results;
+        const fftArr = results
+          .filter((result) => result.status === "fulfilled")
+          .map((result: any) => result.value);
+
+        return fftArr;
       };
 
       const fetchData = async () => {
@@ -135,7 +173,8 @@ export default function FftCsvReader() {
         setCycle((prev) => (prev + 1) % cycles);
       }
     },
-    cycle === 0 ? 2500 : 1000
+    1000
+    // cycle === 0 ? 2500 : 1000
   );
 
   const setCycleChartArr = (cycle: number) => {

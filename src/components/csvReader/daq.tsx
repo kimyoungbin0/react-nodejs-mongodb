@@ -13,22 +13,43 @@ import { addCommas, getRandomInt } from "../../commons/libraries/utils";
 import { getDateTime, setDateTime } from "../../commons/libraries/date";
 
 const Wrapper = styled.div`
+  width: 100%;
+  max-width: 850px;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
 `;
 
 const ChartWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  min-width: 600px;
-  max-height: 370px;
+  width: 100%;
+  max-width: 600px;
+  /* max-height: 370px; */
   border: 1px solid #cccccc;
+`;
+
+const ChartControlWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 600px;
+  min-height: 30px;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  /* border: 1px solid #cccccc; */
 `;
 
 const TableWrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  min-width: 250px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 250px;
+  max-width: 100%;
   max-height: 370px;
   padding: 5px;
   overflow: auto;
@@ -38,13 +59,19 @@ const TableWrapper = styled.div`
 const InnerTableWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  min-height: 50%;
+  width: 100%;
+  min-width: 240px;
+  max-height: 50%;
+  /* min-height: 50%; */
   overflow: auto;
   border: 1px solid #cccccc;
 `;
 
 const CycleWrapper = styled.div`
-  min-width: 500px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 500px;
   min-height: 30px;
   display: flex;
   flex-direction: row;
@@ -54,13 +81,16 @@ const CycleWrapper = styled.div`
 `;
 
 const ControlWrapper = styled.div`
-  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 350px;
   min-height: 30px;
   padding: 0 10px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end;
   /* border: 1px solid #cccccc; */
 `;
 
@@ -74,10 +104,12 @@ const WrapperCol = styled.div`
 `;
 
 const PipeWrapper = styled.div`
-  width: 850px;
+  width: 100%;
+  max-width: 850px;
   padding: 20px;
   border: 1px solid #cccccc;
-  background-color: #bc960d;
+  /* background-color: #bc960d; */
+  background-image: url("/images/pipe_bg.jpg");
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -87,7 +119,7 @@ const PipeWrapper = styled.div`
 const PipeBlock = styled.div`
   min-width: 10%;
   padding: 10px;
-  background-color: lightgray;
+  background-color: #d3d3d386;
   border: 1px solid darkgray;
   display: flex;
   flex-direction: row;
@@ -110,7 +142,10 @@ const PipeBlockLeak = styled.div`
 const SensorBlock = styled.div`
   min-width: 10%;
   padding: 10px;
-  background-color: yellow;
+  background-image: url("/images/sensor.png");
+  background-size: auto;
+  background-repeat: no-repeat;
+  /* background-color: #ffff0067; */
   border: 1px solid #cccccc;
   display: flex;
   flex-direction: row;
@@ -180,7 +215,8 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     // height: "100%",
-    maxWidth: "800px",
+    width: "100%",
+    maxWidth: "850px",
     height: "100px",
     justifyContent: "center",
     // margin: 10,
@@ -320,12 +356,25 @@ export default function DaqCsvReader() {
     for (let i = 0; i < chunkData.length; i++) {
       const maxPlot = Number(_.max(chunkData[i]));
       const leak = getRandomInt(1, 10);
-      const sensor = getRandomInt(1, 2);
+      // const sensor = getRandomInt(1, 2);
+      let sensor = 0;
+      if (leak <= 3) {
+        sensor = 1;
+      } else if (leak >= 8) {
+        sensor = 2;
+      } else if (leak > 3 && leak < 6) {
+        sensor = 3;
+      } else {
+        sensor = 4;
+      }
+
       let distance = 0;
       if (sensor === 1) {
         distance = leak;
       } else if (sensor === 2) {
         distance = 10 - leak + 1;
+      } else {
+        distance = leak <= 10 - leak + 1 ? leak : 10 - leak + 1;
       }
 
       if (maxPlot > tv) {
@@ -452,6 +501,7 @@ export default function DaqCsvReader() {
       if (el.cycle === cycle) {
         return { leak: el.leak, sensor: el.sensor, distance: el.distance };
       }
+      return null;
     });
     if (leakValue?.leak > 0) setLeak(leakValue);
     else setLeak({ leak: 0, sensor: 0, distance: 0 });
@@ -658,7 +708,7 @@ export default function DaqCsvReader() {
           />
 
           {cycle > -1 && (
-            <ControlWrapper>
+            <ChartControlWrapper>
               <input
                 type="range"
                 min="0"
@@ -667,9 +717,9 @@ export default function DaqCsvReader() {
                 onChange={(e) => setCycle(Number(e.target.value))}
                 style={{ width: "100%" }}
               />
-            </ControlWrapper>
+            </ChartControlWrapper>
           )}
-          <ControlWrapper>
+          <ChartControlWrapper>
             {cycle > -1 && !isPause && (
               <ControlButton onClick={onClickPause}>Pause</ControlButton>
             )}
@@ -695,7 +745,7 @@ export default function DaqCsvReader() {
             {cycle > -1 && isPause && (
               <ControlButton onClick={onClickNext}>Next</ControlButton>
             )}
-          </ControlWrapper>
+          </ChartControlWrapper>
         </ChartWrapper>
         <TableWrapper>
           <InnerTableWrapper>
@@ -746,6 +796,22 @@ export default function DaqCsvReader() {
         </TableWrapper>
       </Wrapper>
 
+      {isAmpChart && (
+        <>
+          <Wrapper>
+            <CycleWrapper>
+              maxAmp: {maxAmp.freq} / {maxAmp.amp}
+            </CycleWrapper>
+          </Wrapper>
+          <Wrapper>
+            <ChartWrapper>
+              <AmpLive index={ampIndex} count={cycle} plots={ampData} />
+            </ChartWrapper>
+            <TableWrapper></TableWrapper>
+          </Wrapper>
+        </>
+      )}
+
       <WrapperCol>
         <PipeWrapper>
           {(() => {
@@ -763,8 +829,10 @@ export default function DaqCsvReader() {
         </PipeWrapper>
 
         <PipeWrapper style={{ justifyContent: "space-between" }}>
-          {leak.sensor !== 1 && <SensorBlock>FlexMate Sensor 1</SensorBlock>}
-          {leak.sensor === 1 && (
+          {(leak.sensor === 0 || leak.sensor === 2) && (
+            <SensorBlock>FlexMate Sensor 1</SensorBlock>
+          )}
+          {(leak.sensor === 1 || leak.sensor >= 3) && (
             <SensorBlockLeak>FlexMate Sensor 1</SensorBlockLeak>
           )}
 
@@ -772,32 +840,19 @@ export default function DaqCsvReader() {
             <ThresholdBlock>
               Pipe 1 Threshold Detection at {getDateTime(cycle * 1000)} |
               Sensor:
-              {leak.sensor} / Distance: {leak.distance}m
+              {leak.sensor < 3 ? leak.sensor : leak.sensor - 2} / Distance:{" "}
+              {leak.distance}m
             </ThresholdBlock>
           )}
 
-          {leak.sensor !== 2 && <SensorBlock>FlexMate Sensor 2</SensorBlock>}
-          {leak.sensor === 2 && (
+          {(leak.sensor === 0 || leak.sensor === 1) && (
+            <SensorBlock>FlexMate Sensor 2</SensorBlock>
+          )}
+          {(leak.sensor === 2 || leak.sensor >= 3) && (
             <SensorBlockLeak>FlexMate Sensor 2</SensorBlockLeak>
           )}
         </PipeWrapper>
       </WrapperCol>
-
-      {isAmpChart && (
-        <>
-          <Wrapper>
-            <CycleWrapper>
-              maxAmp: {maxAmp.freq} / {maxAmp.amp}
-            </CycleWrapper>
-          </Wrapper>
-          <Wrapper>
-            <ChartWrapper>
-              <AmpLive index={ampIndex} count={cycle} plots={ampData} />
-            </ChartWrapper>
-            <TableWrapper></TableWrapper>
-          </Wrapper>
-        </>
-      )}
     </>
   );
 }

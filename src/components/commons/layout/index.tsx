@@ -42,6 +42,7 @@ export default function Layout(props: ILayoutProps) {
         <div
           style={{
             width: "calc(100% - 201px)",
+            maxWidth: "calc(100% - 201px)",
             padding: "10px",
             overflow: "auto",
           }}
