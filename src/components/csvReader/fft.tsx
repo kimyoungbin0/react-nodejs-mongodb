@@ -153,6 +153,9 @@ export default function FftCsvReader() {
       const fetchData = async () => {
         const result = await fetchCsvData();
 
+        // Wait for 1 second before setting state
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+
         setFftArr(result);
         setCycle(0);
         setCycles(result.length);

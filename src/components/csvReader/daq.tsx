@@ -174,6 +174,7 @@ const ThresholdBlock = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  font-size: 0.8rem;
 `;
 
 const GREY = "#CCC";
