@@ -137,6 +137,7 @@ const PipeBlockLeak = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  font-weight: 800;
 `;
 
 const SensorBlock = styled.div`
@@ -163,6 +164,7 @@ const SensorBlockLeak = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  font-weight: 800;
 `;
 
 const ThresholdBlock = styled.div`
