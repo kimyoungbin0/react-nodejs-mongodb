@@ -10,10 +10,14 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import annotationPlugin from "chartjs-plugin-annotation";
 
 export default function AmpFft(props: any) {
   const labels = props.index;
   const plots = props.plots;
+  const tv = props.tv;
+  const minY = props.minY;
+  const maxY = props.maxY;
 
   ChartJS.register(
     CategoryScale,
@@ -22,7 +26,8 @@ export default function AmpFft(props: any) {
     LineElement,
     Title,
     Tooltip,
-    Legend
+    Legend,
+    annotationPlugin
   );
 
   const options: any = {
@@ -35,9 +40,21 @@ export default function AmpFft(props: any) {
         display: true,
         text: "Amplitude Frequency Chart",
       },
+      annotation: {
+        annotations: [
+          {
+            drawTime: "afterDatasetsDraw",
+            type: "line",
+            yMin: tv,
+            yMax: tv,
+            borderColor: "blue",
+            borderWidth: 1,
+          },
+        ],
+      },
     },
     interaction: {
-      axis: "r",
+      axis: "xy",
     },
     animations: {
       tension: {
@@ -59,8 +76,8 @@ export default function AmpFft(props: any) {
       },
       y: {
         // defining min and max so hiding the dataset does not change scale range
-        min: -160,
-        max: 0,
+        min: minY,
+        max: maxY,
         grid: {
           color: function (context: any) {
             if (context.tick.value > 0) {

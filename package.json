@@ -14,6 +14,7 @@
     "@emotion/styled": "^11.10.5",
     "@next/font": "13.1.6",
     "chart.js": "^4.2.1",
+    "chartjs-plugin-annotation": "^2.1.2",
     "chartjs-plugin-zoom": "^2.0.0",
     "fft-js": "^0.0.12",
     "lodash": "^4.17.21",
@@ -22,7 +23,8 @@
     "react": "18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "18.2.0",
-    "react-papaparse": "^4.1.0"
+    "react-papaparse": "^4.1.0",
+    "react-table": "^7.8.0"
   },
   "devDependencies": {
     "@types/chart.js": "^2.9.37",
