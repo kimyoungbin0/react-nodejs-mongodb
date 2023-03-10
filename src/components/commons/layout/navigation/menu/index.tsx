@@ -30,6 +30,7 @@ export default function Menu() {
       <Wrapper>
         <MenuItem href="/daq">DAQ</MenuItem>
         <MenuItem href="/fftos">FFT OS</MenuItem>
+        <MenuItem href="/fftos2">FFT OS2</MenuItem>
         <MenuItem href="/os">OS Wave</MenuItem>
         {/* <MenuItem href="/fft">OS FFT</MenuItem> */}
         <MenuItemDeactivated>Transaction</MenuItemDeactivated>
