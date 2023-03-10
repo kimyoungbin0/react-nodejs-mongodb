@@ -10,6 +10,7 @@ import {
 } from "../../../commons/libraries/array";
 import FftUI from "./Fft.presenter";
 import CsvReader from "../../csvReader/CsvReader";
+import type { FftUIProps } from "./Fft.types";
 
 function useInterval(callback: any, delay: any) {
   // const savedCallback = useRef();
@@ -30,7 +31,7 @@ function useInterval(callback: any, delay: any) {
   }, [delay]);
 }
 
-let myProps = {};
+let myProps: FftUIProps = {};
 let indexCount: { [index: number]: number } = {};
 
 export default function Fft() {

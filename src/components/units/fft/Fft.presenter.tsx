@@ -5,33 +5,34 @@ import { addCommas } from "../../../commons/libraries/utils";
 import AmpFft from "../../chart/ampFft";
 // import { subtractArrays } from "../../../commons/libraries/array";
 import * as S from "./Fft.styles";
+import type { FftUIProps } from "./Fft.types";
 // import { useState } from "react";
 // import CsvReader from "../../csvReader/CsvReader";
 
-interface FftUIProps {
-  cycle: number;
-  isPause: boolean;
-  cycles: number;
-  plotCount: number;
-  ms: number;
-  tv: number;
-  minFreq: number;
-  maxFreq: number;
-  scale: number;
-  ampIndex: number[];
-  ampData: number[][];
-  minY: number;
-  maxY: number;
-  threshold: number[];
-  tvIndexTop: number[];
-  onClickApply: (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => void;
-  onClickPause: (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => void;
-  handleResults: (results: any) => void;
-}
+// interface FftUIProps {
+//   cycle: number;
+//   isPause: boolean;
+//   cycles: number;
+//   plotCount: number;
+//   ms: number;
+//   tv: number;
+//   minFreq: number;
+//   maxFreq: number;
+//   scale: number;
+//   ampIndex: number[];
+//   ampData: number[][];
+//   minY: number;
+//   maxY: number;
+//   threshold: number[];
+//   tvIndexTop: number[];
+//   onClickApply: (
+//     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+//   ) => void;
+//   onClickPause: (
+//     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+//   ) => void;
+//   handleResults: (results: any) => void;
+// }
 
 export default function FftUI(props: FftUIProps) {
   const {
