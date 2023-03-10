@@ -43,7 +43,7 @@ const TableWrapper = styled.div`
 `;
 
 const CycleWrapper = styled.div`
-  min-width: 350px;
+  min-width: 300px;
   min-height: 30px;
   display: flex;
   flex-direction: row;
@@ -53,7 +53,7 @@ const CycleWrapper = styled.div`
 `;
 
 const ControlWrapper = styled.div`
-  min-width: 450px;
+  min-width: 500px;
   min-height: 30px;
   padding: 0 10px;
   display: flex;
@@ -180,8 +180,9 @@ export default function FftOsCsvReader() {
   const [minFreq, setMinFreq] = useState(0);
   const [maxFreq, setMaxFreq] = useState(100);
   const [scale, setScale] = useState(32);
-  const [tv, setTv] = useState(13);
-  const [tvIndexTop10, setTvIndexTop10] = useState([] as any);
+  const [tv, setTv] = useState(15);
+  const [tvIndexTop, setTvIndexTop] = useState([] as any);
+  const [ms, setMs] = useState(100);
 
   const [threshold, setThreshold] = useState([] as any);
   const [minY, setMinY] = useState(-100);
@@ -228,11 +229,14 @@ export default function FftOsCsvReader() {
       // const temp = getTdAmp(waveData[cycle % cycles]);
       // setAmpIndex(temp.frequencies);
       // setAmpData(temp.fdAmp);
-      setCycle((prev) => (prev + 1) % cycles);
-
+      if (cycle + 1 < cycles) {
+        setCycle((prev) => (prev + 1) % cycles);
+      } else {
+        setIsPause(true);
+      }
       // checkLeak((cycle + 1) % cycles);
     }
-  }, 1000);
+  }, ms);
 
   useEffect(() => {
     setCycleChartArr(cycle);
@@ -241,6 +245,16 @@ export default function FftOsCsvReader() {
   const setCycleChartArr = (cycle: number) => {
     if (cycle < 0) return;
 
+    const thresholdData = setThresholdData();
+
+    if (!isPause) {
+      setThresholdTable(thresholdData.thresholdData);
+    }
+
+    setChartMinMax(thresholdData.min, thresholdData.max);
+  };
+
+  const setThresholdData = () => {
     const ampMaxArray = reduceMaxArray(
       waveIndex,
       waveData[cycle],
@@ -280,33 +294,37 @@ export default function FftOsCsvReader() {
       Number(tv)
     );
 
+    const min = Math.floor(Math.min(...filteredDataArr) / 10) * 10;
+    const max = (Math.floor(Math.max(...filteredDataArr) / 10) + 1) * 10;
+
     setThreshold(thresholdData);
-
-    if (!isPause) {
-      // maxIndex 발생 횟수 카운트
-      if (cycle === 0) {
-        indexCount = {};
-      }
-      thresholdData.forEach(({ maxIndex }) => {
-        const index = maxIndex.toFixed(1);
-        indexCount[index] = indexCount[index] ? indexCount[index] + 1 : 1;
-      });
-      // setTvIndexCount(indexCount);
-      // console.log(indexCount);
-
-      const sorted = Object.entries(indexCount)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 10);
-      setTvIndexTop10(sorted);
-      // console.log(sorted);
-    }
 
     setAmpIndex(filteredIndexArr);
     setAmpData(filteredDataArr);
     setPlotCount(plotCount);
 
-    const min = Math.floor(Math.min(...filteredDataArr) / 10) * 10;
-    const max = (Math.floor(Math.max(...filteredDataArr) / 10) + 1) * 10;
+    return { thresholdData, min, max };
+  };
+
+  const setThresholdTable = (thresholdData: any) => {
+    // maxIndex 발생 횟수 카운트
+    if (cycle === 0) {
+      indexCount = {};
+    }
+    thresholdData.forEach(({ maxIndex }) => {
+      const index = maxIndex.toFixed(1);
+      indexCount[index] = indexCount[index] ? indexCount[index] + 1 : 1;
+    });
+    // setTvIndexCount(indexCount);
+    // console.log(indexCount);
+
+    const sorted = Object.entries(indexCount).sort((a, b) => b[1] - a[1]);
+    // .slice(0, 10);
+    setTvIndexTop(sorted);
+    // console.log(sorted);
+  };
+
+  const setChartMinMax = (min: number, max: number) => {
     if (cycle === 0) {
       setMinY(min);
       setMaxY(max);
@@ -321,6 +339,7 @@ export default function FftOsCsvReader() {
   };
 
   const onClickApply = () => {
+    const msInputElement = document.getElementById("ms") as HTMLInputElement;
     const tvInputElement = document.getElementById("tv") as HTMLInputElement;
     const minFreqInputElement = document.getElementById(
       "minFreq"
@@ -331,16 +350,23 @@ export default function FftOsCsvReader() {
     const scaleInputElement = document.getElementById(
       "scale"
     ) as HTMLInputElement;
+    const ms = parseInt(msInputElement?.value || "0");
     const tv = parseInt(tvInputElement?.value || "0");
     const minFreq = parseInt(minFreqInputElement?.value || "0");
     const maxFreq = parseInt(maxFreqInputElement?.value || "0");
     const scale = Math.floor(parseFloat(scaleInputElement?.value || "0"));
+    setMs(ms);
     setTv(tv);
     setMinFreq(minFreq);
     setMaxFreq(maxFreq);
     setScale(scale);
-    console.log("Apply: " + cycle);
+
     if (cycle > -1) setCycleChartArr((cycle - 1) % cycles);
+
+    indexCount = {};
+    setTvIndexTop([]);
+    setThresholdTable([]);
+    setCycle(0);
   };
 
   const onClickPause = () => {
@@ -472,6 +498,14 @@ export default function FftOsCsvReader() {
           cycle: {cycle} / cycles: {cycles} / plots: {addCommas(plotCount)}
         </CycleWrapper>
         <ControlWrapper>
+          ms:{" "}
+          <input
+            id="ms"
+            type="number"
+            step={100}
+            style={{ maxWidth: "60px" }}
+            defaultValue={ms}
+          />{" "}
           tv:{" "}
           <input
             id="tv"
@@ -479,7 +513,6 @@ export default function FftOsCsvReader() {
             step={1}
             style={{ maxWidth: "60px" }}
             defaultValue={tv}
-            // onChange={onChangeTv}
           />{" "}
           min:{" "}
           <input
@@ -489,7 +522,6 @@ export default function FftOsCsvReader() {
             step={1}
             style={{ maxWidth: "60px" }}
             defaultValue={minFreq}
-            // onChange={onChangeMaxFreq}
           />{" "}
           max:{" "}
           <input
@@ -508,7 +540,6 @@ export default function FftOsCsvReader() {
             step={1}
             style={{ maxWidth: "60px" }}
             defaultValue={scale}
-            // onChange={onChangeScale}
           />
           <ControlButton onClick={onClickApply}>Apply</ControlButton>
         </ControlWrapper>
@@ -587,7 +618,7 @@ export default function FftOsCsvReader() {
               </tr>
             </thead>
             <tbody>
-              {tvIndexTop10.map((data: any) => (
+              {tvIndexTop.map((data: any) => (
                 <tr key={`${data[0]}-${data[1]}`}>
                   <td>{data[0]}</td>
                   <td>{data[1]}</td>
