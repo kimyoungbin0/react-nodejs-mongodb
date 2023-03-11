@@ -8,9 +8,12 @@ import {
   roundArray,
   subtractArrays,
 } from "../../../commons/libraries/array";
-import FftUI from "./Fft.presenter";
 import CsvReader from "../../csvReader/CsvReader";
+import FftUI from "./Fft.presenter";
 import type { FftUIProps } from "./Fft.types";
+
+let myProps: FftUIProps = {};
+let indexCount: { [index: number]: number } = {};
 
 function useInterval(callback: any, delay: any) {
   // const savedCallback = useRef();
@@ -31,9 +34,6 @@ function useInterval(callback: any, delay: any) {
   }, [delay]);
 }
 
-let myProps: FftUIProps = {};
-let indexCount: { [index: number]: number } = {};
-
 export default function Fft() {
   const [cycle, setCycle] = useState(-1);
   const [cycles, setCycles] = useState(0);
@@ -52,11 +52,10 @@ export default function Fft() {
   const [ms, setMs] = useState(100);
 
   const [threshold, setThreshold] = useState([] as any);
-  const [minY, setMinY] = useState(-100);
-  const [maxY, setMaxY] = useState(100);
+  const [minY, setMinY] = useState(0);
+  const [maxY, setMaxY] = useState(0);
 
   const [startDate, setStartDate] = useState("");
-  // const [leak, setLeak] = useState(0);
   const [leak, setLeak] = useState({ leak: 0, sensor: 0, distance: 0 });
 
   const chunk = (data: any[]) => {
@@ -116,6 +115,9 @@ export default function Fft() {
       tvIndexTop,
       onClickApply,
       onClickPause,
+      onClickPrev,
+      onClickNext,
+      onChangeCycle,
     };
   }, [cycle]);
 
@@ -130,12 +132,12 @@ export default function Fft() {
     let indexData = csvData.indexData;
     let chunkedData = csvData.offsetData;
     let averageData = csvData.averageData;
-    console.log(indexData);
-    console.log(chunkedData);
-    console.log(averageData);
+    // console.log(indexData);
+    // console.log(chunkedData);
+    // console.log(averageData);
 
     setWaveIndex(indexData);
-    const adjustedData = subtractArrays(chunkedData, averageData, 2);
+    // const adjustedData = subtractArrays(chunkedData, averageData, 2);
     setAverageData(averageData);
     setWaveData(chunkedData);
     setCycles(chunkedData.length);
@@ -237,7 +239,7 @@ export default function Fft() {
     }
   };
 
-  const onClickApply = () => {
+  const reset = () => {
     const msInputElement = document.getElementById("ms") as HTMLInputElement;
     const tvInputElement = document.getElementById("tv") as HTMLInputElement;
     const minFreqInputElement = document.getElementById(
@@ -268,6 +270,10 @@ export default function Fft() {
     setCycle(0);
   };
 
+  const onClickApply = () => {
+    reset();
+  };
+
   const onClickPause = () => {
     setIsPause(!isPause);
     setCycle(cycle);
@@ -291,9 +297,15 @@ export default function Fft() {
     setIsPause(true);
   };
 
+  const onChangeCycle = (cycle: number) => {
+    setCycle(cycle);
+    setCycleChartArr(cycle);
+    setIsPause(true);
+  };
+
   return (
     <>
-      <CsvReader handleResults={handleResults} />
+      {cycle < 0 && <CsvReader handleResults={handleResults} />}
       <FftUI {...myProps} />
     </>
   );

@@ -1,38 +1,7 @@
-// import _, { chunk } from "lodash";
-// import { useCSVReader, formatFileSize } from "react-papaparse";
-
 import { addCommas } from "../../../commons/libraries/utils";
 import AmpFft from "../../chart/ampFft";
-// import { subtractArrays } from "../../../commons/libraries/array";
 import * as S from "./Fft.styles";
 import type { FftUIProps } from "./Fft.types";
-// import { useState } from "react";
-// import CsvReader from "../../csvReader/CsvReader";
-
-// interface FftUIProps {
-//   cycle: number;
-//   isPause: boolean;
-//   cycles: number;
-//   plotCount: number;
-//   ms: number;
-//   tv: number;
-//   minFreq: number;
-//   maxFreq: number;
-//   scale: number;
-//   ampIndex: number[];
-//   ampData: number[][];
-//   minY: number;
-//   maxY: number;
-//   threshold: number[];
-//   tvIndexTop: number[];
-//   onClickApply: (
-//     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-//   ) => void;
-//   onClickPause: (
-//     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-//   ) => void;
-//   handleResults: (results: any) => void;
-// }
 
 export default function FftUI(props: FftUIProps) {
   const {
@@ -53,14 +22,13 @@ export default function FftUI(props: FftUIProps) {
     tvIndexTop,
     onClickApply,
     onClickPause,
-    handleResults,
+    onClickPrev,
+    onClickNext,
+    onChangeCycle,
   } = props;
 
-  console.log(handleResults);
   return (
     <>
-      {/* {isPause && cycle === -1 && <CsvReader />} */}
-      {/* <CsvReader props={handleResults} /> */}
       <S.Wrapper>
         <S.CycleWrapper>
           cycle: {cycle} / cycles: {cycles} / plots: {addCommas(plotCount)}
@@ -99,7 +67,6 @@ export default function FftUI(props: FftUIProps) {
             step={1}
             style={{ maxWidth: "60px" }}
             defaultValue={maxFreq}
-            // onChange={onChangeMaxFreq}
           />{" "}
           1/scale:{" "}
           <input
@@ -114,7 +81,6 @@ export default function FftUI(props: FftUIProps) {
       </S.Wrapper>
       <S.Wrapper>
         <S.ChartWrapper>
-          {/* <AmpFft index={waveIndex} count={cycle} plots={waveData[cycle]} /> */}
           <AmpFft
             index={ampIndex}
             count={cycle}
@@ -131,8 +97,7 @@ export default function FftUI(props: FftUIProps) {
                 max={cycles - 1}
                 value={cycle}
                 onChange={(e) => {
-                  setCycle(Number(e.target.value));
-                  setCycleChartArr(Number(e.target.value) % cycles);
+                  onChangeCycle(Number(e.target.value));
                 }}
                 style={{ width: "100%" }}
               />
@@ -166,14 +131,15 @@ export default function FftUI(props: FftUIProps) {
               </tr>
             </thead>
             <tbody>
-              {/* {threshold.map((data: any) => (
-                <tr key={`${data.sector}-${data.maxValue}`}>
-                  <td>{data.sector}</td>
-                  <td>{data.maxIndex}</td>
-                  <td>{data.maxValue}</td>
-                  <td>{data.maxAverage}</td>
-                </tr>
-              ))} */}
+              {cycle > -1 &&
+                threshold.map((data: any) => (
+                  <tr key={`${data.sector}-${data.maxValue}`}>
+                    <td>{data.sector}</td>
+                    <td>{data.maxIndex}</td>
+                    <td>{data.maxValue}</td>
+                    <td>{data.maxAverage}</td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </S.TableWrapper>
@@ -186,12 +152,13 @@ export default function FftUI(props: FftUIProps) {
               </tr>
             </thead>
             <tbody>
-              {/* {tvIndexTop.map((data: any) => (
-                <tr key={`${data[0]}-${data[1]}`}>
-                  <td>{data[0]}</td>
-                  <td>{data[1]}</td>
-                </tr>
-              ))} */}
+              {cycle > -1 &&
+                tvIndexTop.map((data: any) => (
+                  <tr key={`${data[0]}-${data[1]}`}>
+                    <td>{data[0]}</td>
+                    <td>{data[1]}</td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </S.TableWrapper>

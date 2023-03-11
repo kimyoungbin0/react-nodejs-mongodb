@@ -1,9 +1,6 @@
-import _, { chunk } from "lodash";
 import { useCSVReader, formatFileSize } from "react-papaparse";
-
-import { subtractArrays } from "../../commons/libraries/array";
-import * as S from "../units/fft/Fft.styles";
 import { useState } from "react";
+import * as S from "../units/fft/Fft.styles";
 
 export default function CsvReader({ handleResults }) {
   const { CSVReader } = useCSVReader();
