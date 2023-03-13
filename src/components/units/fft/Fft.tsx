@@ -28,6 +28,8 @@ function useInterval(callback: any, delay: any) {
 
 let tvTotalIndexCount: any = {};
 let tvConIndCount: any = {};
+let prevThresholdData: any = {};
+// let pauseCycle: number = -1;
 
 export default function FftOsCsvReader() {
   const [cycle, setCycle] = useState(-1);
@@ -52,6 +54,7 @@ export default function FftOsCsvReader() {
 
   const [startDate, setStartDate] = useState("");
   const [leak, setLeak] = useState({ leak: 0, sensor: 0, distance: 0 });
+  const [pauseCycle, setPauseCycle] = useState(-1);
 
   const chunk = (data: any[]) => {
     const dataCount = data[0].length;
@@ -263,8 +266,16 @@ export default function FftOsCsvReader() {
   };
 
   const onClickPause = () => {
+    if (!isPause) {
+      setPauseCycle(cycle);
+    } else {
+      console.log("pauseCycle: " + pauseCycle);
+      setCycle(pauseCycle);
+      setCycleChartArr(pauseCycle);
+    }
+    // console.log("pauseCycle: " + pauseCycle);
     setIsPause(!isPause);
-    setCycle(cycle);
+    // setCycle(cycle);
   };
 
   const onClickPrev = () => {
