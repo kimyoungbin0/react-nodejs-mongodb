@@ -49,7 +49,7 @@ export default function Fft() {
   const [scale, setScale] = useState(32);
   const [tv, setTv] = useState(15);
   const [tvIndexTop, setTvIndexTop] = useState([] as any);
-  const [ms, setMs] = useState(100);
+  const [ms, setMs] = useState(1000);
 
   const [threshold, setThreshold] = useState([] as any);
   const [minY, setMinY] = useState(0);
@@ -89,7 +89,7 @@ export default function Fft() {
       if (cycle + 1 < cycles) {
         setCycle((prev) => (prev + 1) % cycles);
       } else {
-        setIsPause(true);
+        if (!isPause) setIsPause(true);
       }
     }
   }, ms);
@@ -119,12 +119,9 @@ export default function Fft() {
       onClickNext,
       onChangeCycle,
     };
-  }, [cycle]);
+  }, [cycle, isPause]);
 
   const handleResults = (results: any) => {
-    console.log(results);
-    setCycle(0);
-    setIsPause(false);
     setWaveIndex([]);
     setWaveData([]);
     setAverageData([]);
@@ -132,15 +129,18 @@ export default function Fft() {
     let indexData = csvData.indexData;
     let chunkedData = csvData.offsetData;
     let averageData = csvData.averageData;
-    // console.log(indexData);
-    // console.log(chunkedData);
-    // console.log(averageData);
+    console.log(indexData);
+    console.log(chunkedData);
+    console.log(averageData);
 
     setWaveIndex(indexData);
     // const adjustedData = subtractArrays(chunkedData, averageData, 2);
     setAverageData(averageData);
     setWaveData(chunkedData);
     setCycles(chunkedData.length);
+
+    setCycle(0);
+    if (isPause) setIsPause(false);
   };
 
   const setCycleChartArr = (cycle: number) => {
@@ -153,6 +153,7 @@ export default function Fft() {
     }
 
     setChartMinMax(thresholdData.min, thresholdData.max);
+    // setCycle(cycle);
   };
 
   const setThresholdData = () => {
@@ -285,7 +286,7 @@ export default function Fft() {
       setCycle((prev) => (prev - 1) % cycles);
       setCycleChartArr((cycle - 1) % cycles);
     }
-    setIsPause(true);
+    if (!isPause) setIsPause(true);
   };
 
   const onClickNext = () => {
@@ -294,13 +295,13 @@ export default function Fft() {
       setCycle((prev) => (prev % cycles) + 1);
       setCycleChartArr((cycle + 1) % cycles);
     }
-    setIsPause(true);
+    if (!isPause) setIsPause(true);
   };
 
   const onChangeCycle = (cycle: number) => {
     setCycle(cycle);
     setCycleChartArr(cycle);
-    setIsPause(true);
+    if (!isPause) setIsPause(true);
   };
 
   return (

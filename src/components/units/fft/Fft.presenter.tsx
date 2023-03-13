@@ -5,19 +5,19 @@ import type { FftUIProps } from "./Fft.types";
 
 export default function FftUI(props: FftUIProps) {
   const {
-    cycle,
-    isPause,
-    cycles,
-    plotCount,
-    ms,
-    tv,
-    minFreq,
-    maxFreq,
-    scale,
+    cycle = -1,
+    isPause = true,
+    cycles = 0,
+    plotCount = 0,
+    ms = 1000,
+    tv = 15,
+    minFreq = 0,
+    maxFreq = 100,
+    scale = 32,
     ampIndex,
     ampData,
-    minY,
-    maxY,
+    minY = 0,
+    maxY = 0,
     threshold,
     tvIndexTop,
     onClickApply,
@@ -34,48 +34,22 @@ export default function FftUI(props: FftUIProps) {
           cycle: {cycle} / cycles: {cycles} / plots: {addCommas(plotCount)}
         </S.CycleWrapper>
         <S.ControlWrapper>
-          ms:{" "}
-          <input
-            id="ms"
-            type="number"
-            step={100}
-            style={{ maxWidth: "60px" }}
-            defaultValue={ms}
-          />{" "}
-          tv:{" "}
-          <input
-            id="tv"
-            type="number"
-            step={1}
-            style={{ maxWidth: "60px" }}
-            defaultValue={tv}
-          />{" "}
+          ms: <S.NumberInput id={"ms"} type={"number"} defaultValue={ms} />
+          tv: <S.NumberInput id={"tv"} type={"number"} defaultValue={tv} />
           min:{" "}
-          <input
-            id="minFreq"
-            type="number"
-            min={0}
-            step={1}
-            style={{ maxWidth: "60px" }}
+          <S.NumberInput
+            id={"minFreq"}
+            type={"number"}
             defaultValue={minFreq}
-          />{" "}
-          max:{" "}
-          <input
-            id="maxFreq"
-            type="number"
-            min={0}
-            step={1}
-            style={{ maxWidth: "60px" }}
-            defaultValue={maxFreq}
-          />{" "}
-          1/scale:{" "}
-          <input
-            id="scale"
-            type="number"
-            step={1}
-            style={{ maxWidth: "60px" }}
-            defaultValue={scale}
           />
+          max:{" "}
+          <S.NumberInput
+            id={"maxFreq"}
+            type={"number"}
+            defaultValue={maxFreq}
+          />
+          1/scale:{" "}
+          <S.NumberInput id={"scale"} type={"number"} defaultValue={scale} />
           <S.ControlButton onClick={onClickApply}>Apply</S.ControlButton>
         </S.ControlWrapper>
       </S.Wrapper>
@@ -91,15 +65,14 @@ export default function FftUI(props: FftUIProps) {
           />
           {cycle > -1 && (
             <S.ControlWrapper>
-              <input
+              <S.RangeInput
+                id="cycleRange"
                 type="range"
-                min="0"
                 max={cycles - 1}
                 value={cycle}
                 onChange={(e) => {
                   onChangeCycle(Number(e.target.value));
                 }}
-                style={{ width: "100%" }}
               />
             </S.ControlWrapper>
           )}
@@ -108,13 +81,11 @@ export default function FftUI(props: FftUIProps) {
               <S.ControlButton onClick={onClickPause}>Pause</S.ControlButton>
             )}
             {cycle > -1 && isPause && (
-              <S.ControlButton onClick={onClickPause}>Resume</S.ControlButton>
-            )}
-            {cycle > -1 && isPause && (
-              <S.ControlButton onClick={onClickPrev}>Prev</S.ControlButton>
-            )}
-            {cycle > -1 && isPause && (
-              <S.ControlButton onClick={onClickNext}>Next</S.ControlButton>
+              <>
+                <S.ControlButton onClick={onClickPause}>Resume</S.ControlButton>
+                <S.ControlButton onClick={onClickPrev}>Prev</S.ControlButton>
+                <S.ControlButton onClick={onClickNext}>Next</S.ControlButton>
+              </>
             )}
           </S.ControlWrapper>
         </S.ChartWrapper>

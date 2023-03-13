@@ -182,7 +182,7 @@ export default function FftOsCsvReader() {
   const [scale, setScale] = useState(32);
   const [tv, setTv] = useState(15);
   const [tvIndexTop, setTvIndexTop] = useState([] as any);
-  const [ms, setMs] = useState(100);
+  const [ms, setMs] = useState(1000);
 
   const [threshold, setThreshold] = useState([] as any);
   const [minY, setMinY] = useState(-100);
@@ -416,9 +416,9 @@ export default function FftOsCsvReader() {
             let indexData = csvData.indexData;
             let chunkedData = csvData.offsetData;
             let averageData = csvData.averageData;
-            console.log(indexData);
-            console.log(chunkedData);
-            console.log(averageData);
+            // console.log(indexData);
+            // console.log(chunkedData);
+            // console.log(averageData);
 
             setWaveIndex(indexData);
             const adjustedData = subtractArrays(chunkedData, averageData, 2);

@@ -10,12 +10,7 @@ export const reduceArray = (arr: any[], n: number) => {
   return [];
 };
 
-export const reduceMaxArray = (
-  indexArr: any[],
-  dataArr: any[],
-  averageArr: any[],
-  n: number
-) => {
+export const reduceMaxArray = (indexArr: any[], dataArr: any[], averageArr: any[], n: number) => {
   if (dataArr !== undefined && dataArr.length > 0) {
     if (n <= 1) {
       return {
@@ -51,12 +46,7 @@ export const reduceMaxArray = (
   return [];
 };
 
-export const getThresholdData = (
-  arr1: any[],
-  arr2: any[],
-  arr3: any[],
-  tv: number
-) => {
+export const getThresholdData = (arr1: any[], arr2: any[], arr3: any[], tv: number) => {
   let result = [];
   for (let i = 0; i < arr1.length; i++) {
     const sector = `${arr1[i][0]}~${arr1[i][arr1[i].length - 1]}`;

@@ -45,13 +45,94 @@ export const ControlButton = styled.button`
   margin: 0 5px;
 `;
 
+export const NumberInput = styled.input`
+  max-width: 60px;
+`;
+
+export const RangeInput = styled.input`
+  width: 100%;
+`;
+
+export const PipeWrapper = styled.div`
+  width: 100%;
+  max-width: 800px;
+  padding: 20px;
+  border: 1px solid #cccccc;
+  /* background-color: #bc960d; */
+  background-image: url("/images/pipe_bg.jpg");
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const PipeBlock = styled.div`
+  min-width: 20%;
+  padding: 10px;
+  background-color: #d3d3d386;
+  border: 1px solid darkgray;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const PipeBlockLeak = styled.div`
+  min-width: 20%;
+  padding: 10px;
+  color: white;
+  background-color: red;
+  border: 1px solid darkgray;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-weight: 800;
+`;
+
+export const SensorBlock = styled.div`
+  min-width: 20%;
+  padding: 10px;
+  background-image: url("/images/sensor.png");
+  background-size: auto;
+  background-repeat: no-repeat;
+  /* background-color: #ffff0067; */
+  border: 1px solid #cccccc;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const SensorBlockLeak = styled.div`
+  min-width: 10%;
+  padding: 10px;
+  color: white;
+  background-color: red;
+  border: 1px solid #cccccc;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-weight: 800;
+`;
+
+export const ThresholdBlock = styled.div`
+  min-width: 10%;
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #cccccc;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8rem;
+`;
+
 export const GREY = "#CCC";
 export const GREY_LIGHT = "rgba(255, 255, 255, 0.4)";
 export const DEFAULT_REMOVE_HOVER_COLOR = "#A01919";
-export const REMOVE_HOVER_COLOR_LIGHT = lightenDarkenColor(
-  DEFAULT_REMOVE_HOVER_COLOR,
-  40
-);
+export const REMOVE_HOVER_COLOR_LIGHT = lightenDarkenColor(DEFAULT_REMOVE_HOVER_COLOR, 40);
 export const GREY_DIM = "#686868";
 
 export const styles = {

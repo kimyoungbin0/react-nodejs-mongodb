@@ -1,4 +1,4 @@
-import Fft from "../../src/components/units/fft/Fft.container";
+import Fft from "../../src/components/units/fft/Fft";
 
 export default function FftOsPage() {
   return (
