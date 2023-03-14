@@ -4,9 +4,10 @@ import CsvReader from "../../csvReader/CsvReader";
 import AmpFft from "../../chart/ampFft";
 
 import _ from "lodash";
-import { addCommas } from "../../../commons/libraries/utils";
+import { addCommas, getRandomInt } from "../../../commons/libraries/utils";
 import { getDateTime, setDateTime } from "../../../commons/libraries/date";
 import { averageByColumn, getThresholdData, reduceMaxArray, roundArray } from "../../../commons/libraries/array";
+import ModalBasic from "../../commons/modals/ModalBasic";
 
 function useInterval(callback: any, delay: any) {
   const savedCallback = useRef<() => void>(() => {});
@@ -53,8 +54,10 @@ export default function FftOsCsvReader() {
   const [maxY, setMaxY] = useState(100);
 
   const [startDate, setStartDate] = useState("");
-  const [leak, setLeak] = useState({ leak: 0, sensor: 0, distance: 0 });
+  const [leak, setLeak] = useState({ leak: 0, sensor: 0, distance: 0, time: "" });
   const [pauseCycle, setPauseCycle] = useState(-1);
+
+  const [recent, setRecent] = useState([] as any);
 
   const chunk = (data: any[]) => {
     const dataCount = data[0].length;
@@ -92,6 +95,7 @@ export default function FftOsCsvReader() {
         setCycle((prev) => (prev + 1) % cycles);
       } else {
         setIsPause(true);
+        setPauseCycle(0);
       }
       // checkLeak((cycle + 1) % cycles);
     }
@@ -151,20 +155,6 @@ export default function FftOsCsvReader() {
     return { thresholdData, min, max };
   };
 
-  const checkLeak = (cycle: number) => {
-    // const leakValue = threshold.find((el: any) => el.cycle === cycle)?.leak;
-    // if (leakValue > 0) setLeak(leakValue);
-    // else setLeak(0);
-    const leakValue = threshold.find((el: any) => {
-      if (el.cycle === cycle) {
-        return { leak: el.leak, sensor: el.sensor, distance: el.distance };
-      }
-      return null;
-    });
-    if (leakValue?.leak > 0) setLeak(leakValue);
-    else setLeak({ leak: 0, sensor: 0, distance: 0 });
-  };
-
   const setThresholdTable = (thresholdData: any) => {
     // TODO leak 연속 발생 횟수 카운트
     // indexCount2
@@ -188,10 +178,6 @@ export default function FftOsCsvReader() {
     });
     prevThresholdData = JSON.parse(JSON.stringify(thresholdData));
 
-    // prevIndexCount = JSON.parse(JSON.stringify(indexCount));
-    // setTvIndexCount(indexCount);
-    // console.log(indexCount2);
-
     const combinedCounts = [];
     for (const index in tvTotalIndexCount) {
       combinedCounts.push({
@@ -213,13 +199,28 @@ export default function FftOsCsvReader() {
 
     console.log(combinedCounts);
 
-    // const filteredCounts = combinedCounts.filter((el) => el.conCnt > 2);
     const filteredCounts = combinedCounts;
-    // const sorted = filteredCounts.sort((a, b) => b.conCnt - a.conCnt);
     const sorted = filteredCounts.sort((a, b) => b.totalCnt - a.totalCnt);
-    // .slice(0, 10);
     setTvIndexTop(sorted);
-    // console.log(sorted);
+
+    let activity = "";
+    for (const count of sorted) {
+      if (count.conCnt >= 3) {
+        activity += `${count.freq}, `;
+      }
+    }
+    activity = activity.slice(0, -2); // remove trailing comma and space
+
+    if (activity) {
+      let position = getRandomInt(1, 5);
+      let time = getDateTime(cycle * 1000);
+      recent.push({ cycle: cycle, time: time, position: position, activity: activity });
+
+      setRecent(recent);
+      setLeak({ leak: position, sensor: 0, distance: 5, time: time });
+    } else {
+      setLeak({});
+    }
   };
 
   const setChartMinMax = (min: number, max: number) => {
@@ -263,6 +264,8 @@ export default function FftOsCsvReader() {
     setTvIndexTop([]);
     setThresholdTable([]);
     setCycle(0);
+
+    setRecent([]);
   };
 
   const onClickPause = () => {
@@ -326,127 +329,163 @@ export default function FftOsCsvReader() {
 
   return (
     <>
-      {cycle < 0 && <CsvReader handleResults={handleResults} />}
-      <S.Wrapper>
-        <S.CycleWrapper>
-          cycle: {cycle} / cycles: {cycles} / plots: {addCommas(plotCount)}
-        </S.CycleWrapper>
-        <S.ControlWrapper>
-          ms: <S.NumberInput id={"ms"} type={"number"} defaultValue={ms} />
-          tv: <S.NumberInput id={"tv"} type={"number"} defaultValue={tv} />
-          min: <S.NumberInput id={"minFreq"} type={"number"} defaultValue={minFreq} />
-          max: <S.NumberInput id={"maxFreq"} type={"number"} defaultValue={maxFreq} />
-          1/scale: <S.NumberInput id={"scale"} type={"number"} defaultValue={scale} />
-          <S.ControlButton onClick={onClickApply}>Apply</S.ControlButton>
-        </S.ControlWrapper>
-      </S.Wrapper>
-      <S.Wrapper>
-        <S.ChartWrapper>
-          <AmpFft index={ampIndex} count={cycle} plots={ampData} tv={tv} minY={minY} maxY={maxY} />
-          {cycle > -1 && (
+      <S.PageWrapper>
+        <S.LeftWrapper>
+          {cycle < 0 && <CsvReader handleResults={handleResults} />}
+          <S.Wrapper>
+            <S.CycleWrapper>
+              cycle: {cycle} / cycles: {cycles} / plots: {addCommas(plotCount)}
+            </S.CycleWrapper>
             <S.ControlWrapper>
-              <S.RangeInput
-                id="cycleRange"
-                type="range"
-                max={cycles - 1}
-                value={cycle}
-                onChange={(e) => {
-                  onChangeCycle(Number(e.target.value));
-                }}
-              />
+              ms: <S.NumberInput id={"ms"} type={"number"} defaultValue={ms} />
+              tv: <S.NumberInput id={"tv"} type={"number"} defaultValue={tv} />
+              min: <S.NumberInput id={"minFreq"} type={"number"} defaultValue={minFreq} />
+              max: <S.NumberInput id={"maxFreq"} type={"number"} defaultValue={maxFreq} />
+              1/scale: <S.NumberInput id={"scale"} type={"number"} defaultValue={scale} />
+              <S.ControlButton onClick={onClickApply}>Apply</S.ControlButton>
             </S.ControlWrapper>
-          )}
-          <S.ControlWrapper>
-            {cycle > -1 && !isPause && <S.ControlButton onClick={onClickPause}>Pause</S.ControlButton>}
-            {cycle > -1 && isPause && (
-              <>
-                <S.ControlButton onClick={onClickPause}>Resume</S.ControlButton>
-                <S.ControlButton onClick={onClickPrev}>Prev</S.ControlButton>
-                <S.ControlButton onClick={onClickNext}>Next</S.ControlButton>
-              </>
-            )}
-          </S.ControlWrapper>
-        </S.ChartWrapper>
-      </S.Wrapper>
-      <S.Wrapper>
-        <S.PipeWrapper>
-          {(() => {
-            const blocks = [];
-            for (let i = 1; i <= 5; i++) {
-              if (leak.leak === i) {
-                blocks.push(<S.PipeBlockLeak key={i}>{i}</S.PipeBlockLeak>);
-              } else {
-                blocks.push(<S.PipeBlock key={i}>{i}</S.PipeBlock>);
-              }
-            }
-            return blocks;
-          })()}
-        </S.PipeWrapper>
-      </S.Wrapper>
-      <S.Wrapper>
-        <S.PipeWrapper style={{ justifyContent: "space-between" }}>
-          {(leak.sensor === 0 || leak.sensor === 2) && <S.SensorBlock>FlexMate Sensor 1</S.SensorBlock>}
-          {(leak.sensor === 1 || leak.sensor >= 3) && <S.SensorBlockLeak>FlexMate Sensor 1</S.SensorBlockLeak>}
+          </S.Wrapper>
+          <S.Wrapper>
+            <S.ChartWrapper>
+              <AmpFft index={ampIndex} count={cycle} plots={ampData} tv={tv} minY={minY} maxY={maxY} />
+              {cycle > -1 && (
+                <S.ControlWrapper>
+                  <S.RangeInput
+                    id="cycleRange"
+                    type="range"
+                    max={cycles - 1}
+                    value={cycle}
+                    onChange={(e) => {
+                      onChangeCycle(Number(e.target.value));
+                    }}
+                  />
+                </S.ControlWrapper>
+              )}
+              <S.ControlWrapper>
+                {cycle > -1 && !isPause && <S.ControlButton onClick={onClickPause}>Pause</S.ControlButton>}
+                {cycle > -1 && isPause && (
+                  <>
+                    <S.ControlButton onClick={onClickPause}>Resume</S.ControlButton>
+                    <S.ControlButton onClick={onClickPrev}>Prev</S.ControlButton>
+                    <S.ControlButton onClick={onClickNext}>Next</S.ControlButton>
+                  </>
+                )}
+              </S.ControlWrapper>
+            </S.ChartWrapper>
+          </S.Wrapper>
+          <S.Wrapper>
+            <S.PipeWrapper>
+              {(() => {
+                const blocks = [];
+                for (let i = 1; i <= 5; i++) {
+                  if (leak.leak === i) {
+                    blocks.push(<S.PipeBlockLeak key={i}>{i}</S.PipeBlockLeak>);
+                  } else {
+                    blocks.push(<S.PipeBlock key={i}>{i}</S.PipeBlock>);
+                  }
+                }
+                return blocks;
+              })()}
+            </S.PipeWrapper>
+          </S.Wrapper>
+          <S.Wrapper>
+            <S.PipeWrapper style={{ justifyContent: "space-between" }}>
+              {(leak.sensor === 0 || leak.sensor === 2) && <S.SensorBlock>FlexMate Sensor 1</S.SensorBlock>}
+              {(leak.sensor === 1 || leak.sensor >= 3) && <S.SensorBlockLeak>FlexMate Sensor 1</S.SensorBlockLeak>}
 
-          {leak.leak > 0 && (
-            <S.ThresholdBlock>
-              Pipe 1 Threshold Detection at {getDateTime(cycle * 1000)} | Sensor:
-              {leak.sensor < 3 ? leak.sensor : leak.sensor - 2} / Distance: {leak.distance}m
-            </S.ThresholdBlock>
-          )}
+              {leak.leak > 0 && (
+                <S.ThresholdBlock>
+                  Pipe 1 Threshold Detection at {leak.time} | Sensor:
+                  {leak.sensor < 3 ? leak.sensor : leak.sensor - 2} / Distance: {leak.distance}m
+                </S.ThresholdBlock>
+              )}
 
-          {(leak.sensor === 0 || leak.sensor === 1) && <S.SensorBlock>FlexMate Sensor 2</S.SensorBlock>}
-          {(leak.sensor === 2 || leak.sensor >= 3) && <S.SensorBlockLeak>FlexMate Sensor 2</S.SensorBlockLeak>}
-        </S.PipeWrapper>
-      </S.Wrapper>
-      <S.Wrapper>
-        <S.TableWrapper>
-          <table>
-            <thead>
-              <tr>
-                <th>Sector</th>
-                <th>MaxIndex</th>
-                <th>MaxValue</th>
-                <th>MaxAverage</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cycle > -1 &&
-                threshold.map((data: any) => (
-                  <tr key={`${data.sector}-${data.maxValue}`}>
-                    <td>{data.sector}</td>
-                    <td>{data.maxIndex}</td>
-                    <td>{data.maxValue}</td>
-                    <td>{data.maxAverage}</td>
+              {(leak.sensor === 0 || leak.sensor === 1) && <S.SensorBlock>FlexMate Sensor 2</S.SensorBlock>}
+              {(leak.sensor === 2 || leak.sensor >= 3) && <S.SensorBlockLeak>FlexMate Sensor 2</S.SensorBlockLeak>}
+            </S.PipeWrapper>
+          </S.Wrapper>
+          <S.Wrapper>
+            <S.TableWrapper>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Sector</th>
+                    <th>MaxIndex</th>
+                    <th>MaxValue</th>
+                    <th>MaxAverage</th>
                   </tr>
-                ))}
-            </tbody>
-          </table>
-        </S.TableWrapper>
-        <S.TableWrapper>
-          <table>
-            <thead>
-              <tr>
-                <th>Index</th>
-                <th>Total</th>
-                <th>Continue</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cycle > -1 &&
-                tvIndexTop.map(({ freq, totalCnt, conCnt }) => {
-                  return (
-                    <tr key={freq}>
-                      <td>{freq}</td>
-                      <td>{totalCnt}</td>
-                      <td>{conCnt}</td>
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table>
-        </S.TableWrapper>
-      </S.Wrapper>
+                </thead>
+                <tbody>
+                  {cycle > -1 &&
+                    threshold.map((data: any) => (
+                      <tr key={`${data.sector}-${data.maxValue}`}>
+                        <td>{data.sector}</td>
+                        <td>{data.maxIndex}</td>
+                        <td>{data.maxValue}</td>
+                        <td>{data.maxAverage}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </S.TableWrapper>
+            <S.TableWrapper>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Index</th>
+                    <th>Total</th>
+                    <th>Continue</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cycle > -1 &&
+                    tvIndexTop.map(({ freq, totalCnt, conCnt }) => {
+                      return (
+                        <tr key={freq}>
+                          <td>{freq}</td>
+                          <td>{totalCnt}</td>
+                          <td>{conCnt}</td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </S.TableWrapper>
+          </S.Wrapper>
+        </S.LeftWrapper>
+        <S.RightWrapper>
+          <S.SectionTitleWrapper>
+            <S.SectionTitle>Recent Activity</S.SectionTitle>
+          </S.SectionTitleWrapper>
+
+          {recent
+            .slice()
+            .reverse()
+            .slice(0, 10)
+            .map((el) => (
+              <S.RecentWrapper key={el.cycle}>
+                <S.RecentItemWrapper>
+                  <S.LeakPositionWrapper>
+                    <S.LeakPosition>{el.position}</S.LeakPosition>
+                  </S.LeakPositionWrapper>
+                </S.RecentItemWrapper>
+                <S.RecentItemWrapper>
+                  <div>
+                    {" "}
+                    <div>
+                      <S.RecentType>Leak Detected [{el.time}]</S.RecentType>
+                    </div>
+                    <div>
+                      <S.RecentItem>
+                        Cycle: {el.cycle} / {el.activity} KHz
+                      </S.RecentItem>
+                    </div>
+                  </div>
+                </S.RecentItemWrapper>
+              </S.RecentWrapper>
+            ))}
+        </S.RightWrapper>
+      </S.PageWrapper>
     </>
   );
 }

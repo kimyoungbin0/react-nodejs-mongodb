@@ -1,12 +1,41 @@
+import {
+  ClusterOutlined,
+  DashboardOutlined,
+  DashboardTwoTone,
+  LineChartOutlined,
+  LogoutOutlined,
+  MessageOutlined,
+  ProjectOutlined,
+  SettingOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import styled from "@emotion/styled";
 
 const Wrapper = styled.div`
   width: 201px;
+  max-height: 100vh;
   padding: 10px;
   background-color: white;
   border-right: solid 1px #cccccc;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  overflow-y: auto;
+`;
+
+const MenuWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const MenuItemWrapper = styled.div`
+  width: 100%;
+  padding: 0;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
 const MenuItem = styled.a`
@@ -28,16 +57,58 @@ export default function Menu() {
   return (
     <>
       <Wrapper>
-        <MenuItem href="/daq">DAQ</MenuItem>
-        <MenuItem href="/fftos">FFT OS</MenuItem>
-        <MenuItem href="/fftos2">FFT OS2</MenuItem>
-        <MenuItem href="/os">OS Wave</MenuItem>
-        {/* <MenuItem href="/fft">OS FFT</MenuItem> */}
-        <MenuItemDeactivated>Transaction</MenuItemDeactivated>
-        <MenuItemDeactivated>Message</MenuItemDeactivated>
-        <MenuItemDeactivated>Devices</MenuItemDeactivated>
-        <MenuItemDeactivated>Statistic</MenuItemDeactivated>
-        <MenuItemDeactivated>Account</MenuItemDeactivated>
+        <MenuWrapper>
+          <MenuItemWrapper>
+            <DashboardOutlined />
+            <MenuItem href="/fftos2">DashBoard</MenuItem>
+          </MenuItemWrapper>
+          <MenuItemWrapper>
+            <LineChartOutlined />
+            <MenuItem href="/daq">DAQ</MenuItem>
+          </MenuItemWrapper>
+          <MenuItemWrapper>
+            <LineChartOutlined />
+            <MenuItem href="/fftos">FFT OS</MenuItem>
+          </MenuItemWrapper>
+          <MenuItemWrapper>
+            <LineChartOutlined />
+            <MenuItem href="/fftos2">FFT OS2</MenuItem>
+          </MenuItemWrapper>
+          <MenuItemWrapper>
+            <LineChartOutlined />
+            <MenuItem href="/os">OS Wave</MenuItem>
+          </MenuItemWrapper>
+          <MenuItemWrapper>
+            <ProjectOutlined />
+            <MenuItemDeactivated>Transaction</MenuItemDeactivated>
+          </MenuItemWrapper>
+          <MenuItemWrapper>
+            <MessageOutlined />
+            <MenuItemDeactivated>Message</MenuItemDeactivated>
+          </MenuItemWrapper>
+          <MenuItemWrapper>
+            <ClusterOutlined />
+            <MenuItemDeactivated>Devices</MenuItemDeactivated>
+          </MenuItemWrapper>
+          <MenuItemWrapper>
+            <ProjectOutlined />
+            <MenuItemDeactivated>Statistics</MenuItemDeactivated>
+          </MenuItemWrapper>
+          <MenuItemWrapper>
+            <UserOutlined />
+            <MenuItemDeactivated>Account</MenuItemDeactivated>
+          </MenuItemWrapper>
+        </MenuWrapper>
+        <MenuWrapper>
+          <MenuItemWrapper>
+            <SettingOutlined />
+            <MenuItem>Setting</MenuItem>
+          </MenuItemWrapper>
+          <MenuItemWrapper>
+            <LogoutOutlined />
+            <MenuItem>Logout</MenuItem>
+          </MenuItemWrapper>
+        </MenuWrapper>
       </Wrapper>
     </>
   );

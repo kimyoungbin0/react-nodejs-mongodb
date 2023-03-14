@@ -5,9 +5,7 @@ import * as S from "../units/fft/Fft.styles";
 export default function CsvReader({ handleResults }) {
   const { CSVReader } = useCSVReader();
   const [zoneHover, setZoneHover] = useState(false);
-  const [removeHoverColor, setRemoveHoverColor] = useState(
-    S.DEFAULT_REMOVE_HOVER_COLOR
-  );
+  const [removeHoverColor, setRemoveHoverColor] = useState(S.DEFAULT_REMOVE_HOVER_COLOR);
 
   return (
     <>
@@ -37,31 +35,16 @@ export default function CsvReader({ handleResults }) {
           setZoneHover(false);
         }}
       >
-        {({
-          getRootProps,
-          acceptedFile,
-          ProgressBar,
-          getRemoveFileProps,
-          Remove,
-        }: any) => (
+        {({ getRootProps, acceptedFile, ProgressBar, getRemoveFileProps, Remove }: any) => (
           <>
-            <div
-              {...getRootProps()}
-              style={Object.assign(
-                {},
-                S.styles.zone,
-                zoneHover && S.styles.zoneHover
-              )}
-            >
+            <div {...getRootProps()} style={Object.assign({}, S.styles.zone, zoneHover && S.styles.zoneHover)}>
               {acceptedFile ? (
                 <>
                   {/* <div style={styles.file}>
                       <div style={styles.info}> */}
                   <div>
                     <div>
-                      <span style={S.styles.size}>
-                        {formatFileSize(acceptedFile.size)}
-                      </span>
+                      <span style={S.styles.size}>{formatFileSize(acceptedFile.size)}</span>
                       <span style={S.styles.name}>{acceptedFile.name}</span>
                     </div>
                     {/* <div style={styles.progressBar}> */}

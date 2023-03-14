@@ -1,10 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import _, { max } from "lodash";
-import {
-  useCSVReader,
-  lightenDarkenColor,
-  formatFileSize,
-} from "react-papaparse";
+import { useCSVReader, lightenDarkenColor, formatFileSize } from "react-papaparse";
 import WaveLive from "../chart/waveLive";
 import AmpLive from "../chart/ampLive";
 
@@ -182,10 +178,7 @@ const ThresholdBlock = styled.div`
 const GREY = "#CCC";
 const GREY_LIGHT = "rgba(255, 255, 255, 0.4)";
 const DEFAULT_REMOVE_HOVER_COLOR = "#A01919";
-const REMOVE_HOVER_COLOR_LIGHT = lightenDarkenColor(
-  DEFAULT_REMOVE_HOVER_COLOR,
-  40
-);
+const REMOVE_HOVER_COLOR_LIGHT = lightenDarkenColor(DEFAULT_REMOVE_HOVER_COLOR, 40);
 const GREY_DIM = "#686868";
 
 const flatValue = 26;
@@ -303,9 +296,7 @@ export default function DaqCsvReader() {
 
   const { CSVReader } = useCSVReader();
   const [zoneHover, setZoneHover] = useState(false);
-  const [removeHoverColor, setRemoveHoverColor] = useState(
-    DEFAULT_REMOVE_HOVER_COLOR
-  );
+  const [removeHoverColor, setRemoveHoverColor] = useState(DEFAULT_REMOVE_HOVER_COLOR);
 
   // useEffect(() => {
   //   setChartData(chunkData);
@@ -432,15 +423,11 @@ export default function DaqCsvReader() {
     const maxIndex: number = Number(_.max(unzipIndex));
     const plotCount = maxIndex + 1;
     setPlotCount(plotCount);
-    const indexData = _.chunk(unzipIndex, plotCount).filter(
-      (subArray) => subArray.length === plotCount
-    );
+    const indexData = _.chunk(unzipIndex, plotCount).filter((subArray) => subArray.length === plotCount);
 
     const unzipData = _.unzip(data)[5];
     const flatData = _.map(unzipData, (el: number) => el / flatValue);
-    const chunkData = _.chunk(flatData, plotCount).filter(
-      (subArray) => subArray.length === plotCount
-    );
+    const chunkData = _.chunk(flatData, plotCount).filter((subArray) => subArray.length === plotCount);
 
     const offsetAvg = _.map(chunkData, (el) => _.mean(el));
 
@@ -620,31 +607,16 @@ export default function DaqCsvReader() {
             setZoneHover(false);
           }}
         >
-          {({
-            getRootProps,
-            acceptedFile,
-            ProgressBar,
-            getRemoveFileProps,
-            Remove,
-          }: any) => (
+          {({ getRootProps, acceptedFile, ProgressBar, getRemoveFileProps, Remove }: any) => (
             <>
-              <div
-                {...getRootProps()}
-                style={Object.assign(
-                  {},
-                  styles.zone,
-                  zoneHover && styles.zoneHover
-                )}
-              >
+              <div {...getRootProps()} style={Object.assign({}, styles.zone, zoneHover && styles.zoneHover)}>
                 {acceptedFile ? (
                   <>
                     {/* <div style={styles.file}>
                       <div style={styles.info}> */}
                     <div>
                       <div>
-                        <span style={styles.size}>
-                          {formatFileSize(acceptedFile.size)}
-                        </span>
+                        <span style={styles.size}>{formatFileSize(acceptedFile.size)}</span>
                         <span style={styles.name}>{acceptedFile.name}</span>
                       </div>
                       {/* <div style={styles.progressBar}> */}
@@ -677,77 +649,31 @@ export default function DaqCsvReader() {
       )}
       <Wrapper>
         <CycleWrapper>
-          startAt: {startDate} / cycle: {cycle} / cycles: {cycles} / plots:{" "}
-          {addCommas(plotCount)}
+          startAt: {startDate} / cycle: {cycle} / cycles: {cycles} / plots: {addCommas(plotCount)}
         </CycleWrapper>
         <ControlWrapper>
-          threshold:{" "}
-          <input
-            id="tv"
-            type="number"
-            step={1}
-            style={{ maxWidth: "60px" }}
-            defaultValue={tv}
-            onChange={onChangeTv}
-          />{" "}
-          seq:{" "}
-          <input
-            id="tvSeq"
-            type="number"
-            step={1}
-            style={{ maxWidth: "60px" }}
-            defaultValue={tvSeq}
-            onChange={onChangeSeq}
-          />
+          threshold: <input id="tv" type="number" step={1} style={{ maxWidth: "60px" }} defaultValue={tv} onChange={onChangeTv} /> seq:{" "}
+          <input id="tvSeq" type="number" step={1} style={{ maxWidth: "60px" }} defaultValue={tvSeq} onChange={onChangeSeq} />
           <ControlButton onClick={onClickApply}>Apply</ControlButton>
         </ControlWrapper>
       </Wrapper>
       <Wrapper>
         <ChartWrapper>
-          <WaveLive
-            index={waveIndex[cycle]}
-            count={cycle}
-            plots={waveData[cycle]}
-          />
+          <WaveLive index={waveIndex[cycle]} count={cycle} plots={waveData[cycle]} />
 
           {cycle > -1 && (
             <ChartControlWrapper>
-              <input
-                type="range"
-                min="0"
-                max={cycles - 1}
-                value={cycle}
-                onChange={(e) => setCycle(Number(e.target.value))}
-                style={{ width: "100%" }}
-              />
+              <input type="range" min="0" max={cycles - 1} value={cycle} onChange={(e) => setCycle(Number(e.target.value))} style={{ width: "100%" }} />
             </ChartControlWrapper>
           )}
           <ChartControlWrapper>
-            {cycle > -1 && !isPause && (
-              <ControlButton onClick={onClickPause}>Pause</ControlButton>
-            )}
-            {cycle > -1 && isPause && (
-              <ControlButton onClick={onClickPause}>Resume</ControlButton>
-            )}
-            {cycle > -1 && (
-              <ControlButton onClick={onClickReset}>Reset</ControlButton>
-            )}
-            {cycle > -1 && !isAmpChart && (
-              <ControlButton onClick={onClickIsAmpChart}>
-                Show AmpChart
-              </ControlButton>
-            )}
-            {cycle > -1 && isAmpChart && (
-              <ControlButton onClick={onClickIsAmpChart}>
-                Hide AmpChart
-              </ControlButton>
-            )}
-            {cycle > -1 && isPause && (
-              <ControlButton onClick={onClickPrev}>Prev</ControlButton>
-            )}
-            {cycle > -1 && isPause && (
-              <ControlButton onClick={onClickNext}>Next</ControlButton>
-            )}
+            {cycle > -1 && !isPause && <ControlButton onClick={onClickPause}>Pause</ControlButton>}
+            {cycle > -1 && isPause && <ControlButton onClick={onClickPause}>Resume</ControlButton>}
+            {cycle > -1 && <ControlButton onClick={onClickReset}>Reset</ControlButton>}
+            {cycle > -1 && !isAmpChart && <ControlButton onClick={onClickIsAmpChart}>Show AmpChart</ControlButton>}
+            {cycle > -1 && isAmpChart && <ControlButton onClick={onClickIsAmpChart}>Hide AmpChart</ControlButton>}
+            {cycle > -1 && isPause && <ControlButton onClick={onClickPrev}>Prev</ControlButton>}
+            {cycle > -1 && isPause && <ControlButton onClick={onClickNext}>Next</ControlButton>}
           </ChartControlWrapper>
         </ChartWrapper>
         <TableWrapper>
@@ -765,8 +691,7 @@ export default function DaqCsvReader() {
                   <>
                     <div style={{ background: bgColor }}>
                       <div>
-                        {getDateTime(el[0] * 1000)} ~{" "}
-                        {getDateTime(el[el.length - 1] * 1000, "time")}
+                        {getDateTime(el[0] * 1000)} ~ {getDateTime(el[el.length - 1] * 1000, "time")}
                       </div>
 
                       <div
@@ -777,9 +702,7 @@ export default function DaqCsvReader() {
                         key={index}
                         id={`${el[0]}:${el[el.length - 1]}`}
                         onClick={onClickTv}
-                      >{`> l: ${index} s: ${el[0]} e: ${
-                        el[el.length - 1]
-                      } seq: ${el.length}`}</div>
+                      >{`> l: ${index} s: ${el[0]} e: ${el[el.length - 1]} seq: ${el.length}`}</div>
                     </div>
                   </>
                 );
@@ -789,10 +712,7 @@ export default function DaqCsvReader() {
             {isThreshold &&
               threshold.map((el: any, index: number) => (
                 <div key={el.cycle} id={el.cycle} onClick={onClickWarn}>
-                  {el.warn > 0 &&
-                    el.cycle >= startTv &&
-                    el.cycle <= endTv &&
-                    `${el.warn} (${el.cycle})[${el.leak}]: ${el.maxPlot}`}
+                  {el.warn > 0 && el.cycle >= startTv && el.cycle <= endTv && `${el.warn} (${el.cycle})[${el.leak}]: ${el.maxPlot}`}
                 </div>
               ))}
           </InnerTableWrapper>
@@ -832,28 +752,18 @@ export default function DaqCsvReader() {
         </PipeWrapper>
 
         <PipeWrapper style={{ justifyContent: "space-between" }}>
-          {(leak.sensor === 0 || leak.sensor === 2) && (
-            <SensorBlock>FlexMate Sensor 1</SensorBlock>
-          )}
-          {(leak.sensor === 1 || leak.sensor >= 3) && (
-            <SensorBlockLeak>FlexMate Sensor 1</SensorBlockLeak>
-          )}
+          {(leak.sensor === 0 || leak.sensor === 2) && <SensorBlock>FlexMate Sensor 1</SensorBlock>}
+          {(leak.sensor === 1 || leak.sensor >= 3) && <SensorBlockLeak>FlexMate Sensor 1</SensorBlockLeak>}
 
           {leak.leak > 0 && (
             <ThresholdBlock>
-              Pipe 1 Threshold Detection at {getDateTime(cycle * 1000)} |
-              Sensor:
-              {leak.sensor < 3 ? leak.sensor : leak.sensor - 2} / Distance:{" "}
-              {leak.distance}m
+              Pipe 1 Threshold Detection at {getDateTime(cycle * 1000)} | Sensor:
+              {leak.sensor < 3 ? leak.sensor : leak.sensor - 2} / Distance: {leak.distance}m
             </ThresholdBlock>
           )}
 
-          {(leak.sensor === 0 || leak.sensor === 1) && (
-            <SensorBlock>FlexMate Sensor 2</SensorBlock>
-          )}
-          {(leak.sensor === 2 || leak.sensor >= 3) && (
-            <SensorBlockLeak>FlexMate Sensor 2</SensorBlockLeak>
-          )}
+          {(leak.sensor === 0 || leak.sensor === 1) && <SensorBlock>FlexMate Sensor 2</SensorBlock>}
+          {(leak.sensor === 2 || leak.sensor >= 3) && <SensorBlockLeak>FlexMate Sensor 2</SensorBlockLeak>}
         </PipeWrapper>
       </WrapperCol>
     </>

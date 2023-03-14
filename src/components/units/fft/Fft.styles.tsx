@@ -1,6 +1,33 @@
 import styled from "@emotion/styled";
 import { lightenDarkenColor } from "react-papaparse";
 
+export const PageWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  min-width: 800px;
+  max-width: 100vw;
+`;
+
+export const LeftWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-width: 810px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+`;
+
+export const RightWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 100vw;
+  max-width: 800px;
+  min-height: 500px;
+  border: solid 1px #cccccc;
+  padding: 10px;
+`;
+
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -17,7 +44,8 @@ export const TableWrapper = styled.div`
   display: flex;
   flex-direction: column;
   min-width: 400px;
-  max-height: 350px;
+  min-height: 100px;
+  max-height: 150px;
   overflow: auto;
   border: 1px solid #cccccc;
 `;
@@ -46,7 +74,7 @@ export const ControlButton = styled.button`
 `;
 
 export const NumberInput = styled.input`
-  max-width: 60px;
+  max-width: 55px;
 `;
 
 export const RangeInput = styled.input`
@@ -129,6 +157,61 @@ export const ThresholdBlock = styled.div`
   font-size: 0.8rem;
 `;
 
+export const SectionTitleWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-bottom: 1px solid #cccccc;
+`;
+
+export const SectionTitle = styled.h2`
+  font-size: 1.5rem;
+`;
+
+export const RecentWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  height: 50px;
+  border-bottom: 1px solid #cccccc;
+`;
+
+export const RecentItemWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding-left: 20px;
+`;
+
+export const LeakPositionWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: red;
+`;
+
+export const LeakPosition = styled.span`
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+  color: white;
+`;
+
+export const RecentType = styled.span`
+  font-size: 1.2rem;
+  font-weight: 500;
+`;
+
+export const RecentItem = styled.span`
+  font-size: 1rem;
+  font-weight: 300;
+`;
+
 export const GREY = "#CCC";
 export const GREY_LIGHT = "rgba(255, 255, 255, 0.4)";
 export const DEFAULT_REMOVE_HOVER_COLOR = "#A01919";
@@ -144,7 +227,7 @@ export const styles = {
     flexDirection: "column",
     // height: "100%",
     width: "100%",
-    maxWidth: "850px",
+    maxWidth: "800px",
     height: "100px",
     justifyContent: "center",
     // margin: 10,

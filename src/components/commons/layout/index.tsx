@@ -24,20 +24,14 @@ export default function Layout(props: ILayoutProps) {
   const isHiddenMenu = HIDDEN_MENUS.includes(router.asPath);
   const isHiddenFooter = HIDDEN_FOOTERS.includes(router.asPath);
 
-  const layoutHeight =
-    (!isHiddenHeader ? 50 : 0) +
-    (!isHiddenBanner ? 100 : 0) +
-    (!isHiddenMenu ? 50 : 0) +
-    (!isHiddenFooter ? 50 : 0);
+  const layoutHeight = (!isHiddenHeader ? 60 : 0) + (!isHiddenBanner ? 100 : 0) + (!isHiddenMenu ? 50 : 0) + (!isHiddenFooter ? 50 : 0);
 
   return (
     <>
       {!isHiddenHeader && <LayoutHeader />}
       {!isHiddenBanner && <LayoutBanner />}
       {!isHiddenMenu && <LayoutNavigation />}
-      <div
-        style={{ height: `calc(100vh - ${layoutHeight}px)`, display: "flex" }}
-      >
+      <div style={{ height: `calc(100vh - ${layoutHeight}px)`, display: "flex" }}>
         <Menu />
         <div
           style={{

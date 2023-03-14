@@ -9,10 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.0.1",
     "@emotion/core": "^11.0.0",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@next/font": "13.1.6",
+    "antd": "^5.3.1",
     "chart.js": "^4.2.1",
     "chartjs-plugin-annotation": "^2.1.2",
     "chartjs-plugin-zoom": "^2.0.0",
