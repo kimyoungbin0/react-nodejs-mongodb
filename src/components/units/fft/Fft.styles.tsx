@@ -19,11 +19,14 @@ export const LeftWrapper = styled.div`
 
 export const RightWrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: space-between;
   flex-wrap: wrap;
   width: 100vw;
   max-width: 800px;
-  min-height: 500px;
+  min-height: 400px;
+  max-height: 100vh;
   border: solid 1px #cccccc;
   padding: 10px;
 `;
@@ -143,6 +146,20 @@ export const SensorBlockLeak = styled.div`
   justify-content: center;
   align-items: center;
   font-weight: 800;
+
+  animation: blink ${({ ms }) => ms || "1000ms"} infinite;
+
+  @keyframes blink {
+    50% {
+      background-color: #ff6666;
+    }
+  }
+
+  ${({ isPause }) =>
+    isPause &&
+    `
+    animation: none;
+  `}
 `;
 
 export const ThresholdBlock = styled.div`
@@ -159,9 +176,34 @@ export const ThresholdBlock = styled.div`
 
 export const SectionTitleWrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  height: 80px;
   padding: 10px;
   border-bottom: 1px solid #cccccc;
+  overflow: auto;
+`;
+
+export const SectionRecentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+  min-height: 620px;
+  max-height: 620px;
+  padding: 10px;
+  overflow: auto;
+`;
+
+export const RecentButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100px;
+  padding: 10px;
 `;
 
 export const SectionTitle = styled.h2`
@@ -173,7 +215,8 @@ export const RecentWrapper = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  height: 50px;
+  width: 100%;
+  height: 60px;
   border-bottom: 1px solid #cccccc;
 `;
 
@@ -182,7 +225,8 @@ export const RecentItemWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  padding-left: 20px;
+  height: 60px;
+  padding: 10px 20px;
 `;
 
 export const LeakPositionWrapper = styled.div`
@@ -192,8 +236,19 @@ export const LeakPositionWrapper = styled.div`
   align-items: center;
   width: 40px;
   height: 40px;
+  padding: 10px;
   border-radius: 50%;
   background-color: red;
+`;
+
+export const RecentWarnWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 280px;
+  height: 60px;
+  padding: 10px 50px;
 `;
 
 export const LeakPosition = styled.span`
@@ -210,6 +265,12 @@ export const RecentType = styled.span`
 export const RecentItem = styled.span`
   font-size: 1rem;
   font-weight: 300;
+`;
+
+export const RecentWarn = styled.span`
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+  font-weight: 700;
 `;
 
 export const GREY = "#CCC";

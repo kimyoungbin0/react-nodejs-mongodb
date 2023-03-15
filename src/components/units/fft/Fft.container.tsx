@@ -1,13 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import _ from "lodash";
 import { getDateTime, setDateTime } from "../../../commons/libraries/date";
-import {
-  averageByColumn,
-  getThresholdData,
-  reduceMaxArray,
-  roundArray,
-  subtractArrays,
-} from "../../../commons/libraries/array";
+import { averageByColumn, getThresholdData, reduceMaxArray, roundArray, subtractArrays } from "../../../commons/libraries/array";
 import CsvReader from "../../csvReader/CsvReader";
 import FftUI from "./Fft.presenter";
 import type { FftUIProps } from "./Fft.types";
@@ -157,12 +151,7 @@ export default function Fft() {
   };
 
   const setThresholdData = () => {
-    const ampMaxArray = reduceMaxArray(
-      waveIndex,
-      waveData[cycle],
-      averageData,
-      scale
-    );
+    const ampMaxArray = reduceMaxArray(waveIndex, waveData[cycle], averageData, scale);
     const ampIndexArr = ampMaxArray.maxIndexArray;
     const ampDataArr = ampMaxArray.maxDataArray;
     const ampAverageArr = ampMaxArray.maxAverageArray;
@@ -189,12 +178,7 @@ export default function Fft() {
     const chunkedFilteredDataArr = _.chunk(filteredDataArr, chunkedCount);
     const chunkedFilteredAverageArr = _.chunk(filteredAverageArr, chunkedCount);
 
-    const thresholdData = getThresholdData(
-      chunkedFilteredIndexArr,
-      chunkedFilteredDataArr,
-      chunkedFilteredAverageArr,
-      Number(tv)
-    );
+    const thresholdData = getThresholdData(chunkedFilteredIndexArr, chunkedFilteredDataArr, chunkedFilteredAverageArr, Number(tv));
 
     const min = Math.floor(Math.min(...filteredDataArr) / 10) * 10;
     const max = (Math.floor(Math.max(...filteredDataArr) / 10) + 1) * 10;
@@ -243,15 +227,9 @@ export default function Fft() {
   const reset = () => {
     const msInputElement = document.getElementById("ms") as HTMLInputElement;
     const tvInputElement = document.getElementById("tv") as HTMLInputElement;
-    const minFreqInputElement = document.getElementById(
-      "minFreq"
-    ) as HTMLInputElement;
-    const maxFreqInputElement = document.getElementById(
-      "maxFreq"
-    ) as HTMLInputElement;
-    const scaleInputElement = document.getElementById(
-      "scale"
-    ) as HTMLInputElement;
+    const minFreqInputElement = document.getElementById("minFreq") as HTMLInputElement;
+    const maxFreqInputElement = document.getElementById("maxFreq") as HTMLInputElement;
+    const scaleInputElement = document.getElementById("scale") as HTMLInputElement;
     const ms = parseInt(msInputElement?.value || "0");
     const tv = parseInt(tvInputElement?.value || "0");
     const minFreq = parseInt(minFreqInputElement?.value || "0");

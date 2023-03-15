@@ -8,6 +8,8 @@ import { addCommas, getRandomInt } from "../../../commons/libraries/utils";
 import { getDateTime, setDateTime } from "../../../commons/libraries/date";
 import { averageByColumn, getThresholdData, reduceMaxArray, roundArray } from "../../../commons/libraries/array";
 import ModalBasic from "../../commons/modals/ModalBasic";
+import { Button } from "antd";
+import { InfoCircleOutlined } from "@ant-design/icons";
 
 function useInterval(callback: any, delay: any) {
   const savedCallback = useRef<() => void>(() => {});
@@ -47,7 +49,7 @@ export default function FftOsCsvReader() {
   const [scale, setScale] = useState(32);
   const [tv, setTv] = useState(15);
   const [tvIndexTop, setTvIndexTop] = useState([] as any);
-  const [ms, setMs] = useState(1000);
+  const [ms, setMs] = useState(100);
 
   const [threshold, setThreshold] = useState([] as any);
   const [minY, setMinY] = useState(-100);
@@ -58,6 +60,7 @@ export default function FftOsCsvReader() {
   const [pauseCycle, setPauseCycle] = useState(-1);
 
   const [recent, setRecent] = useState([] as any);
+  const [isViewAllHistory, setIsViewAllHistory] = useState(false);
 
   const chunk = (data: any[]) => {
     const dataCount = data[0].length;
@@ -212,12 +215,14 @@ export default function FftOsCsvReader() {
     activity = activity.slice(0, -2); // remove trailing comma and space
 
     if (activity) {
+      const WARN_MSG = ["Warning", "Caution", "Danger"];
       let position = getRandomInt(1, 5);
+      let warn = getRandomInt(0, 2);
       let time = getDateTime(cycle * 1000);
-      recent.push({ cycle: cycle, time: time, position: position, activity: activity });
+      recent.push({ cycle: cycle, time: time, position: position, activity: activity, warn: WARN_MSG[warn] });
 
       setRecent(recent);
-      setLeak({ leak: position, sensor: 0, distance: 5, time: time });
+      setLeak({ leak: position, sensor: 1, distance: 5, time: time });
     } else {
       setLeak({});
     }
@@ -264,6 +269,7 @@ export default function FftOsCsvReader() {
     setTvIndexTop([]);
     setThresholdTable([]);
     setCycle(0);
+    setIsPause(true);
 
     setRecent([]);
   };
@@ -303,6 +309,16 @@ export default function FftOsCsvReader() {
     setCycle(cycle);
     setCycleChartArr(cycle);
     if (!isPause) setIsPause(true);
+  };
+
+  const onClickRecent = (event: any) => {
+    setIsPause(true);
+    setCycle(event.currentTarget.id);
+    setCycleChartArr(event.currentTarget.id);
+  };
+
+  const onClickViewAllHistory = (event: any) => {
+    setIsViewAllHistory(!isViewAllHistory);
   };
 
   const handleResults = (results: any) => {
@@ -390,8 +406,11 @@ export default function FftOsCsvReader() {
           </S.Wrapper>
           <S.Wrapper>
             <S.PipeWrapper style={{ justifyContent: "space-between" }}>
-              {(leak.sensor === 0 || leak.sensor === 2) && <S.SensorBlock>FlexMate Sensor 1</S.SensorBlock>}
-              {(leak.sensor === 1 || leak.sensor >= 3) && <S.SensorBlockLeak>FlexMate Sensor 1</S.SensorBlockLeak>}
+              {((leak.sensor === 1 || leak.sensor >= 3) && (
+                <S.SensorBlockLeak isPause={isPause} ms={ms + "ms"}>
+                  FlexMate Sensor 1
+                </S.SensorBlockLeak>
+              )) || <S.SensorBlock>FlexMate Sensor 1</S.SensorBlock>}
 
               {leak.leak > 0 && (
                 <S.ThresholdBlock>
@@ -400,8 +419,8 @@ export default function FftOsCsvReader() {
                 </S.ThresholdBlock>
               )}
 
-              {(leak.sensor === 0 || leak.sensor === 1) && <S.SensorBlock>FlexMate Sensor 2</S.SensorBlock>}
-              {(leak.sensor === 2 || leak.sensor >= 3) && <S.SensorBlockLeak>FlexMate Sensor 2</S.SensorBlockLeak>}
+              {/* {(leak.sensor === 0 || leak.sensor === 1) && <S.SensorBlock>FlexMate Sensor 2</S.SensorBlock>}
+              {(leak.sensor === 2 || leak.sensor >= 3) && <S.SensorBlockLeak>FlexMate Sensor 2</S.SensorBlockLeak>} */}
             </S.PipeWrapper>
           </S.Wrapper>
           <S.Wrapper>
@@ -458,32 +477,46 @@ export default function FftOsCsvReader() {
             <S.SectionTitle>Recent Activity</S.SectionTitle>
           </S.SectionTitleWrapper>
 
-          {recent
-            .slice()
-            .reverse()
-            .slice(0, 10)
-            .map((el) => (
-              <S.RecentWrapper key={el.cycle}>
-                <S.RecentItemWrapper>
-                  <S.LeakPositionWrapper>
-                    <S.LeakPosition>{el.position}</S.LeakPosition>
-                  </S.LeakPositionWrapper>
-                </S.RecentItemWrapper>
-                <S.RecentItemWrapper>
-                  <div>
-                    {" "}
+          <S.SectionRecentWrapper>
+            {recent
+              .slice()
+              .reverse()
+              .slice(0, isViewAllHistory ? undefined : 10)
+              .map((el) => (
+                <S.RecentWrapper key={el.cycle} id={el.cycle} onClick={onClickRecent}>
+                  <S.RecentItemWrapper>
+                    <S.LeakPositionWrapper>
+                      <S.LeakPosition>{el.position}</S.LeakPosition>
+                    </S.LeakPositionWrapper>
+                  </S.RecentItemWrapper>
+                  <S.RecentItemWrapper>
                     <div>
-                      <S.RecentType>Leak Detected [{el.time}]</S.RecentType>
+                      {" "}
+                      <div>
+                        <S.RecentType>Leak Detected [{el.time}]</S.RecentType>
+                      </div>
+                      <div>
+                        <S.RecentItem>
+                          Cycle: {el.cycle} / {el.activity} KHz
+                        </S.RecentItem>
+                      </div>
                     </div>
-                    <div>
-                      <S.RecentItem>
-                        Cycle: {el.cycle} / {el.activity} KHz
-                      </S.RecentItem>
-                    </div>
-                  </div>
-                </S.RecentItemWrapper>
-              </S.RecentWrapper>
-            ))}
+                  </S.RecentItemWrapper>
+                  <S.RecentWarnWrapper>
+                    <S.RecentWarn>
+                      <InfoCircleOutlined />
+                    </S.RecentWarn>
+                    <S.RecentWarn>{el.warn}</S.RecentWarn>
+                  </S.RecentWarnWrapper>
+                </S.RecentWrapper>
+              ))}
+          </S.SectionRecentWrapper>
+          <S.RecentButtonWrapper>
+            <Button type="primary" onClick={onClickViewAllHistory} style={{ width: "100%", height: "60px", margin: "10px 0", padding: "10px" }}>
+              {!isViewAllHistory && "View All Recent Activities"}
+              {isViewAllHistory && "View Recent 10 Activities"}
+            </Button>
+          </S.RecentButtonWrapper>
         </S.RightWrapper>
       </S.PageWrapper>
     </>
