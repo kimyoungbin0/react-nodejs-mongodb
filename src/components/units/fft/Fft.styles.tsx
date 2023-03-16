@@ -14,7 +14,7 @@ export const LeftWrapper = styled.div`
   flex-direction: column;
   min-width: 810px;
   padding-right: 10px;
-  padding-bottom: 10px;
+  margin-bottom: 10px;
 `;
 
 export const RightWrapper = styled.div`
@@ -29,6 +29,7 @@ export const RightWrapper = styled.div`
   max-height: 100vh;
   border: solid 1px #cccccc;
   padding: 10px;
+  margin-bottom: 10px;
 `;
 
 export const Wrapper = styled.div`
@@ -48,7 +49,7 @@ export const TableWrapper = styled.div`
   flex-direction: column;
   min-width: 400px;
   min-height: 100px;
-  max-height: 150px;
+  max-height: 170px;
   overflow: auto;
   border: 1px solid #cccccc;
 `;

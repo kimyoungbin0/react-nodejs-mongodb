@@ -218,11 +218,14 @@ export default function FftPage() {
       const WARN_MSG = ["Warning", "Caution", "Danger"];
       let position = getRandomInt(1, 5);
       let warn = getRandomInt(0, 2);
-      let time = getDateTime(cycle * 1000);
-      recent.push({ cycle: cycle, time: time, position: position, activity: activity, warn: WARN_MSG[warn] });
-
-      setRecent(recent);
-      setLeak({ leak: position, sensor: 1, distance: 5, time: time });
+      let time = getDateTime(cycle * ms);
+      const duplicateCycle = recent.some((el) => el.cycle === cycle); // check if duplicate cycle exists
+      if (!duplicateCycle) {
+        // proceed only if there is no duplicate cycle
+        recent.push({ cycle: cycle, time: time, position: position, activity: activity, warn: WARN_MSG[warn] });
+        setRecent(recent);
+        setLeak({ leak: position, sensor: 1, distance: 5, time: time });
+      }
     } else {
       setLeak({});
     }
