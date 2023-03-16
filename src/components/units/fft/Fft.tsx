@@ -34,7 +34,7 @@ let tvConIndCount: any = {};
 let prevThresholdData: any = {};
 // let pauseCycle: number = -1;
 
-export default function FftOsCsvReader() {
+export default function FftPage() {
   const [cycle, setCycle] = useState(-1);
   const [cycles, setCycles] = useState(0);
   const [isPause, setIsPause] = useState(true);

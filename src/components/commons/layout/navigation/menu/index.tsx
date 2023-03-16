@@ -62,7 +62,7 @@ export default function Menu() {
             <DashboardOutlined />
             <MenuItem href="/fftos2">DashBoard</MenuItem>
           </MenuItemWrapper>
-          <MenuItemWrapper>
+          {/* <MenuItemWrapper>
             <LineChartOutlined />
             <MenuItem href="/daq">DAQ</MenuItem>
           </MenuItemWrapper>
@@ -77,7 +77,7 @@ export default function Menu() {
           <MenuItemWrapper>
             <LineChartOutlined />
             <MenuItem href="/os">OS Wave</MenuItem>
-          </MenuItemWrapper>
+          </MenuItemWrapper> */}
           <MenuItemWrapper>
             <ProjectOutlined />
             <MenuItemDeactivated>Transaction</MenuItemDeactivated>

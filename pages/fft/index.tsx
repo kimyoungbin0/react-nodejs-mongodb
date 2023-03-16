@@ -1,9 +1,9 @@
-import FftCsvReader from "../../src/components/csvReader/fft";
+import FftOsPage from "../fftos2";
 
 export default function FftPage() {
   return (
     <>
-      <FftCsvReader />
+      <FftOsPage />
     </>
   );
 }

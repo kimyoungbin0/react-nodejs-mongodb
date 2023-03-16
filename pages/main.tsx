@@ -1,9 +1,9 @@
-import DaqPage from "./daq";
+import FftPage from "./fft";
 
 export default function Flexreal() {
   return (
     <>
-      <DaqPage />
+      <FftPage />
     </>
   );
 }
