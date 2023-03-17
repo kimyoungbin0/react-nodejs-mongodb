@@ -88,6 +88,7 @@ export default function FftPage() {
       if (cycle === 0) {
         setDateTime();
         setStartDate(getDateTime(0));
+        setRecent([]);
       }
       setCycleChartArr(cycle);
 
@@ -159,9 +160,6 @@ export default function FftPage() {
   };
 
   const setThresholdTable = (thresholdData: any) => {
-    // TODO leak 연속 발생 횟수 카운트
-    // indexCount2
-
     // maxIndex 발생 횟수 카운트
     if (cycle === 0) {
       tvTotalIndexCount = {};
@@ -273,7 +271,7 @@ export default function FftPage() {
     setThresholdTable([]);
     setCycle(0);
     setIsPause(true);
-
+    setPauseCycle(0);
     setRecent([]);
   };
 
@@ -285,6 +283,7 @@ export default function FftPage() {
       setCycle(pauseCycle);
       setCycleChartArr(pauseCycle);
     }
+
     // console.log("pauseCycle: " + pauseCycle);
     setIsPause(!isPause);
     // setCycle(cycle);
@@ -295,6 +294,7 @@ export default function FftPage() {
     if (cycle > 0) {
       setCycle((prev) => (prev - 1) % cycles);
       setCycleChartArr((cycle - 1) % cycles);
+      setLeakStatus(cycle - 1);
     }
     setIsPause(true);
   };
@@ -304,6 +304,7 @@ export default function FftPage() {
     if (cycle < cycles - 1) {
       setCycle((prev) => (prev % cycles) + 1);
       setCycleChartArr((cycle + 1) % cycles);
+      setLeakStatus((cycle + 1) % cycles);
     }
     setIsPause(true);
   };
@@ -314,10 +315,23 @@ export default function FftPage() {
     if (!isPause) setIsPause(true);
   };
 
-  const onClickRecent = (event: any) => {
+  const onClickRecent = (cycle: number) => {
     setIsPause(true);
-    setCycle(event.currentTarget.id);
-    setCycleChartArr(event.currentTarget.id);
+    setCycle(cycle);
+    setCycleChartArr(cycle);
+    setLeakStatus(cycle);
+  };
+
+  const setLeakStatus = (cycle: number) => {
+    console.log(cycle);
+    const selectedLeak = recent.find((el: any) => el.cycle === cycle);
+
+    if (selectedLeak) {
+      // do something with the found element, e.g. console.log(foundElement)
+      setLeak({ leak: selectedLeak.position, sensor: 1, distance: 5, time: selectedLeak.time });
+    } else {
+      // handle the case when no element with cycle === n was found
+    }
   };
 
   const onClickViewAllHistory = (event: any) => {
@@ -486,7 +500,7 @@ export default function FftPage() {
               .reverse()
               .slice(0, isViewAllHistory ? undefined : 10)
               .map((el: any) => (
-                <S.RecentWrapper key={el.cycle} id={el.cycle} onClick={onClickRecent}>
+                <S.RecentWrapper key={el.cycle} id={el.cycle} onClick={() => onClickRecent(el.cycle)}>
                   <S.RecentItemWrapper>
                     <S.LeakPositionWrapper>
                       <S.LeakPosition>{el.position}</S.LeakPosition>
