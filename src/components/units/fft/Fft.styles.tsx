@@ -136,7 +136,12 @@ export const SensorBlock = styled.div`
   align-items: center;
 `;
 
-export const SensorBlockLeak = styled.div`
+interface SensorBlockLeakProps {
+  isPause: boolean;
+  ms?: string;
+}
+
+export const SensorBlockLeak = styled.div<SensorBlockLeakProps>`
   min-width: 10%;
   padding: 10px;
   color: white;
@@ -148,7 +153,7 @@ export const SensorBlockLeak = styled.div`
   align-items: center;
   font-weight: 800;
 
-  animation: blink ${({ ms }) => ms || "1000ms"} infinite;
+  animation: blink ${({ ms }) => ms} infinite;
 
   @keyframes blink {
     50% {

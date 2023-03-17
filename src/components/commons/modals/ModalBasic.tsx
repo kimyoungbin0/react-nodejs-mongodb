@@ -1,12 +1,16 @@
 import { Modal } from "antd";
 import { useEffect, useState } from "react";
 
-export default function ModalBasic({ open }) {
+interface ModalBasicProps {
+  open: boolean;
+}
+
+export default function ModalBasic({ open }: ModalBasicProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     setIsOpen(open);
-  }, []);
+  }, [open]);
 
   const showModal = () => {
     setIsOpen(true);

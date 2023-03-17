@@ -1,24 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import _ from "lodash";
-import {
-  useCSVReader,
-  lightenDarkenColor,
-  formatFileSize,
-} from "react-papaparse";
+import { useCSVReader, lightenDarkenColor, formatFileSize } from "react-papaparse";
 
 import styled from "@emotion/styled";
 import { addCommas, getRandomInt } from "../../commons/libraries/utils";
 import { getDateTime, setDateTime } from "../../commons/libraries/date";
 import AmpFft from "../chart/ampFft";
-import {
-  averageByColumn,
-  getThresholdData,
-  reduceArray,
-  reduceMaxArray,
-  roundArray,
-  subtractArrays,
-} from "../../commons/libraries/array";
+import { averageByColumn, getThresholdData, reduceArray, reduceMaxArray, roundArray, subtractArrays } from "../../commons/libraries/array";
 // import { useTable } from "react-table";
+
+interface AmpMaxArray {
+  maxIndexArray: any[];
+  maxDataArray: any[];
+  maxAverageArray: any[];
+}
 
 const Wrapper = styled.div`
   display: flex;
@@ -70,10 +65,7 @@ const ControlButton = styled.button`
 const GREY = "#CCC";
 const GREY_LIGHT = "rgba(255, 255, 255, 0.4)";
 const DEFAULT_REMOVE_HOVER_COLOR = "#A01919";
-const REMOVE_HOVER_COLOR_LIGHT = lightenDarkenColor(
-  DEFAULT_REMOVE_HOVER_COLOR,
-  40
-);
+const REMOVE_HOVER_COLOR_LIGHT = lightenDarkenColor(DEFAULT_REMOVE_HOVER_COLOR, 40);
 const GREY_DIM = "#686868";
 
 const flatValue = 26;
@@ -194,9 +186,7 @@ export default function FftOsCsvReader() {
 
   const { CSVReader } = useCSVReader();
   const [zoneHover, setZoneHover] = useState(false);
-  const [removeHoverColor, setRemoveHoverColor] = useState(
-    DEFAULT_REMOVE_HOVER_COLOR
-  );
+  const [removeHoverColor, setRemoveHoverColor] = useState(DEFAULT_REMOVE_HOVER_COLOR);
 
   const chunk = (data: any[]) => {
     const dataCount = data[0].length;
@@ -255,12 +245,7 @@ export default function FftOsCsvReader() {
   };
 
   const setThresholdData = () => {
-    const ampMaxArray = reduceMaxArray(
-      waveIndex,
-      waveData[cycle],
-      averageData,
-      scale
-    );
+    const ampMaxArray: AmpMaxArray = reduceMaxArray(waveIndex, waveData[cycle], averageData, scale);
     const ampIndexArr = ampMaxArray.maxIndexArray;
     const ampDataArr = ampMaxArray.maxDataArray;
     const ampAverageArr = ampMaxArray.maxAverageArray;
@@ -287,19 +272,14 @@ export default function FftOsCsvReader() {
     const chunkedFilteredDataArr = _.chunk(filteredDataArr, chunkedCount);
     const chunkedFilteredAverageArr = _.chunk(filteredAverageArr, chunkedCount);
 
-    const thresholdData = getThresholdData(
-      chunkedFilteredIndexArr,
-      chunkedFilteredDataArr,
-      chunkedFilteredAverageArr,
-      Number(tv)
-    );
+    const thresholdData = getThresholdData(chunkedFilteredIndexArr, chunkedFilteredDataArr, chunkedFilteredAverageArr, Number(tv));
 
     const min = Math.floor(Math.min(...filteredDataArr) / 10) * 10;
     const max = (Math.floor(Math.max(...filteredDataArr) / 10) + 1) * 10;
 
     setThreshold(thresholdData);
 
-    setAmpIndex(filteredIndexArr);
+    setAmpIndex(filteredIndexArr as never[]);
     setAmpData(filteredDataArr);
     setPlotCount(plotCount);
 
@@ -311,7 +291,7 @@ export default function FftOsCsvReader() {
     if (cycle === 0) {
       indexCount = {};
     }
-    thresholdData.forEach(({ maxIndex }) => {
+    thresholdData.forEach(({ maxIndex }: any) => {
       const index = maxIndex.toFixed(1);
       indexCount[index] = indexCount[index] ? indexCount[index] + 1 : 1;
     });
@@ -341,15 +321,9 @@ export default function FftOsCsvReader() {
   const onClickApply = () => {
     const msInputElement = document.getElementById("ms") as HTMLInputElement;
     const tvInputElement = document.getElementById("tv") as HTMLInputElement;
-    const minFreqInputElement = document.getElementById(
-      "minFreq"
-    ) as HTMLInputElement;
-    const maxFreqInputElement = document.getElementById(
-      "maxFreq"
-    ) as HTMLInputElement;
-    const scaleInputElement = document.getElementById(
-      "scale"
-    ) as HTMLInputElement;
+    const minFreqInputElement = document.getElementById("minFreq") as HTMLInputElement;
+    const maxFreqInputElement = document.getElementById("maxFreq") as HTMLInputElement;
+    const scaleInputElement = document.getElementById("scale") as HTMLInputElement;
     const ms = parseInt(msInputElement?.value || "0");
     const tv = parseInt(tvInputElement?.value || "0");
     const minFreq = parseInt(minFreqInputElement?.value || "0");
@@ -438,31 +412,16 @@ export default function FftOsCsvReader() {
             setZoneHover(false);
           }}
         >
-          {({
-            getRootProps,
-            acceptedFile,
-            ProgressBar,
-            getRemoveFileProps,
-            Remove,
-          }: any) => (
+          {({ getRootProps, acceptedFile, ProgressBar, getRemoveFileProps, Remove }: any) => (
             <>
-              <div
-                {...getRootProps()}
-                style={Object.assign(
-                  {},
-                  styles.zone,
-                  zoneHover && styles.zoneHover
-                )}
-              >
+              <div {...getRootProps()} style={Object.assign({}, styles.zone, zoneHover && styles.zoneHover)}>
                 {acceptedFile ? (
                   <>
                     {/* <div style={styles.file}>
                       <div style={styles.info}> */}
                     <div>
                       <div>
-                        <span style={styles.size}>
-                          {formatFileSize(acceptedFile.size)}
-                        </span>
+                        <span style={styles.size}>{formatFileSize(acceptedFile.size)}</span>
                         <span style={styles.name}>{acceptedFile.name}</span>
                       </div>
                       {/* <div style={styles.progressBar}> */}
@@ -498,32 +457,9 @@ export default function FftOsCsvReader() {
           cycle: {cycle} / cycles: {cycles} / plots: {addCommas(plotCount)}
         </CycleWrapper>
         <ControlWrapper>
-          ms:{" "}
-          <input
-            id="ms"
-            type="number"
-            step={100}
-            style={{ maxWidth: "60px" }}
-            defaultValue={ms}
-          />{" "}
-          tv:{" "}
-          <input
-            id="tv"
-            type="number"
-            step={1}
-            style={{ maxWidth: "60px" }}
-            defaultValue={tv}
-          />{" "}
-          min:{" "}
-          <input
-            id="minFreq"
-            type="number"
-            min={0}
-            step={1}
-            style={{ maxWidth: "60px" }}
-            defaultValue={minFreq}
-          />{" "}
-          max:{" "}
+          ms: <input id="ms" type="number" step={100} style={{ maxWidth: "60px" }} defaultValue={ms} /> tv:{" "}
+          <input id="tv" type="number" step={1} style={{ maxWidth: "60px" }} defaultValue={tv} /> min:{" "}
+          <input id="minFreq" type="number" min={0} step={1} style={{ maxWidth: "60px" }} defaultValue={minFreq} /> max:{" "}
           <input
             id="maxFreq"
             type="number"
@@ -533,28 +469,14 @@ export default function FftOsCsvReader() {
             defaultValue={maxFreq}
             // onChange={onChangeMaxFreq}
           />{" "}
-          1/scale:{" "}
-          <input
-            id="scale"
-            type="number"
-            step={1}
-            style={{ maxWidth: "60px" }}
-            defaultValue={scale}
-          />
+          1/scale: <input id="scale" type="number" step={1} style={{ maxWidth: "60px" }} defaultValue={scale} />
           <ControlButton onClick={onClickApply}>Apply</ControlButton>
         </ControlWrapper>
       </Wrapper>
       <Wrapper>
         <ChartWrapper>
           {/* <AmpFft index={waveIndex} count={cycle} plots={waveData[cycle]} /> */}
-          <AmpFft
-            index={ampIndex}
-            count={cycle}
-            plots={ampData}
-            tv={tv}
-            minY={minY}
-            maxY={maxY}
-          />
+          <AmpFft index={ampIndex} count={cycle} plots={ampData} tv={tv} minY={minY} maxY={maxY} />
           {cycle > -1 && (
             <ControlWrapper>
               <input
@@ -571,18 +493,10 @@ export default function FftOsCsvReader() {
             </ControlWrapper>
           )}
           <ControlWrapper>
-            {cycle > -1 && !isPause && (
-              <ControlButton onClick={onClickPause}>Pause</ControlButton>
-            )}
-            {cycle > -1 && isPause && (
-              <ControlButton onClick={onClickPause}>Resume</ControlButton>
-            )}
-            {cycle > -1 && isPause && (
-              <ControlButton onClick={onClickPrev}>Prev</ControlButton>
-            )}
-            {cycle > -1 && isPause && (
-              <ControlButton onClick={onClickNext}>Next</ControlButton>
-            )}
+            {cycle > -1 && !isPause && <ControlButton onClick={onClickPause}>Pause</ControlButton>}
+            {cycle > -1 && isPause && <ControlButton onClick={onClickPause}>Resume</ControlButton>}
+            {cycle > -1 && isPause && <ControlButton onClick={onClickPrev}>Prev</ControlButton>}
+            {cycle > -1 && isPause && <ControlButton onClick={onClickNext}>Next</ControlButton>}
           </ControlWrapper>
         </ChartWrapper>
       </Wrapper>

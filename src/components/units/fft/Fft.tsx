@@ -151,7 +151,7 @@ export default function FftPage() {
 
     setThreshold(thresholdData);
 
-    setAmpIndex(filteredIndexArr);
+    setAmpIndex(filteredIndexArr as never[]);
     setAmpData(filteredDataArr);
     setPlotCount(plotCount);
 
@@ -168,12 +168,12 @@ export default function FftPage() {
       tvConIndCount = {};
     }
 
-    thresholdData.forEach(({ maxIndex }) => {
+    thresholdData.forEach(({ maxIndex }: any) => {
       const index = maxIndex.toFixed(1);
       tvTotalIndexCount[index] = tvTotalIndexCount[index] ? tvTotalIndexCount[index] + 1 : 1;
       // Find and remove elements in indexCount2 that are not in the current thresholdData
       Object.keys(tvConIndCount).forEach((key) => {
-        if (!thresholdData.some(({ maxIndex }) => maxIndex.toFixed(1) === key)) {
+        if (!thresholdData.some(({ maxIndex }: any) => maxIndex.toFixed(1) === key)) {
           delete tvConIndCount[key];
         }
       });
@@ -219,7 +219,7 @@ export default function FftPage() {
       let position = getRandomInt(1, 5);
       let warn = getRandomInt(0, 2);
       let time = getDateTime(cycle * ms);
-      const duplicateCycle = recent.some((el) => el.cycle === cycle); // check if duplicate cycle exists
+      const duplicateCycle = recent.some((el: any) => el.cycle === cycle); // check if duplicate cycle exists
       if (!duplicateCycle) {
         // proceed only if there is no duplicate cycle
         recent.push({ cycle: cycle, time: time, position: position, activity: activity, warn: WARN_MSG[warn] });
@@ -227,7 +227,7 @@ export default function FftPage() {
         setLeak({ leak: position, sensor: 1, distance: 5, time: time });
       }
     } else {
-      setLeak({});
+      setLeak({ leak: 0, sensor: 0, distance: 0, time: "" });
     }
   };
 
@@ -410,7 +410,7 @@ export default function FftPage() {
           <S.Wrapper>
             <S.PipeWrapper style={{ justifyContent: "space-between" }}>
               {((leak.sensor === 1 || leak.sensor >= 3) && (
-                <S.SensorBlockLeak isPause={isPause} ms={ms + "ms"}>
+                <S.SensorBlockLeak isPause={isPause} ms={`${ms || 1000}ms`}>
                   FlexMate Sensor 1
                 </S.SensorBlockLeak>
               )) || <S.SensorBlock>FlexMate Sensor 1</S.SensorBlock>}
@@ -461,7 +461,7 @@ export default function FftPage() {
                 </thead>
                 <tbody>
                   {cycle > -1 &&
-                    tvIndexTop.map(({ freq, totalCnt, conCnt }) => {
+                    tvIndexTop.map(({ freq, totalCnt, conCnt }: { freq: number; totalCnt: number; conCnt: number }) => {
                       return (
                         <tr key={freq}>
                           <td>{freq}</td>
@@ -485,7 +485,7 @@ export default function FftPage() {
               .slice()
               .reverse()
               .slice(0, isViewAllHistory ? undefined : 10)
-              .map((el) => (
+              .map((el: any) => (
                 <S.RecentWrapper key={el.cycle} id={el.cycle} onClick={onClickRecent}>
                   <S.RecentItemWrapper>
                     <S.LeakPositionWrapper>

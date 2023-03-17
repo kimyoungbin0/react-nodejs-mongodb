@@ -10,7 +10,13 @@ export const reduceArray = (arr: any[], n: number) => {
   return [];
 };
 
-export const reduceMaxArray = (indexArr: any[], dataArr: any[], averageArr: any[], n: number) => {
+interface AmpMaxArray {
+  maxIndexArray: any[];
+  maxDataArray: any[];
+  maxAverageArray: any[];
+}
+
+export const reduceMaxArray = (indexArr: any[], dataArr: any[], averageArr: any[], n: number): AmpMaxArray => {
   if (dataArr !== undefined && dataArr.length > 0) {
     if (n <= 1) {
       return {
@@ -43,7 +49,11 @@ export const reduceMaxArray = (indexArr: any[], dataArr: any[], averageArr: any[
       maxAverageArray: maxAverageArray,
     };
   }
-  return [];
+  return {
+    maxIndexArray: [],
+    maxDataArray: [],
+    maxAverageArray: [],
+  };
 };
 
 export const getThresholdData = (arr1: any[], arr2: any[], arr3: any[], tv: number) => {

@@ -2,7 +2,7 @@ import { useCSVReader, formatFileSize } from "react-papaparse";
 import { useState } from "react";
 import * as S from "../units/fft/Fft.styles";
 
-export default function CsvReader({ handleResults }) {
+export default function CsvReader({ handleResults }: any) {
   const { CSVReader } = useCSVReader();
   const [zoneHover, setZoneHover] = useState(false);
   const [removeHoverColor, setRemoveHoverColor] = useState(S.DEFAULT_REMOVE_HOVER_COLOR);
