@@ -62,13 +62,22 @@ const LoginItemWrapper = styled.div`
   padding-left: 10px;
 `;
 
+const IconWrapper = styled.div`
+  svg {
+    width: 40px;
+    height: 40px;
+  }
+`;
+
 export default function LayoutHeader() {
   return (
     <>
       <Wrapper>
         <HomeWrapper>
           <SiteWrapper>
-            <AppstoreTwoTone />
+            <IconWrapper>
+              <AppstoreTwoTone />
+            </IconWrapper>
             <LogoWrapper>
               <SpanLogo href="/"> FlexReal v0.0.1</SpanLogo>
               <span>support@rinasolution.com</span>
