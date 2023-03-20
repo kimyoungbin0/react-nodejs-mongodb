@@ -8,7 +8,7 @@ import { addCommas, getRandomInt } from "../../../commons/libraries/utils";
 import { getDateTime, setDateTime } from "../../../commons/libraries/date";
 import { averageByColumn, getThresholdData, reduceMaxArray, roundArray } from "../../../commons/libraries/array";
 import ModalBasic from "../../commons/modals/ModalBasic";
-import { Button, ConfigProvider, DatePicker } from "antd";
+import { Button, ConfigProvider, DatePicker, Table } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import koKR from "antd/lib/locale/ko_KR";
 import dayjs from "dayjs";
@@ -364,6 +364,62 @@ export default function FftPage() {
     setIsPause(false);
   };
 
+  const columnsSector = [
+    {
+      title: "Sector",
+      dataIndex: "sector",
+      key: "sector",
+    },
+    {
+      title: "Freq",
+      dataIndex: "maxIndex",
+      key: "maxIndex",
+    },
+    {
+      title: "Max",
+      dataIndex: "maxValue",
+      key: "maxValue",
+    },
+    {
+      title: "Avg",
+      dataIndex: "maxAverage",
+      key: "maxAverage",
+    },
+  ];
+
+  const dataSector = threshold.map((data: any) => ({
+    key: `${data.sector}-${data.maxValue}`,
+    sector: data.sector,
+    maxIndex: data.maxIndex,
+    maxValue: data.maxValue,
+    maxAverage: data.maxAverage,
+  }));
+
+  const columnsLeak = [
+    {
+      title: "Freq",
+      dataIndex: "freq",
+      key: "freq",
+    },
+    {
+      title: "Total",
+      dataIndex: "totalCnt",
+      key: "totalCnt",
+    },
+    {
+      title: "Seq",
+      dataIndex: "conCnt",
+      key: "conCnt",
+    },
+  ];
+
+  const dataLeak = tvIndexTop.map(({ freq, totalCnt, conCnt }: { freq: number; totalCnt: number; conCnt: number }) => ({
+    key: freq,
+    freq,
+    totalCnt,
+    conCnt,
+  }));
+
   return (
     <>
       <S.PageWrapper>
@@ -445,8 +501,16 @@ export default function FftPage() {
             </S.PipeWrapper>
           </S.Wrapper>
           <S.Wrapper>
-            <S.TableWrapper>
-              <table>
+            {/* <S.TableWrapper> */}
+            <Table
+              columns={columnsSector}
+              dataSource={dataSector}
+              size="small"
+              sticky={true}
+              scroll={{ y: 150 }}
+              style={{ width: "450px", maxHeight: "150px" }}
+            />
+            {/* <table>
                 <thead>
                   <tr>
                     <th>Sector</th>
@@ -466,10 +530,11 @@ export default function FftPage() {
                       </tr>
                     ))}
                 </tbody>
-              </table>
-            </S.TableWrapper>
-            <S.TableWrapper>
-              <table>
+              </table> */}
+            {/* </S.TableWrapper> */}
+            {/* <S.TableWrapper> */}
+            <Table columns={columnsLeak} dataSource={dataLeak} size="small" sticky={true} scroll={{ y: 150 }} style={{ width: "350px", maxHeight: "150px" }} />
+            {/* <table>
                 <thead>
                   <tr>
                     <th>Index</th>
@@ -489,8 +554,8 @@ export default function FftPage() {
                       );
                     })}
                 </tbody>
-              </table>
-            </S.TableWrapper>
+              </table> */}
+            {/* </S.TableWrapper> */}
           </S.Wrapper>
         </S.LeftWrapper>
         <S.RightWrapper>

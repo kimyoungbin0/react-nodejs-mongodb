@@ -50,7 +50,7 @@ export const TableWrapper = styled.div`
   min-width: 400px;
   min-height: 100px;
   max-height: 170px;
-  overflow: auto;
+  /* overflow: auto; */
   border: 1px solid #cccccc;
 `;
 
