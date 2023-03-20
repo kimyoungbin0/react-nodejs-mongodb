@@ -8,8 +8,12 @@ import { addCommas, getRandomInt } from "../../../commons/libraries/utils";
 import { getDateTime, setDateTime } from "../../../commons/libraries/date";
 import { averageByColumn, getThresholdData, reduceMaxArray, roundArray } from "../../../commons/libraries/array";
 import ModalBasic from "../../commons/modals/ModalBasic";
-import { Button } from "antd";
+import { Button, ConfigProvider, DatePicker } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
+import koKR from "antd/lib/locale/ko_KR";
+import dayjs from "dayjs";
+import "dayjs/locale/ko";
+// import locale from "antd/es/date-picker/locale/ko_KR";
 
 function useInterval(callback: any, delay: any) {
   const savedCallback = useRef<() => void>(() => {});
@@ -492,6 +496,9 @@ export default function FftPage() {
         <S.RightWrapper>
           <S.SectionTitleWrapper>
             <S.SectionTitle>Recent Activity</S.SectionTitle>
+            <S.CalendarWrapper>
+              <DatePicker defaultValue={dayjs(getDateTime(0), "YYYY-MM-DD")} size={"small"} allowClear={false} />
+            </S.CalendarWrapper>
           </S.SectionTitleWrapper>
 
           <S.SectionRecentWrapper>
@@ -530,8 +537,10 @@ export default function FftPage() {
           </S.SectionRecentWrapper>
           <S.RecentButtonWrapper>
             <Button type="primary" onClick={onClickViewAllHistory} style={{ width: "100%", height: "60px", margin: "10px 0", padding: "10px" }}>
-              {!isViewAllHistory && "View All Recent Activities"}
-              {isViewAllHistory && "View Recent 10 Activities"}
+              <S.ButtonText>
+                {!isViewAllHistory && "View All Recent Activities"}
+                {isViewAllHistory && "View Recent 10 Activities"}
+              </S.ButtonText>
             </Button>
           </S.RecentButtonWrapper>
         </S.RightWrapper>

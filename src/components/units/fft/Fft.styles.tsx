@@ -183,12 +183,22 @@ export const ThresholdBlock = styled.div`
 export const SectionTitleWrapper = styled.div`
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   flex-wrap: wrap;
   width: 100%;
   height: 80px;
   padding: 10px;
   border-bottom: 1px solid #cccccc;
   overflow: auto;
+`;
+
+export const CalendarWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 10px;
 `;
 
 export const SectionRecentWrapper = styled.div`
@@ -277,6 +287,12 @@ export const RecentWarn = styled.span`
   font-size: 1.5rem;
   line-height: 1.5rem;
   font-weight: 700;
+`;
+
+export const ButtonText = styled.span`
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: white;
 `;
 
 export const GREY = "#CCC";
