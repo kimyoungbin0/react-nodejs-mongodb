@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import {
   ClusterOutlined,
   DashboardOutlined,
@@ -9,7 +10,6 @@ import {
   SettingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import styled from "@emotion/styled";
 
 const Wrapper = styled.div`
   width: 201px;
