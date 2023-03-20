@@ -23,10 +23,10 @@ export const RightWrapper = styled.div`
   justify-content: space-between;
   align-items: space-between;
   flex-wrap: wrap;
-  width: 100vw;
+  width: 100%;
   max-width: 800px;
-  min-height: 400px;
-  max-height: 100vh;
+  min-height: 800px;
+  /* max-height: 100vh; */
   border: solid 1px #cccccc;
   padding: 10px;
   margin-bottom: 10px;
@@ -47,11 +47,11 @@ export const ChartWrapper = styled.div`
 export const TableWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  min-width: 400px;
-  min-height: 100px;
-  max-height: 170px;
+  /* min-width: 400px; */
+  min-height: 180px;
+  max-height: 230px;
   /* overflow: auto; */
-  border: 1px solid #cccccc;
+  /* border: 1px solid #cccccc; */
 `;
 
 export const CycleWrapper = styled.div`
@@ -66,11 +66,11 @@ export const CycleWrapper = styled.div`
 export const ControlWrapper = styled.div`
   min-width: 500px;
   min-height: 30px;
-  padding: 0 10px;
+  padding: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end;
 `;
 
 export const ControlButton = styled.button`

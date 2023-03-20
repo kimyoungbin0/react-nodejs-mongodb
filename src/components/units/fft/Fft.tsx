@@ -501,61 +501,26 @@ export default function FftPage() {
             </S.PipeWrapper>
           </S.Wrapper>
           <S.Wrapper>
-            {/* <S.TableWrapper> */}
-            <Table
-              columns={columnsSector}
-              dataSource={dataSector}
-              size="small"
-              sticky={true}
-              scroll={{ y: 150 }}
-              style={{ width: "450px", maxHeight: "150px" }}
-            />
-            {/* <table>
-                <thead>
-                  <tr>
-                    <th>Sector</th>
-                    <th>MaxIndex</th>
-                    <th>MaxValue</th>
-                    <th>MaxAverage</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {cycle > -1 &&
-                    threshold.map((data: any) => (
-                      <tr key={`${data.sector}-${data.maxValue}`}>
-                        <td>{data.sector}</td>
-                        <td>{data.maxIndex}</td>
-                        <td>{data.maxValue}</td>
-                        <td>{data.maxAverage}</td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table> */}
-            {/* </S.TableWrapper> */}
-            {/* <S.TableWrapper> */}
-            <Table columns={columnsLeak} dataSource={dataLeak} size="small" sticky={true} scroll={{ y: 150 }} style={{ width: "350px", maxHeight: "150px" }} />
-            {/* <table>
-                <thead>
-                  <tr>
-                    <th>Index</th>
-                    <th>Total</th>
-                    <th>Continue</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {cycle > -1 &&
-                    tvIndexTop.map(({ freq, totalCnt, conCnt }: { freq: number; totalCnt: number; conCnt: number }) => {
-                      return (
-                        <tr key={freq}>
-                          <td>{freq}</td>
-                          <td>{totalCnt}</td>
-                          <td>{conCnt}</td>
-                        </tr>
-                      );
-                    })}
-                </tbody>
-              </table> */}
-            {/* </S.TableWrapper> */}
+            <S.TableWrapper>
+              <Table
+                columns={columnsSector}
+                dataSource={dataSector}
+                size="small"
+                sticky={true}
+                scroll={{ y: 150 }}
+                style={{ width: "450px", minHeight: "150px" }}
+              />
+            </S.TableWrapper>
+            <S.TableWrapper>
+              <Table
+                columns={columnsLeak}
+                dataSource={dataLeak}
+                size="small"
+                sticky={true}
+                scroll={{ y: 150 }}
+                style={{ width: "350px", minHeight: "150px" }}
+              />
+            </S.TableWrapper>
           </S.Wrapper>
         </S.LeftWrapper>
         <S.RightWrapper>

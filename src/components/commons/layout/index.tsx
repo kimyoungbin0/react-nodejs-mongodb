@@ -3,7 +3,7 @@ import LayoutBanner from "./banner";
 import LayoutFooter from "./footer";
 import LayoutHeader from "./header";
 import LayoutNavigation from "./navigation";
-import Menu from "./navigation/menu";
+import MenuLeft from "./navigation/menu";
 
 const HIDDEN_HEADERS = ["/xxx"];
 const HIDDEN_BANNERS = ["/", "/daq", "/os", "/fft", "/fftos", "/fftos2", "dashboard"];
@@ -32,11 +32,11 @@ export default function Layout(props: ILayoutProps) {
       {!isHiddenBanner && <LayoutBanner />}
       {!isHiddenMenu && <LayoutNavigation />}
       <div style={{ height: `calc(100vh - ${layoutHeight}px)`, display: "flex" }}>
-        <Menu />
+        <MenuLeft />
         <div
           style={{
-            width: "calc(100% - 201px)",
-            maxWidth: "calc(100% - 201px)",
+            minWidth: "calc(100% - 241px)",
+            maxWidth: "calc(100% - 81px)",
             padding: "10px",
             overflow: "auto",
           }}
