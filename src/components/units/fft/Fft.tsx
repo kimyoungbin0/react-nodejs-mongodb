@@ -8,7 +8,7 @@ import { addCommas, getRandomInt } from "../../../commons/libraries/utils";
 import { getDateTime, setDateTime } from "../../../commons/libraries/date";
 import { averageByColumn, getThresholdData, reduceMaxArray, roundArray } from "../../../commons/libraries/array";
 import ModalBasic from "../../commons/modals/ModalBasic";
-import { Button, ConfigProvider, DatePicker, InputNumber, Table } from "antd";
+import { Button, ConfigProvider, DatePicker, InputNumber, Select, Space, Table } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import koKR from "antd/lib/locale/ko_KR";
 import dayjs from "dayjs";
@@ -64,7 +64,8 @@ export default function FftPage() {
   const [pauseCycle, setPauseCycle] = useState(-1);
 
   const [recent, setRecent] = useState([] as any);
-  const [isViewAllHistory, setIsViewAllHistory] = useState(false);
+  const [recentCnt, setRecentCnt] = useState(10);
+  // const [isViewAllHistory, setIsViewAllHistory] = useState(false);
 
   const msInputRef = useRef(null);
   const tvInputRef = useRef(null);
@@ -89,7 +90,7 @@ export default function FftPage() {
       offsetArr.push(unzipData);
     }
 
-    const averageArr = resetAverageData(offsetArr, 20);
+    const averageArr = setAvgData(offsetArr, 20);
     // const averageArr = roundArray(averageByColumn(offsetArr.slice(0, 20)), 2);
     // const averageArr = roundArray(averageByColumn(offsetArr), 2);
 
@@ -117,13 +118,13 @@ export default function FftPage() {
       // checkLeak((cycle + 1) % cycles);
 
       if (recent.length === 1) {
-        const result = resetAverageData(waveData, cycle - 2);
+        const result = setAvgData(waveData, cycle - 2);
         setAverageData(result);
       }
     }
   }, ms);
 
-  const resetAverageData = (data: any[], leakPoint: number) => {
+  const setAvgData = (data: any[], leakPoint: number) => {
     console.log("resetAverageData:", leakPoint);
     const averageData = roundArray(averageByColumn(data.slice(0, leakPoint)), 2);
     return averageData;
@@ -304,6 +305,7 @@ export default function FftPage() {
     setAmpIndex([]);
     setAmpData([]);
     setThreshold([]);
+    setTvIndexTop([]);
     setRecent([]);
   };
 
@@ -366,9 +368,9 @@ export default function FftPage() {
     }
   };
 
-  const onClickViewAllHistory = (event: any) => {
-    setIsViewAllHistory(!isViewAllHistory);
-  };
+  // const onClickViewAllHistory = (event: any) => {
+  //   setIsViewAllHistory(!isViewAllHistory);
+  // };
 
   const handleResults = (results: any) => {
     setWaveIndex([]);
@@ -392,6 +394,14 @@ export default function FftPage() {
     setIsPause(false);
   };
 
+  const handleRecentCntChange = (value: string) => {
+    const recentCnt = parseInt(value);
+    // if (recentCnt > 0) {
+    setRecentCnt(recentCnt);
+    // } else {
+    //   setIsViewAllHistory(true);
+    // }
+  };
   const columnsSector = [
     {
       title: "Sector",
@@ -557,16 +567,31 @@ export default function FftPage() {
         <S.RightWrapper>
           <S.SectionTitleWrapper>
             <S.SectionTitle>Recent Activity</S.SectionTitle>
-            <S.CalendarWrapper>
+            <S.RecentControlWrapper>
               <DatePicker defaultValue={dayjs(getDateTime(0), "YYYY-MM-DD")} size={"small"} allowClear={false} />
-            </S.CalendarWrapper>
+              <Space wrap>
+                <Select
+                  defaultValue="10"
+                  size="small"
+                  style={{ width: 120 }}
+                  onChange={handleRecentCntChange}
+                  options={[
+                    { value: "10", label: "최근 10건" },
+                    { value: "100", label: "최근 100건" },
+                    { value: "500", label: "최근 500건" },
+                    { value: "-1", label: "전체" },
+                    // { value: "1000", label: "최근 1000건", disabled: true },
+                  ]}
+                />
+              </Space>
+            </S.RecentControlWrapper>
           </S.SectionTitleWrapper>
 
           <S.SectionRecentWrapper>
             {recent
               .slice()
               .reverse()
-              .slice(0, isViewAllHistory ? undefined : 10)
+              .slice(0, recentCnt < 0 ? undefined : recentCnt)
               .map((el: any) => (
                 <S.RecentWrapper key={el.cycle} id={el.cycle} onClick={() => onClickRecent(el.cycle)}>
                   <S.RecentItemWrapper>
@@ -596,14 +621,14 @@ export default function FftPage() {
                 </S.RecentWrapper>
               ))}
           </S.SectionRecentWrapper>
-          <S.RecentButtonWrapper>
+          {/* <S.RecentButtonWrapper>
             <Button type="primary" onClick={onClickViewAllHistory} style={{ width: "100%", height: "60px", margin: "10px 0", padding: "10px" }}>
               <S.ButtonText>
                 {!isViewAllHistory && "View All Recent Activities"}
                 {isViewAllHistory && "View Recent 10 Activities"}
               </S.ButtonText>
             </Button>
-          </S.RecentButtonWrapper>
+          </S.RecentButtonWrapper> */}
         </S.RightWrapper>
       </S.PageWrapper>
     </>

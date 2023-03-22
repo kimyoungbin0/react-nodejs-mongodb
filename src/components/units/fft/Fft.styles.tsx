@@ -207,7 +207,7 @@ export const SectionTitleWrapper = styled.div`
   overflow: auto;
 `;
 
-export const CalendarWrapper = styled.div`
+export const RecentControlWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
