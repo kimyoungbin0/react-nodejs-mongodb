@@ -13,7 +13,7 @@ import {
 } from "@ant-design/icons";
 
 import { Menu, Button, MenuProps } from "antd";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const Wrapper = styled.div`
   /* width: 201px; */
@@ -43,23 +43,11 @@ const MenuItemWrapper = styled.div`
   align-items: center;
 `;
 
-const MenuItem = styled.a`
-  height: 40px;
-  padding: 10px;
-  font-size: 1.2rem;
-  text-decoration: none;
-`;
-
-const MenuItemDeactivated = styled.a`
-  height: 40px;
-  padding: 10px;
-  font-size: 1.2rem;
-  color: lightgray;
-  text-decoration: none;
-`;
-
 export default function MenuLeft() {
   const [collapsed, setCollapsed] = useState(false);
+  const menuButtonRef = useRef(null);
+  const leftTopMenuRef = useRef(null);
+  const leftBottomMenuRef = useRef(null);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -107,16 +95,16 @@ export default function MenuLeft() {
 
   return (
     <>
-      <Wrapper style={{ minWidth: collapsed ? 81 : 241, transition: "all 0.2s" }}>
+      <Wrapper style={{ minWidth: collapsed ? 81 : 201, transition: "all 0.2s" }}>
         <MenuWrapper>
           {/* // TODO findDOMNode is deprecated in StrictMode. 관련 문제 해결 필요 */}
-          <Button type="primary" onClick={toggleCollapsed} style={{ marginTop: 10, marginLeft: 10, marginRight: 10, marginBottom: 10 }}>
+          <Button type="primary" onClick={toggleCollapsed} style={{ marginTop: 10, marginLeft: 10, marginRight: 10, marginBottom: 10 }} ref={menuButtonRef}>
             {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           </Button>
-          <Menu defaultSelectedKeys={["1"]} defaultOpenKeys={["sub1"]} mode="inline" inlineCollapsed={collapsed} items={items} />
+          <Menu defaultSelectedKeys={["1"]} defaultOpenKeys={["sub1"]} mode="inline" inlineCollapsed={collapsed} items={items} ref={leftTopMenuRef} />
         </MenuWrapper>
         <MenuWrapper>
-          <Menu defaultSelectedKeys={[]} defaultOpenKeys={[]} mode="inline" inlineCollapsed={collapsed} items={items2} />
+          <Menu defaultSelectedKeys={[]} defaultOpenKeys={[]} mode="inline" inlineCollapsed={collapsed} items={items2} ref={leftBottomMenuRef} />
         </MenuWrapper>
       </Wrapper>
     </>
