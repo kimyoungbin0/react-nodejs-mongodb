@@ -106,8 +106,19 @@ export default function FftPage() {
         setPauseCycle(0);
       }
       // checkLeak((cycle + 1) % cycles);
+
+      if (recent.length === 1) {
+        resetAverageData(cycle - 2);
+        console.log("resetAverageData:", cycle - 2);
+      }
     }
   }, ms);
+
+  const resetAverageData = (firstLeak: number) => {
+    console.log("resetAverageData:", firstLeak);
+    const averageArr = roundArray(averageByColumn(waveData.slice(0, firstLeak)), 2);
+    setAverageData(averageArr);
+  };
 
   const setCycleChartArr = (cycle: number) => {
     if (cycle > -1) {
