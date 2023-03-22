@@ -89,7 +89,8 @@ export default function FftPage() {
       offsetArr.push(unzipData);
     }
 
-    const averageArr = roundArray(averageByColumn(offsetArr.slice(0, 20)), 2);
+    const averageArr = resetAverageData(offsetArr, 20);
+    // const averageArr = roundArray(averageByColumn(offsetArr.slice(0, 20)), 2);
     // const averageArr = roundArray(averageByColumn(offsetArr), 2);
 
     return { indexData, offsetData: offsetArr, averageData: averageArr };
@@ -116,16 +117,17 @@ export default function FftPage() {
       // checkLeak((cycle + 1) % cycles);
 
       if (recent.length === 1) {
-        resetAverageData(cycle - 2);
-        console.log("resetAverageData:", cycle - 2);
+        const result = resetAverageData(waveData, cycle - 2);
+        setAverageData(result);
       }
     }
   }, ms);
 
-  const resetAverageData = (firstLeak: number) => {
-    console.log("resetAverageData:", firstLeak);
-    const averageArr = roundArray(averageByColumn(waveData.slice(0, firstLeak)), 2);
-    setAverageData(averageArr);
+  const resetAverageData = (data: any[], leakPoint: number) => {
+    console.log("resetAverageData:", leakPoint);
+    const averageData = roundArray(averageByColumn(data.slice(0, leakPoint)), 2);
+    return averageData;
+    // setAverageData(averageArr);
   };
 
   const setCycleChartArr = (cycle: number) => {
@@ -267,10 +269,14 @@ export default function FftPage() {
   };
 
   const onClickApply = () => {
-    reset();
+    reset(cycle);
   };
 
-  const reset = () => {
+  const onClickReset = () => {
+    reset(-1);
+  };
+
+  const reset = (cycle: number) => {
     const msInputElement = document.getElementById("ms") as HTMLInputElement;
     const tvInputElement = document.getElementById("tv") as HTMLInputElement;
     const minFreqInputElement = document.getElementById("minFreq") as HTMLInputElement;
@@ -295,6 +301,9 @@ export default function FftPage() {
     setCycle(cycle < 0 ? -1 : 0);
     setIsPause(true);
     setPauseCycle(0);
+    setAmpIndex([]);
+    setAmpData([]);
+    setThreshold([]);
     setRecent([]);
   };
 
@@ -480,6 +489,7 @@ export default function FftPage() {
                     <S.ControlButton onClick={onClickPause}>Resume</S.ControlButton>
                     <S.ControlButton onClick={onClickPrev}>Prev</S.ControlButton>
                     <S.ControlButton onClick={onClickNext}>Next</S.ControlButton>
+                    <S.ControlButton onClick={onClickReset}>Reset</S.ControlButton>
                   </>
                 )}
               </S.ControlWrapper>
