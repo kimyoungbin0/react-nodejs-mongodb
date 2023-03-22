@@ -66,6 +66,14 @@ export default function FftPage() {
   const [recent, setRecent] = useState([] as any);
   const [isViewAllHistory, setIsViewAllHistory] = useState(false);
 
+  const msInputRef = useRef(null);
+  const tvInputRef = useRef(null);
+  const minInputRef = useRef(null);
+  const maxInputRef = useRef(null);
+  const scaleInputRef = useRef(null);
+  const sectorTableRef = useRef(null);
+  const leakTableRef = useRef(null);
+
   const chunk = (data: any[]) => {
     const dataCount = data[0].length;
     const unzipIndex = _.unzip(data)[0];
@@ -284,7 +292,7 @@ export default function FftPage() {
     tvTotalIndexCount = {};
     setTvIndexTop([]);
     setThresholdTable([]);
-    setCycle(0);
+    setCycle(cycle < 0 ? -1 : 0);
     setIsPause(true);
     setPauseCycle(0);
     setRecent([]);
@@ -441,11 +449,11 @@ export default function FftPage() {
               cycle: {cycle} / cycles: {cycles} / plots: {addCommas(plotCount)}
             </S.CycleWrapper>
             <S.SettingWrapper>
-              ms: <S.AntdInputNumber id={"ms"} type={"number"} size={"small"} defaultValue={ms} min={80} max={1000} />
-              tv: <S.AntdInputNumber id={"tv"} type={"number"} size={"small"} defaultValue={tv} min={0} max={100} />
-              min: <S.AntdInputNumber id={"minFreq"} type={"number"} size={"small"} defaultValue={minFreq} min={0} max={100} />
-              max: <S.AntdInputNumber id={"maxFreq"} type={"number"} size={"small"} defaultValue={maxFreq} min={0} max={100} />
-              1/scale: <S.AntdInputNumber id={"scale"} type={"number"} size={"small"} defaultValue={scale} min={1} max={8192} />
+              ms: <S.AntdInputNumber id={"ms"} type={"number"} size={"small"} defaultValue={ms} min={80} max={1000} ref={msInputRef} />
+              tv: <S.AntdInputNumber id={"tv"} type={"number"} size={"small"} defaultValue={tv} min={0} max={100} ref={tvInputRef} />
+              min: <S.AntdInputNumber id={"minFreq"} type={"number"} size={"small"} defaultValue={minFreq} min={0} max={100} ref={minInputRef} />
+              max: <S.AntdInputNumber id={"maxFreq"} type={"number"} size={"small"} defaultValue={maxFreq} min={0} max={100} ref={maxInputRef} />
+              1/scale: <S.AntdInputNumber id={"scale"} type={"number"} size={"small"} defaultValue={scale} min={1} max={8192} ref={scaleInputRef} />
               <S.ControlButton onClick={onClickApply}>Apply</S.ControlButton>
             </S.SettingWrapper>
           </S.Wrapper>
@@ -520,6 +528,7 @@ export default function FftPage() {
                 sticky={true}
                 scroll={{ y: 150 }}
                 style={{ width: "450px", minHeight: "150px" }}
+                ref={sectorTableRef}
               />
             </S.TableWrapper>
             <S.TableWrapper>
@@ -530,6 +539,7 @@ export default function FftPage() {
                 sticky={true}
                 scroll={{ y: 150 }}
                 style={{ width: "350px", minHeight: "150px" }}
+                ref={leakTableRef}
               />
             </S.TableWrapper>
           </S.Wrapper>

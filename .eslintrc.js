@@ -32,5 +32,7 @@ module.exports = {
     "no-empty": "off",
     "@typescript-eslint/consistent-indexed-object-style": "off",
     "@typescript-eslint/no-dynamic-delete": "off",
+    "@typescript-eslint/consistent-type-imports": "off",
+    "@typescript-eslint/consistent-type-assertions": "off",
   },
 };

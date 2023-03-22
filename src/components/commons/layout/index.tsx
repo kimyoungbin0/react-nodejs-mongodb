@@ -35,7 +35,7 @@ export default function Layout(props: ILayoutProps) {
         <MenuLeft />
         <div
           style={{
-            minWidth: "calc(100% - 241px)",
+            minWidth: "calc(100% - 201px)",
             maxWidth: "calc(100% - 81px)",
             padding: "10px",
             overflow: "auto",
