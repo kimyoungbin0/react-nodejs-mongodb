@@ -9,6 +9,7 @@ import {
   UserOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
+  ApiOutlined,
 } from "@ant-design/icons";
 
 import { Menu, Button, MenuProps } from "antd";
@@ -84,7 +85,7 @@ export default function MenuLeft() {
     { type: "divider" },
     getItem("DashBoard", "sub1", <DashboardOutlined />, [getItem(<a href="/fftos2">FFT OS</a>, "1"), getItem(<a href="/daq">Wave Form</a>, "2")]),
     { type: "divider" },
-    getItem("Transaction", "sub2", <ProjectOutlined />),
+    getItem("Transaction", "sub2", <ApiOutlined />),
     { type: "divider" },
     getItem("Message", "sub3", <MessageOutlined />),
     { type: "divider" },
@@ -106,7 +107,7 @@ export default function MenuLeft() {
 
   return (
     <>
-      <Wrapper style={{ width: collapsed ? 81 : 241, transition: "all 0.2s" }}>
+      <Wrapper style={{ minWidth: collapsed ? 81 : 241, transition: "all 0.2s" }}>
         <MenuWrapper>
           {/* // TODO findDOMNode is deprecated in StrictMode. 관련 문제 해결 필요 */}
           <Button type="primary" onClick={toggleCollapsed} style={{ marginTop: 10, marginLeft: 10, marginRight: 10, marginBottom: 10 }}>

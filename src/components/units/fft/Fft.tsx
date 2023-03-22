@@ -8,7 +8,7 @@ import { addCommas, getRandomInt } from "../../../commons/libraries/utils";
 import { getDateTime, setDateTime } from "../../../commons/libraries/date";
 import { averageByColumn, getThresholdData, reduceMaxArray, roundArray } from "../../../commons/libraries/array";
 import ModalBasic from "../../commons/modals/ModalBasic";
-import { Button, ConfigProvider, DatePicker, Table } from "antd";
+import { Button, ConfigProvider, DatePicker, InputNumber, Table } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import koKR from "antd/lib/locale/ko_KR";
 import dayjs from "dayjs";
@@ -202,7 +202,7 @@ export default function FftPage() {
       }
     }
 
-    console.log(combinedCounts);
+    // console.log(combinedCounts);
 
     const filteredCounts = combinedCounts;
     const sorted = filteredCounts.sort((a, b) => b.totalCnt - a.totalCnt);
@@ -283,7 +283,7 @@ export default function FftPage() {
     if (!isPause) {
       setPauseCycle(cycle);
     } else {
-      console.log("pauseCycle: " + pauseCycle);
+      // console.log("pauseCycle: " + pauseCycle);
       setCycle(pauseCycle);
       setCycleChartArr(pauseCycle);
     }
@@ -327,7 +327,7 @@ export default function FftPage() {
   };
 
   const setLeakStatus = (cycle: number) => {
-    console.log(cycle);
+    // console.log(cycle);
     const selectedLeak = recent.find((el: any) => el.cycle === cycle);
 
     if (selectedLeak) {
@@ -429,14 +429,14 @@ export default function FftPage() {
             <S.CycleWrapper>
               cycle: {cycle} / cycles: {cycles} / plots: {addCommas(plotCount)}
             </S.CycleWrapper>
-            <S.ControlWrapper>
-              ms: <S.NumberInput id={"ms"} type={"number"} defaultValue={ms} />
-              tv: <S.NumberInput id={"tv"} type={"number"} defaultValue={tv} />
-              min: <S.NumberInput id={"minFreq"} type={"number"} defaultValue={minFreq} />
-              max: <S.NumberInput id={"maxFreq"} type={"number"} defaultValue={maxFreq} />
-              1/scale: <S.NumberInput id={"scale"} type={"number"} defaultValue={scale} />
+            <S.SettingWrapper>
+              ms: <S.AntdInputNumber id={"ms"} type={"number"} size={"small"} defaultValue={ms} min={80} max={1000} />
+              tv: <S.AntdInputNumber id={"tv"} type={"number"} size={"small"} defaultValue={tv} min={0} max={100} />
+              min: <S.AntdInputNumber id={"minFreq"} type={"number"} size={"small"} defaultValue={minFreq} min={0} max={100} />
+              max: <S.AntdInputNumber id={"maxFreq"} type={"number"} size={"small"} defaultValue={maxFreq} min={0} max={100} />
+              1/scale: <S.AntdInputNumber id={"scale"} type={"number"} size={"small"} defaultValue={scale} min={1} max={8192} />
               <S.ControlButton onClick={onClickApply}>Apply</S.ControlButton>
-            </S.ControlWrapper>
+            </S.SettingWrapper>
           </S.Wrapper>
           <S.Wrapper>
             <S.ChartWrapper>

@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { InputNumber } from "antd";
 import { lightenDarkenColor } from "react-papaparse";
 
 export const PageWrapper = styled.div`
@@ -63,7 +64,7 @@ export const CycleWrapper = styled.div`
   justify-content: flex-start;
 `;
 
-export const ControlWrapper = styled.div`
+export const SettingWrapper = styled.div`
   min-width: 500px;
   min-height: 30px;
   padding: 0;
@@ -73,11 +74,25 @@ export const ControlWrapper = styled.div`
   justify-content: flex-end;
 `;
 
+export const ControlWrapper = styled.div`
+  min-width: 500px;
+  min-height: 30px;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+`;
+
 export const ControlButton = styled.button`
   margin: 0 5px;
 `;
 
-export const NumberInput = styled.input`
+// export const NumberInput = styled.input`
+//   max-width: 55px;
+// `;
+
+export const AntdInputNumber = styled(InputNumber)`
   max-width: 55px;
 `;
 
