@@ -304,6 +304,7 @@ export default function FftPage() {
     setPauseCycle(0);
     setAmpIndex([]);
     setAmpData([]);
+    setLeak({ leak: 0, sensor: 0, distance: 0, time: "" });
     setThreshold([]);
     setTvIndexTop([]);
     setRecent([]);
@@ -402,26 +403,31 @@ export default function FftPage() {
     //   setIsViewAllHistory(true);
     // }
   };
+
   const columnsSector = [
     {
       title: "Sector",
       dataIndex: "sector",
       key: "sector",
+      align: "center",
     },
     {
       title: "Freq",
       dataIndex: "maxIndex",
       key: "maxIndex",
+      align: "center",
     },
     {
       title: "Max",
       dataIndex: "maxValue",
       key: "maxValue",
+      align: "center",
     },
     {
       title: "Avg",
       dataIndex: "maxAverage",
       key: "maxAverage",
+      align: "center",
     },
   ];
 
@@ -438,16 +444,19 @@ export default function FftPage() {
       title: "Freq",
       dataIndex: "freq",
       key: "freq",
+      align: "center",
     },
     {
       title: "Total",
       dataIndex: "totalCnt",
       key: "totalCnt",
+      align: "center",
     },
     {
       title: "Seq",
       dataIndex: "conCnt",
       key: "conCnt",
+      align: "center",
     },
   ];
 
@@ -547,7 +556,7 @@ export default function FftPage() {
                 size="small"
                 sticky={true}
                 scroll={{ y: 150 }}
-                style={{ width: "450px", minHeight: "150px" }}
+                style={{ width: "450px", minHeight: "150px", textAlign: "center" }}
                 ref={sectorTableRef}
               />
             </S.TableWrapper>
