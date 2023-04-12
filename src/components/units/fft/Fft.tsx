@@ -15,6 +15,9 @@ import dayjs from "dayjs";
 import "dayjs/locale/ko";
 // import locale from "antd/es/date-picker/locale/ko_KR";
 
+import { collection, addDoc, getDocs, deleteDoc, getFirestore } from "firebase/firestore/lite";
+import { firebaseApp } from "../../../../src/commons/libraries/firebase";
+
 function useInterval(callback: any, delay: any) {
   const savedCallback = useRef<() => void>(() => {});
 
@@ -103,6 +106,8 @@ export default function FftPage() {
         setDateTime();
         setStartDate(getDateTime(0));
         setRecent([]);
+        fetchDB();
+        // deleteDB();
       }
       setCycleChartArr(cycle);
 
@@ -123,6 +128,32 @@ export default function FftPage() {
       }
     }
   }, ms);
+
+  const insertDB = (cycle: number, ampData: number[]) => {
+    console.log("insertDB:", cycle);
+    const ampDataDB = collection(getFirestore(firebaseApp), "ampData");
+    void addDoc(ampDataDB, {
+      cycle: cycle,
+      plots: ampData,
+    });
+  };
+
+  const fetchDB = async () => {
+    console.log("fetchDB");
+    const ampDataDB = collection(getFirestore(firebaseApp), "ampData");
+    const result = await getDocs(ampDataDB);
+    const data = result.docs.map((doc) => doc.data()).sort((a, b) => a.cycle - b.cycle);
+    console.log("fetchDB:", data);
+  };
+
+  const deleteDB = async () => {
+    console.log("deleteAllDocuments");
+    const ampDataDB = collection(getFirestore(firebaseApp), "ampData");
+    const querySnapshot = await getDocs(ampDataDB);
+    for (const doc of querySnapshot.docs) {
+      await deleteDoc(doc.ref);
+    }
+  };
 
   const setAvgData = (data: any[], leakPoint: number) => {
     console.log("resetAverageData:", leakPoint);
@@ -181,6 +212,8 @@ export default function FftPage() {
     setAmpIndex(filteredIndexArr as never[]);
     setAmpData(filteredDataArr);
     setPlotCount(plotCount);
+
+    // insertDB(cycle, filteredDataArr);
 
     return { thresholdData, min, max };
   };

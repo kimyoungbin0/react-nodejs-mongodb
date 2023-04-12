@@ -278,7 +278,7 @@ export default function DaqCsvReader() {
   const [waveData, setWaveData] = useState([] as any);
   const [offsetData, setOffsetData] = useState([] as any);
   const [waveIndex, setWaveIndex] = useState([] as any);
-  const [isAmpChart, setIsAmpChart] = useState(false);
+  const [isAmpChart, setIsAmpChart] = useState(true);
   const [ampIndex, setAmpIndex] = useState([]);
   const [ampData, setAmpData] = useState([] as any);
   const [tvIndex, setTvIndex] = useState([] as any);
