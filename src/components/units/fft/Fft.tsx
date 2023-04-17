@@ -106,7 +106,7 @@ export default function FftPage() {
         setDateTime();
         setStartDate(getDateTime(0));
         setRecent([]);
-        fetchDB();
+        // fetchDB();
         // deleteDB();
       }
       setCycleChartArr(cycle);
