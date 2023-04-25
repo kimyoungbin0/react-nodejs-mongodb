@@ -6,7 +6,7 @@ import AmpFft from "../../chart/ampFft";
 import _ from "lodash";
 import { addCommas, getRandomInt } from "../../../commons/libraries/utils";
 import { getDateTime, setDateTime } from "../../../commons/libraries/date";
-import { averageByColumn, getThresholdData, reduceMaxArray, roundArray } from "../../../commons/libraries/array";
+import { averageByColumn, textToNumArray, getThresholdData, reduceMaxArray, roundArray } from "../../../commons/libraries/array";
 import ModalBasic from "../../commons/modals/ModalBasic";
 import { Button, ConfigProvider, DatePicker, InputNumber, Select, Space, Table } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
@@ -66,6 +66,7 @@ export default function FftPage() {
   const [leak, setLeak] = useState({ leak: 0, sensor: 0, distance: 0, time: "" });
   const [pauseCycle, setPauseCycle] = useState(-1);
 
+  const [isRecent, setIsRecent] = useState(false);
   const [recent, setRecent] = useState([] as any);
   const [recentCnt, setRecentCnt] = useState(10);
   // const [isViewAllHistory, setIsViewAllHistory] = useState(false);
@@ -101,7 +102,7 @@ export default function FftPage() {
   };
 
   useInterval(() => {
-    if (!isPause && cycle > -1) {
+    if ((!isPause && cycle > -1) || isRecent) {
       if (cycle === 0) {
         setDateTime();
         setStartDate(getDateTime(0));
@@ -114,7 +115,7 @@ export default function FftPage() {
       // const temp = getTdAmp(waveData[cycle % cycles]);
       // setAmpIndex(temp.frequencies);
       // setAmpData(temp.fdAmp);
-      if (cycle + 1 < cycles) {
+      if (!isRecent && cycle + 1 < cycles) {
         setCycle((prev) => (prev + 1) % cycles);
       } else {
         setIsPause(true);
@@ -126,6 +127,8 @@ export default function FftPage() {
         const result = setAvgData(waveData, cycle - 2);
         setAverageData(result);
       }
+
+      setIsRecent(false);
     }
   }, ms);
 
@@ -166,6 +169,7 @@ export default function FftPage() {
     if (cycle > -1) {
       const thresholdData = setThresholdData();
 
+      // TODO: Recent를 Click시, Prev, Next 버튼으로 Click시 업데이트될 수 있도록 수정
       if (!isPause) {
         setThresholdTable(thresholdData.thresholdData);
       }
@@ -271,10 +275,16 @@ export default function FftPage() {
     }
     activity = activity.slice(0, -2); // remove trailing comma and space
 
-    if (activity) {
-      const WARN_MSG = ["Warning", "Caution", "Danger"];
-      let position = getRandomInt(1, 5);
-      let warn = getRandomInt(0, 2);
+    // TODO: 해당 cycle 에 맞는 threshold 가 불러와지는지 확인 필요
+    if (activity && threshold.length > 0) {
+      console.log("cycle:", cycle, "activity:", activity, "threshold:", threshold);
+      // const WARN_MSG = ["Warning", "Caution", "Danger"];
+      const WARN_MSG = ["Low", "Moderate", "High"];
+      // let position = getRandomInt(1, 5);
+      const result = getThresholdPosition(textToNumArray(activity, ","));
+      const position = result.position;
+
+      let warn = result.power - 1;
       let time = getDateTime(cycle * ms);
       const duplicateCycle = recent.some((el: any) => el.cycle === cycle); // check if duplicate cycle exists
       if (!duplicateCycle) {
@@ -286,6 +296,27 @@ export default function FftPage() {
     } else {
       setLeak({ leak: 0, sensor: 0, distance: 0, time: "" });
     }
+  };
+
+  const getThresholdPosition = (activity: any) => {
+    const thresholds = [[45.1, 15.0, 30.1], [29.8, 0.1, 20.8], [15.3, 30.6], [31.3, 33.6], [15.8]];
+    const positions = [1, 2, 3, 4, 5];
+    let power = 0;
+
+    // 입력된 activity 배열과 thresholds 배열을 비교하여 교집합을 찾습니다.
+    for (let i = 0; i < thresholds.length; i++) {
+      const threshold = thresholds[i];
+      const intersection = activity.filter((value: any) => threshold.includes(value));
+      if (intersection.length > 0) {
+        power = intersection.length;
+        return { position: positions[i], power };
+      }
+    }
+
+    // 교집합이 없는 경우 가장 마지막 position 값을 반환합니다.
+    // return { position: positions[positions.length - 1], power: 0 };
+    // 교집합이 없는 경우 position 4와 power 0을 반환합니다.
+    return { position: 4, power: 1 };
   };
 
   const setChartMinMax = (min: number, max: number) => {
@@ -357,6 +388,7 @@ export default function FftPage() {
     // setCycle(cycle);
   };
 
+  // TODO: Prev, Next 버튼 클릭시 기준이 되는 값과 방향의 모호성으로 인해 prev값이 제대로 설정되지 않고 있으니 참고하여 수정 필요
   const onClickPrev = () => {
     console.log("Prev: " + cycle);
     if (cycle > 0) {
@@ -365,6 +397,7 @@ export default function FftPage() {
       setLeakStatus(cycle - 1);
     }
     setIsPause(true);
+    setIsRecent(true);
   };
 
   const onClickNext = () => {
@@ -375,6 +408,7 @@ export default function FftPage() {
       setLeakStatus((cycle + 1) % cycles);
     }
     setIsPause(true);
+    setIsRecent(true);
   };
 
   const onChangeCycle = (cycle: number) => {
@@ -384,10 +418,14 @@ export default function FftPage() {
   };
 
   const onClickRecent = (cycle: number) => {
+    console.log("Recent: " + cycle);
     setIsPause(true);
     setCycle(cycle);
     setCycleChartArr(cycle);
     setLeakStatus(cycle);
+    setIsRecent(true);
+    // TODO: 해당 cycle 에 맞는 threshold 가 불러와지는지 확인 필요
+    // setThresholdTable;
   };
 
   const setLeakStatus = (cycle: number) => {
@@ -589,7 +627,7 @@ export default function FftPage() {
                 size="small"
                 sticky={true}
                 scroll={{ y: 150 }}
-                style={{ width: "450px", minHeight: "150px", textAlign: "center" }}
+                style={{ width: "450px", minHeight: "150px" }}
                 ref={sectorTableRef}
               />
             </S.TableWrapper>
