@@ -83,7 +83,10 @@ export const getThresholdData = (arr1: any[], arr2: any[], arr3: any[], tv: numb
 
 export const averageByColumn = (arr: any) => {
   // 배열의 길이를 열(column)의 개수로 사용합니다.
-  const columnCount = arr[0].length;
+  let columnCount = 0;
+  if (arr.length > 0) {
+    columnCount = arr[0].length;
+  }
 
   // 결과를 저장할 배열을 만듭니다.
   const result = new Array(columnCount).fill(0);
@@ -135,4 +138,14 @@ export const roundArray: any = (arr: any, length: number) => {
     }
   }
   return result;
+};
+
+export const textToNumArray = (text: string, splitText: string) => {
+  // 문자열을 분할합니다.
+  const textArray = text.split(splitText);
+
+  // 배열의 각 요소를 숫자로 변환합니다.
+  const numberArray = textArray.map((str) => parseFloat(str.trim()));
+
+  return numberArray;
 };
