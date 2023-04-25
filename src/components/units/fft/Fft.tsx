@@ -291,7 +291,7 @@ export default function FftPage() {
         // proceed only if there is no duplicate cycle
         recent.push({ cycle: cycle, time: time, position: position, activity: activity, warn: WARN_MSG[warn] });
         setRecent(recent);
-        setLeak({ leak: position, sensor: 1, distance: 5, time: time });
+        setLeak({ leak: position, sensor: 1, distance: 5 - position, time: time });
       }
     } else {
       setLeak({ leak: 0, sensor: 0, distance: 0, time: "" });
@@ -299,7 +299,14 @@ export default function FftPage() {
   };
 
   const getThresholdPosition = (activity: any) => {
-    const thresholds = [[45.1, 15.0, 30.1], [29.8, 0.1, 20.8], [15.3, 30.6], [31.3, 33.6], [15.8]];
+    // const thresholds = [[45.1, 15.0, 30.1], [29.8, 0.1, 20.8], [15.3, 30.6], [31.3, 33.6], [15.8]];
+    const thresholds = [
+      [45.1, 15.0, 30.1],
+      [29.8, 0.1, 20.8],
+      [15.3, 30.6],
+      [15.6, 31.1],
+      [15.8, 25.4],
+    ];
     const positions = [1, 2, 3, 4, 5];
     let power = 0;
 
@@ -316,7 +323,7 @@ export default function FftPage() {
     // 교집합이 없는 경우 가장 마지막 position 값을 반환합니다.
     // return { position: positions[positions.length - 1], power: 0 };
     // 교집합이 없는 경우 position 4와 power 0을 반환합니다.
-    return { position: 4, power: 1 };
+    return { position: 0, power: 1 };
   };
 
   const setChartMinMax = (min: number, max: number) => {
@@ -434,9 +441,10 @@ export default function FftPage() {
 
     if (selectedLeak) {
       // do something with the found element, e.g. console.log(foundElement)
-      setLeak({ leak: selectedLeak.position, sensor: 1, distance: 5, time: selectedLeak.time });
+      setLeak({ leak: selectedLeak.position, sensor: 1, distance: 5 - selectedLeak.position, time: selectedLeak.time });
     } else {
       // handle the case when no element with cycle === n was found
+      setLeak({ leak: 0, sensor: 0, distance: 0, time: "" });
     }
   };
 
