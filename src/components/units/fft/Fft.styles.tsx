@@ -124,7 +124,20 @@ export const PipeBlock = styled.div`
   align-items: center;
 `;
 
-export const PipeBlockLeak = styled.div`
+// export const PipeBlockLeak = styled.div`
+//   min-width: 20%;
+//   padding: 10px;
+//   color: white;
+//   background-color: red;
+//   border: 1px solid darkgray;
+//   display: flex;
+//   flex-direction: row;
+//   justify-content: center;
+//   align-items: center;
+//   font-weight: 800;
+// `;
+
+export const PipeBlockLeak = styled.div<SensorBlockLeakProps>`
   min-width: 20%;
   padding: 10px;
   color: white;
@@ -135,6 +148,20 @@ export const PipeBlockLeak = styled.div`
   justify-content: center;
   align-items: center;
   font-weight: 800;
+
+  animation: blink ${({ ms }) => ms} infinite;
+
+  @keyframes blink {
+    50% {
+      background-color: #ff6666;
+    }
+  }
+
+  ${({ isPause }) =>
+    isPause &&
+    `
+    animation: none;
+  `}
 `;
 
 export const SensorBlock = styled.div`

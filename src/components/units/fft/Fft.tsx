@@ -291,7 +291,7 @@ export default function FftPage() {
         // proceed only if there is no duplicate cycle
         recent.push({ cycle: cycle, time: time, position: position, activity: activity, warn: WARN_MSG[warn] });
         setRecent(recent);
-        setLeak({ leak: position, sensor: 1, distance: 5 - position, time: time });
+        setLeak({ leak: position, sensor: 1, distance: position, time: time });
       }
     } else {
       setLeak({ leak: 0, sensor: 0, distance: 0, time: "" });
@@ -307,7 +307,8 @@ export default function FftPage() {
       [15.6, 31.1],
       [15.8, 25.4],
     ];
-    const positions = [1, 2, 3, 4, 5];
+    // const positions = [1, 2, 3, 4, 5];
+    const positions = [5, 4, 3, 2, 1];
     let power = 0;
 
     // 입력된 activity 배열과 thresholds 배열을 비교하여 교집합을 찾습니다.
@@ -441,7 +442,7 @@ export default function FftPage() {
 
     if (selectedLeak) {
       // do something with the found element, e.g. console.log(foundElement)
-      setLeak({ leak: selectedLeak.position, sensor: 1, distance: 5 - selectedLeak.position, time: selectedLeak.time });
+      setLeak({ leak: selectedLeak.position, sensor: 1, distance: selectedLeak.position, time: selectedLeak.time });
     } else {
       // handle the case when no element with cycle === n was found
       setLeak({ leak: 0, sensor: 0, distance: 0, time: "" });
@@ -599,7 +600,11 @@ export default function FftPage() {
                 const blocks = [];
                 for (let i = 1; i <= 5; i++) {
                   if (leak.leak === i) {
-                    blocks.push(<S.PipeBlockLeak key={i}>{i}</S.PipeBlockLeak>);
+                    blocks.push(
+                      <S.PipeBlockLeak key={i} isPause={isPause} ms={`${ms || 1000}ms`}>
+                        {i}
+                      </S.PipeBlockLeak>
+                    );
                   } else {
                     blocks.push(<S.PipeBlock key={i}>{i}</S.PipeBlock>);
                   }
