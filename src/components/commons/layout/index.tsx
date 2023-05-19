@@ -6,8 +6,8 @@ import LayoutNavigation from "./navigation";
 import MenuLeft from "./navigation/menu";
 
 const HIDDEN_HEADERS = ["/xxx"];
-const HIDDEN_BANNERS = ["/", "/daq", "/os", "/fft", "/fftos", "/fftos2", "dashboard"];
-const HIDDEN_MENUS = ["/", "/daq", "/os", "/fft", "/fftos", "/fftos2", "dashboard"];
+const HIDDEN_BANNERS = ["/", "/daq", "/os", "/fft", "/fftos", "/fftos2", "/wfft", "dashboard"];
+const HIDDEN_MENUS = ["/", "/daq", "/os", "/fft", "/fftos", "/fftos2", "/wfft", "dashboard"];
 const HIDDEN_FOOTERS = ["xxx"];
 
 interface ILayoutProps {

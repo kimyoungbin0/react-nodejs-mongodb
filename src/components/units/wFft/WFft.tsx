@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import * as S from "./Fft.styles";
+import * as S from "./WFft.styles";
 import CsvReader from "../../csvReader/CsvReader";
 import AmpFft from "../../chart/ampFft";
 
@@ -17,6 +17,8 @@ import "dayjs/locale/ko";
 
 import { collection, addDoc, getDocs, deleteDoc, getFirestore } from "firebase/firestore/lite";
 import { firebaseApp } from "../../../../src/commons/libraries/firebase";
+import WaveLive from "../../chart/waveLive";
+import { reduceArray } from "../../../commons/libraries/array";
 
 function useInterval(callback: any, delay: any) {
   const savedCallback = useRef<() => void>(() => {});
@@ -41,20 +43,24 @@ let tvConIndCount: any = {};
 let prevThresholdData: any = {};
 // let pauseCycle: number = -1;
 
-export default function FftPage() {
+export default function WFftPage() {
   const [cycle, setCycle] = useState(-1);
   const [cycles, setCycles] = useState(0);
   const [isPause, setIsPause] = useState(true);
   const [plotCount, setPlotCount] = useState(0);
-  const [waveData, setWaveData] = useState([] as any);
+  const [indexWave, setIndexWave] = useState([] as any);
+  const [dataWave, setDataWave] = useState([] as any);
   const [waveIndex, setWaveIndex] = useState([] as any);
+  const [waveData, setWaveData] = useState([] as any);
   const [averageData, setAverageData] = useState([] as any);
+  const [indexFft, setIndexFft] = useState([] as any);
+  const [dataFft, setDataFft] = useState([] as any);
   const [ampIndex, setAmpIndex] = useState([]);
   const [ampData, setAmpData] = useState([] as any);
-  const [minFreq, setMinFreq] = useState(20);
-  const [maxFreq, setMaxFreq] = useState(50);
+  const [minFreq, setMinFreq] = useState(0);
+  const [maxFreq, setMaxFreq] = useState(100);
   const [scale, setScale] = useState(32);
-  const [tv, setTv] = useState(13);
+  const [tv, setTv] = useState(500);
   const [tvIndexTop, setTvIndexTop] = useState([] as any);
   const [ms, setMs] = useState(100);
 
@@ -81,22 +87,42 @@ export default function FftPage() {
 
   const chunk = (data: any[]) => {
     const dataCount = data[0].length;
-    const unzipIndex = _.unzip(data)[0];
-    const maxIndex: number = unzipIndex.length;
+    const indexWave = _.unzip(data)[0];
+    const maxIndex: number = indexWave.length;
     const plotCount = maxIndex;
     setPlotCount(plotCount);
 
-    const indexData = unzipIndex;
+    console.log("unzipIndex: ", indexWave);
 
-    let offsetArr = new Array();
+    // const indexData = unzipIndex;
+    let dataWave: any = [];
+    let indexFft: any = [];
+    let dataFft = new Array();
     for (let i = 1; i < dataCount; i++) {
-      const unzipData = _.unzip(data)[i];
-      offsetArr.push(unzipData);
+      const waveResult = _.unzip(data)[i];
+      const fftResult = calculateFFT(waveResult);
+
+      if (i === 1) {
+        indexFft = fftResult.frequencies;
+
+        for (let i = 0; i < indexFft.length; i++) {
+          indexFft[i] = Math.floor(indexFft[i] * 100) / 100;
+        }
+
+        console.log("indexFft", indexFft);
+      }
+      const unzipData = fftResult.fftData;
+
+      // const unzipData = _.unzip(data)[i];
+      dataFft.push(unzipData);
+      dataWave.push(waveResult);
+
+      // calculateFFT(unzipData);
     }
 
-    const averageArr = setAvgData(offsetArr, 40);
+    const averageFft = setAvgData(dataFft, 40);
 
-    return { indexData, offsetData: offsetArr, averageData: averageArr };
+    return { indexWave, dataWave, indexFft, dataFft, averageFft };
   };
 
   useInterval(() => {
@@ -131,6 +157,47 @@ export default function FftPage() {
     }
   }, ms);
 
+  let tdAmpData = _.fill(Array(4096 * 2), 0);
+
+  // const getTdAmp = (data: any) => {
+  //   tdAmpData = _.drop(tdAmpData, plotCount);
+  //   tdAmpData = _.concat(tdAmpData, data);
+
+  //   const fft = require("fft-js").fft;
+  //   const fftUtil = require("fft-js").util;
+  //   const signal = _.takeRight(tdAmpData, 8192);
+
+  //   const phasors = fft(signal);
+
+  //   const frequencies = fftUtil.fftFreq(phasors, 16384);
+  //   const magnitudes = fftUtil.fftMag(phasors);
+  // };
+
+  const calculateFFT = (waveform: any) => {
+    const fft = require("fft-js").fft;
+    const fftUtil = require("fft-js").util;
+
+    const signal = waveform.slice(0, 16384);
+
+    const phasors = fft(signal);
+
+    const frequencies = fftUtil.fftFreq(phasors, 8192);
+    const magnitudes = fftUtil.fftMag(phasors);
+
+    const fftData = [];
+    for (let i = 0; i < 8192; i++) {
+      const fdAmp = (Math.abs(magnitudes[i]) * 2) / 16384;
+      fftData.push(fdAmp);
+    }
+
+    const normalizedFrequencies = frequencies.map((freq) => freq * (100 / frequencies[frequencies.length - 1]));
+
+    // console.log("normalizedFrequencies:", normalizedFrequencies);
+    // console.log("fftData:", fftData);
+
+    return { frequencies: normalizedFrequencies, fftData };
+  };
+
   const insertDB = (cycle: number, ampData: number[]) => {
     console.log("insertDB:", cycle);
     const ampDataDB = collection(getFirestore(firebaseApp), "ampData");
@@ -159,13 +226,15 @@ export default function FftPage() {
 
   const setAvgData = (data: any[], leakPoint: number) => {
     console.log("resetAverageData:", leakPoint);
-    const averageData = roundArray(averageByColumn(data.slice(0, leakPoint)), 2);
+    const averageData = roundArray(averageByColumn(data.slice(0, leakPoint)), 10);
+    console.log("averageData:", averageData);
     return averageData;
     // setAverageData(averageArr);
   };
 
   const setCycleChartArr = (cycle: number) => {
     if (cycle > -1) {
+      setWaveChardData();
       const thresholdData = setThresholdData();
 
       // TODO: Recent를 Click시, Prev, Next 버튼으로 Click시 업데이트될 수 있도록 수정
@@ -177,8 +246,15 @@ export default function FftPage() {
     }
   };
 
+  const setWaveChardData = () => {
+    setWaveIndex(reduceArray(indexWave, scale));
+    console.log("waveIndex", reduceArray(indexWave, scale));
+    setWaveData(reduceArray(dataWave[cycle], scale));
+    console.log("waveData", reduceArray(dataWave[cycle], scale));
+  };
+
   const setThresholdData = () => {
-    const ampMaxArray = reduceMaxArray(waveIndex, waveData[cycle], averageData, scale);
+    const ampMaxArray = reduceMaxArray(indexFft, dataFft[cycle], averageData, scale);
     const ampIndexArr = ampMaxArray.maxIndexArray;
     const ampDataArr = ampMaxArray.maxDataArray;
     const ampAverageArr = ampMaxArray.maxAverageArray;
@@ -290,7 +366,7 @@ export default function FftPage() {
         // proceed only if there is no duplicate cycle
         recent.push({ cycle: cycle, time: time, position: position, activity: activity, warn: WARN_MSG[warn] });
         setRecent(recent);
-        setLeak({ leak: position, sensor: 1, distance: position, time: time });
+        setLeak({ leak: position, sensor: 1, distance: 5, time: time });
       }
     } else {
       setLeak({ leak: 0, sensor: 0, distance: 0, time: "" });
@@ -373,6 +449,8 @@ export default function FftPage() {
     setCycle(cycle < 0 ? -1 : 0);
     setIsPause(true);
     setPauseCycle(0);
+    setWaveIndex([]);
+    setWaveData([]);
     setAmpIndex([]);
     setAmpData([]);
     setLeak({ leak: 0, sensor: 0, distance: 0, time: "" });
@@ -461,18 +539,22 @@ export default function FftPage() {
     setWaveData([]);
     setAverageData([]);
     const csvData = chunk(_.dropRight(results));
-    let indexData = csvData.indexData;
-    let chunkedData = csvData.offsetData;
-    let averageData = csvData.averageData;
+    const indexWave = csvData.indexWave;
+    const dataWave = csvData.dataWave;
+    const indexFft = csvData.indexFft;
+    const dataFft = csvData.dataFft;
+    const averageFft = csvData.averageFft;
     // console.log(indexData);
-    // console.log(chunkedData);
+    console.log(dataFft);
     // console.log(averageData);
 
-    setWaveIndex(indexData);
-    // const adjustedData = subtractArrays(chunkedData, averageData, 2);
-    setAverageData(averageData);
-    setWaveData(chunkedData);
-    setCycles(chunkedData.length);
+    console.log("indexFft: " + indexFft);
+    setIndexWave(indexWave);
+    setDataWave(dataWave);
+    setIndexFft(indexFft);
+    setDataFft(dataFft);
+    setAverageData(averageFft);
+    setCycles(dataFft.length);
 
     setCycle(0);
     setIsPause(false);
@@ -561,7 +643,7 @@ export default function FftPage() {
             </S.CycleWrapper>
             <S.SettingWrapper>
               ms: <S.AntdInputNumber id={"ms"} type={"number"} size={"small"} defaultValue={ms} min={80} max={1000} ref={msInputRef} />
-              tv: <S.AntdInputNumber id={"tv"} type={"number"} size={"small"} defaultValue={tv} min={0} max={100} ref={tvInputRef} />
+              tv: <S.AntdInputNumber id={"tv"} type={"number"} size={"small"} defaultValue={tv} min={0} max={1000} ref={tvInputRef} />
               min: <S.AntdInputNumber id={"minFreq"} type={"number"} size={"small"} defaultValue={minFreq} min={0} max={100} ref={minInputRef} />
               max: <S.AntdInputNumber id={"maxFreq"} type={"number"} size={"small"} defaultValue={maxFreq} min={0} max={100} ref={maxInputRef} />
               1/scale: <S.AntdInputNumber id={"scale"} type={"number"} size={"small"} defaultValue={scale} min={1} max={8192} ref={scaleInputRef} />
@@ -570,7 +652,10 @@ export default function FftPage() {
           </S.Wrapper>
           <S.Wrapper>
             <S.ChartWrapper>
-              <AmpFft index={ampIndex} count={cycle} plots={ampData} tv={_.mean(ampData)} minY={minY} maxY={maxY} />
+              {/* TODO: wavechart data 를 올바르게 넣어야 함 */}
+              <WaveLive index={waveIndex} count={cycle} plots={waveData} />
+
+              <AmpFft index={ampIndex} count={cycle} plots={ampData} tv={_.mean(ampData)} minY={0} maxY={1} />
               {cycle > -1 && (
                 <S.ControlWrapper>
                   <S.RangeInput

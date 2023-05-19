@@ -71,7 +71,11 @@ export default function MenuLeft() {
 
   const items: MenuProps["items"] = [
     { type: "divider" },
-    getItem("DashBoard", "sub1", <DashboardOutlined />, [getItem(<a href="/fftos2">FFT OS</a>, "1"), getItem(<a href="/daq">Wave Form</a>, "2")]),
+    getItem("DashBoard", "sub1", <DashboardOutlined />, [
+      getItem(<a href="/fftos2">FFT OS</a>, "1"),
+      getItem(<a href="/daq">Wave Form</a>, "2"),
+      getItem(<a href="/wfft">Wave Form to FFT</a>, "3"),
+    ]),
     { type: "divider" },
     getItem("Transaction", "sub2", <ApiOutlined />),
     { type: "divider" },

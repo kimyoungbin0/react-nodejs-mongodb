@@ -140,7 +140,7 @@ export const roundArray: any = (arr: any, length: number) => {
   return result;
 };
 
-export const textToNumArray = (text: string, splitText: string) => {
+export const textToNumArray = (text: string, splitText: string = ",") => {
   // 문자열을 분할합니다.
   const textArray = text.split(splitText);
 
