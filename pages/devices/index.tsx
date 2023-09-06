@@ -25,11 +25,11 @@ export default function DevicesPage() {
   }, [value]); // Add the dependencies here
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", width: "98%", height: "100%" }}>
-      <div style={{ marginRight: "30px", height: "3%", marginTop: "20px", marginLeft: "10px" }}>
+    <div style={{ display: "flex", flexDirection: "column", width: "98%", height: "100%", padding: "30px" }}>
+      <div style={{ height: "3%", marginRight: "10px" }}>
         <ShowLocation value={value} setValue={setValue} handleSwitchChange={handleSwitchChange} />
       </div>
-      <div style={{ margin: "20px" }}>
+      <div style={{ height: "97%", marginTop: "20px", marginLeft: "10px" }}>
         <UbadgeTable value={value} setValue={setValue} isMapVisible={isMapVisible} setMapVisible={setMapVisible} devices={devices} />
       </div>
     </div>

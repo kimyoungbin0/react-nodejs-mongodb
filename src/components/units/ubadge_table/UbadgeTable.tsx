@@ -4,7 +4,6 @@ import * as S from "./UbadgeTable.styles";
 import { useSession } from "next-auth/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolder, faSatelliteDish } from "@fortawesome/free-solid-svg-icons";
-import { css, styled } from "styled-components";
 
 const UbadgeTable: React.FC<any> = (props) => {
   const { data: session } = useSession();

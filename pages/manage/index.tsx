@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import StreeManage from "../../src/components/units/treeSelect_manage/TreeSelect";
 import UbadgeManage from "../../src/components/units/ubadge_manage/UbadgeManage";
 import AddButton from "../../src/components/units/addButton/addButton";
 import axios from "axios"; // Add axios import
@@ -36,8 +35,8 @@ export default function ManagePage() {
 
   return (
     <>
-      <div style={{ display: "flex", flexDirection: "row", height: "100%", width: "100%" }}>
-        <div style={{ flex: 1, position: "relative", width: "100%" }}>
+      <div style={{ display: "flex", flexDirection: "row", height: "100%", width: "100%", padding: "30px" }}>
+        <div style={{ flex: 1, position: "relative", width: "100%", height: "100%" }}>
           <div style={{ height: "4%", paddingBottom: "8px" }}>
             <ShowLocation value={value} setValue={setValue} handleSwitchChange={handleSwitchChange} />
           </div>
@@ -47,7 +46,7 @@ export default function ManagePage() {
           <AddButton value={value} setValue={setValue} fetchData={fetchData} />
         </div>
 
-        <div style={{ flex: 3, display: "flex", justifyContent: "center", alignItems: "center", position: "relative", margin: "50px" }}>
+        <div style={{ flex: 3, display: "flex", marginLeft: "20px", height: "100%" }}>
           <Map value={value} setValue={setValue} devices={devices} refreshImage={refreshImage} />
           {isMapVisible && (
             <MapChangeButton value={value} setValue={setValue} fetchData={fetchData} refreshImage={refreshImage} setRefreshImage={setRefreshImage} />

@@ -694,44 +694,7 @@ export default function FftPage() {
               </S.ControlWrapper>
             </S.ChartWrapper>
           </S.Wrapper>
-          <S.Wrapper>
-            <S.PipeWrapper>
-              {(() => {
-                const blocks = [];
-                for (let i = 1; i <= 5; i++) {
-                  if (leak.leak === i) {
-                    blocks.push(
-                      <S.PipeBlockLeak key={i} isPause={isPause} ms={`${ms || 1000}ms`}>
-                        {i}
-                      </S.PipeBlockLeak>
-                    );
-                  } else {
-                    blocks.push(<S.PipeBlock key={i}>{i}</S.PipeBlock>);
-                  }
-                }
-                return blocks;
-              })()}
-            </S.PipeWrapper>
-          </S.Wrapper>
-          <S.Wrapper>
-            <S.PipeWrapper style={{ justifyContent: "space-between" }}>
-              {((leak.sensor === 1 || leak.sensor >= 3) && ( //???
-                <S.SensorBlockLeak isPause={isPause} ms={`${ms || 1000}ms`}>
-                  FlexMate Sensor 1
-                </S.SensorBlockLeak>
-              )) || <S.SensorBlock>FlexMate Sensor 1</S.SensorBlock>}
 
-              {leak.leak > 0 && (
-                <S.ThresholdBlock>
-                  Pipe 1 Threshold Detection at {leak.time} | Sensor:
-                  {leak.sensor < 3 ? leak.sensor : leak.sensor - 2} / Distance: {leak.distance}m
-                </S.ThresholdBlock>
-              )}
-
-              {/* {(leak.sensor === 0 || leak.sensor === 1) && <S.SensorBlock>FlexMate Sensor 2</S.SensorBlock>}
-              {(leak.sensor === 2 || leak.sensor >= 3) && <S.SensorBlockLeak>FlexMate Sensor 2</S.SensorBlockLeak>} */}
-            </S.PipeWrapper>
-          </S.Wrapper>
           <S.Wrapper>
             <S.TableWrapper>
               <Table

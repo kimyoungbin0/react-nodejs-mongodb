@@ -1,9 +1,9 @@
-import FftOsPage from "../fftos2";
+import Fft from "../../src/components/units/fft/Fft";
 
 export default function FftPage() {
   return (
     <>
-      <FftOsPage />
+      <Fft />
     </>
   );
 }

@@ -149,11 +149,7 @@ export default function MenuLeft() {
 
   const items: MenuProps["items"] = [
     getItem(<a href="/home">Home</a>, "sub1", <HomeOutlined />),
-    getItem("DashBoard", "sub2", <DashboardOutlined />, [
-      getItem(<a href="/fftos2">FFT OS</a>, "1"),
-      getItem(<a href="/daq">Wave Form</a>, "2"),
-      getItem(<a href="/wfft">Wave Form to FFT</a>, "3"),
-    ]),
+    getItem(<a href="/fft">FFT</a>, "sub2", <DashboardOutlined />),
     getItem(<a href="/manage">Manage</a>, "sub3", <ApiOutlined />),
     getItem(<a href="/devices">Devices</a>, "sub4", <ApartmentOutlined />),
     getItem("Message", "sub5", <MessageOutlined />),

@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { Avatar, Badge, Space } from "antd";
 import * as S from "./Ubadge.styles";
 import { useSession } from "next-auth/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

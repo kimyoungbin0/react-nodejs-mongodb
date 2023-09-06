@@ -10,7 +10,6 @@ import { ThemeModeButton } from "../../units/darkButton/DarkButton";
 const HIDDEN_BANNERS = ["/", "/daq", "/os", "/fft", "/fftos", "/fftos2", "/wfft", "/devices", "/manage", "/setting", "/home", "/mobile", "dashboard"];
 const HIDDEN_MENUS = ["/", "/daq", "/os", "/fft", "/fftos", "/fftos2", "/wfft", "/devices", "/manage", "/setting", "/home", "/mobile", "dashboard"];
 const HIDDEN_LMENUS = ["/"];
-const HIDDEN_EVERY = ["/"];
 
 const StyledLayout = styled.div<{ layoutheight: number }>`
   // layoutHeight prop을 받도록 타입 정의 수정
@@ -112,7 +111,7 @@ export default function Layout(props: ILayoutProps) {
 
   return (
     <ThemeProvider theme={theme}>
-      <ThemeModeButton toggleTheme={toggleTheme} themeMode={themeMode}></ThemeModeButton>
+      {!isHiddenLMENUS && !isMobile && <ThemeModeButton toggleTheme={toggleTheme} themeMode={themeMode} />}
       <StyledLayout layoutheight={layoutHeight}>
         {!isHiddenLMENUS && !isMobile && <MenuLeft />}
         <ContentContainer>{props.children}</ContentContainer>
