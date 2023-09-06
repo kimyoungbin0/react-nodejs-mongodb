@@ -1,9 +1,9 @@
-import Flexreal from "./main";
+import LoginPage from "./login/login";
 
 export default function Home() {
   return (
     <>
-      <Flexreal />
+      <LoginPage />
     </>
   );
 }

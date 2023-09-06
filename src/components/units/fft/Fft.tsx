@@ -3,7 +3,7 @@ import * as S from "./Fft.styles";
 import CsvReader from "../../csvReader/CsvReader";
 import AmpFft from "../../chart/ampFft";
 
-import _ from "lodash";
+import _, { set } from "lodash";
 import { addCommas, getRandomInt } from "../../../commons/libraries/utils";
 import { getDateTime, setDateTime } from "../../../commons/libraries/date";
 import { averageByColumn, textToNumArray, getThresholdData, reduceMaxArray, roundArray } from "../../../commons/libraries/array";
@@ -17,6 +17,7 @@ import "dayjs/locale/ko";
 
 import { collection, addDoc, getDocs, deleteDoc, getFirestore } from "firebase/firestore/lite";
 import { firebaseApp } from "../../../../src/commons/libraries/firebase";
+import { calculateMeanFrequency, calculatePeakFrequency } from "../../../commons/libraries/flexreal";
 
 function useInterval(callback: any, delay: any) {
   const savedCallback = useRef<() => void>(() => {});
@@ -57,6 +58,15 @@ export default function FftPage() {
   const [tv, setTv] = useState(13);
   const [tvIndexTop, setTvIndexTop] = useState([] as any);
   const [ms, setMs] = useState(100);
+  const [vCycle, setVCycle] = useState(100);
+
+  // mean, peak frequency data state
+  const [meanFreq, setMeanFreq] = useState<number[]>([]);
+  const [peakFreq, setPeakFreq] = useState<number[]>([]);
+  const [vStartFreq, setVStartFreq] = useState(0);
+  const [vEndFreq, setVEndFreq] = useState(0);
+  const [vMeanFreq, setVMeanFreq] = useState<number[]>([]);
+  const [vPeakFreq, setVPeakFreq] = useState<number[]>([]);
 
   const [threshold, setThreshold] = useState([] as any);
   const [minY, setMinY] = useState(-100);
@@ -70,6 +80,8 @@ export default function FftPage() {
   const [recent, setRecent] = useState([] as any);
   const [recentCnt, setRecentCnt] = useState(10);
   // const [isViewAllHistory, setIsViewAllHistory] = useState(false);
+
+  const [chartKind, setChartKind] = useState("fft");
 
   const msInputRef = useRef(null);
   const tvInputRef = useRef(null);
@@ -113,11 +125,13 @@ export default function FftPage() {
       // const temp = getTdAmp(waveData[cycle % cycles]);
       // setAmpIndex(temp.frequencies);
       // setAmpData(temp.fdAmp);
-      if (!isRecent && cycle + 1 < cycles) {
-        setCycle((prev) => (prev + 1) % cycles);
-      } else {
-        setIsPause(true);
-        setPauseCycle(0);
+      if (!isRecent) {
+        if (cycle + 1 < cycles) {
+          setCycle((prev) => (prev + 1) % cycles);
+        } else {
+          setIsPause(true);
+          setPauseCycle(cycles - 1);
+        }
       }
       // checkLeak((cycle + 1) % cycles);
 
@@ -218,6 +232,35 @@ export default function FftPage() {
 
     // insertDB(cycle, filteredDataArr);
 
+    if (!isPause && !isRecent) {
+      const meanFrequency = calculateMeanFrequency(filteredIndexArr, filteredDataArr);
+      setMeanFreq((prev: any) => [...prev, meanFrequency]);
+      setVMeanFreq(meanFreq);
+
+      const peakFrequency = calculatePeakFrequency(filteredDataArr, plotCount * 100);
+      setPeakFreq((prev: any) => [...prev, peakFrequency]);
+      setVPeakFreq(peakFreq);
+    } else {
+      // console.log("meanFreq:", meanFreq);
+
+      // TODO: cycle 수동 조작시 meanFreq, peakFreq 업데이트 부분 수정 필요
+      if (cycle <= pauseCycle) {
+        const startIndex = Math.max(cycle - vCycle, 0);
+        const endIndex = Math.min(startIndex + vCycle, meanFreq.length);
+        console.log("startIndex:", startIndex, "endIndex:", endIndex);
+
+        setVStartFreq(startIndex);
+        setVEndFreq(endIndex);
+
+        setVMeanFreq(_.slice(meanFreq, startIndex, endIndex));
+        setVPeakFreq(_.slice(peakFreq, startIndex, endIndex));
+
+        const selectedValues = _.slice(_.range(peakFreq.length), startIndex, endIndex);
+        console.log("cycle:", cycle, "pauseCycel:", pauseCycle, "startIndex:", startIndex, "endIndex:", endIndex);
+        console.log("selectedValues:", selectedValues);
+      }
+    }
+
     return { thresholdData, min, max };
   };
 
@@ -276,7 +319,7 @@ export default function FftPage() {
 
     // TODO: 해당 cycle 에 맞는 threshold 가 불러와지는지 확인 필요
     if (activity && threshold.length > 0) {
-      console.log("cycle:", cycle, "activity:", activity, "threshold:", threshold);
+      // console.log("cycle:", cycle, "activity:", activity, "threshold:", threshold);
       // const WARN_MSG = ["Warning", "Caution", "Danger"];
       const WARN_MSG = ["Low", "Moderate", "High"];
       // let position = getRandomInt(1, 5);
@@ -379,17 +422,33 @@ export default function FftPage() {
     setThreshold([]);
     setTvIndexTop([]);
     setRecent([]);
+
+    setMeanFreq([]);
+    setPeakFreq([]);
+    setVMeanFreq([]);
+    setVPeakFreq([]);
+    setVStartFreq(0);
+    setVEndFreq(0);
   };
 
   const onClickPause = () => {
     if (!isPause) {
       setPauseCycle(cycle);
     } else {
-      // console.log("pauseCycle: " + pauseCycle);
+      console.log("pauseCycle: " + pauseCycle);
       setCycle(pauseCycle);
       setCycleChartArr(pauseCycle);
+      if (pauseCycle === 0 || pauseCycle === cycles - 1) {
+        setMeanFreq([]);
+        setPeakFreq([]);
+        // setVStartFreq(0);
+        // setVEndFreq(0);
+        setCycle(0);
+      }
     }
 
+    setVStartFreq(0);
+    setVEndFreq(0);
     // console.log("pauseCycle: " + pauseCycle);
     setIsPause(!isPause);
     // setCycle(cycle);
@@ -404,6 +463,7 @@ export default function FftPage() {
       setLeakStatus(cycle - 1);
       setIsPause(true);
       setIsRecent(true);
+      console.log("pauseCycle: " + pauseCycle);
     }
   };
 
@@ -415,6 +475,7 @@ export default function FftPage() {
       setLeakStatus((cycle + 1) % cycles);
       setIsPause(true);
       setIsRecent(true);
+      console.log("pauseCycle: " + pauseCycle);
     }
   };
 
@@ -487,6 +548,10 @@ export default function FftPage() {
     // }
   };
 
+  const handleChartKindChange = (value: string) => {
+    setChartKind(value);
+  };
+
   const columnsSector = [
     {
       title: "Sector",
@@ -554,12 +619,24 @@ export default function FftPage() {
     <>
       <S.PageWrapper>
         <S.LeftWrapper>
-          {cycle < 0 && <CsvReader handleResults={handleResults} />}
+          <S.CsvWrapper>{cycle < 0 && <CsvReader handleResults={handleResults} />}</S.CsvWrapper>
           <S.Wrapper>
             <S.CycleWrapper>
-              cycle: {cycle} / cycles: {cycles} / plots: {addCommas(plotCount)}
+              cycle: {cycle} / {cycles} plots: {addCommas(plotCount)}
             </S.CycleWrapper>
             <S.SettingWrapper>
+              <Select
+                defaultValue="fft"
+                size="small"
+                style={{ width: 120 }}
+                onChange={handleChartKindChange}
+                options={[
+                  { value: "fft", label: "FFT" },
+                  { value: "meanFreq", label: "Mean Frequency" },
+                  { value: "peakFreq", label: "Peak Frequency" },
+                  // { value: "1000", label: "최근 1000건", disabled: true },
+                ]}
+              />
               ms: <S.AntdInputNumber id={"ms"} type={"number"} size={"small"} defaultValue={ms} min={80} max={1000} ref={msInputRef} />
               tv: <S.AntdInputNumber id={"tv"} type={"number"} size={"small"} defaultValue={tv} min={0} max={100} ref={tvInputRef} />
               min: <S.AntdInputNumber id={"minFreq"} type={"number"} size={"small"} defaultValue={minFreq} min={0} max={100} ref={minInputRef} />
@@ -570,7 +647,27 @@ export default function FftPage() {
           </S.Wrapper>
           <S.Wrapper>
             <S.ChartWrapper>
-              <AmpFft index={ampIndex} count={cycle} plots={ampData} tv={_.mean(ampData)} minY={minY} maxY={maxY} />
+              {chartKind === "fft" && <AmpFft index={ampIndex} count={cycle} plots={ampData} tv={_.mean(ampData)} minY={minY} maxY={maxY} />}
+              {chartKind === "meanFreq" && (
+                <AmpFft
+                  index={_.map(_.takeRight(_.range(vMeanFreq.length), vCycle), (ev) => ev + vStartFreq)}
+                  count={cycle}
+                  plots={_.takeRight(vMeanFreq, vCycle)}
+                  tv={_.mean(vMeanFreq)}
+                  minY={(_.min(vMeanFreq) ?? 1) - 1}
+                  maxY={(_.max(vMeanFreq) ?? 99) + 1}
+                />
+              )}
+              {chartKind === "peakFreq" && (
+                <AmpFft
+                  index={_.map(_.takeRight(_.range(vPeakFreq.length), vCycle), (ev) => ev + vStartFreq)}
+                  count={cycle}
+                  plots={_.takeRight(vPeakFreq, vCycle)}
+                  tv={_.mean(vPeakFreq)}
+                  minY={(_.min(vPeakFreq) ?? 1) - 1}
+                  maxY={(_.max(vPeakFreq) ?? 99) + 1}
+                />
+              )}
               {cycle > -1 && (
                 <S.ControlWrapper>
                   <S.RangeInput
@@ -618,7 +715,7 @@ export default function FftPage() {
           </S.Wrapper>
           <S.Wrapper>
             <S.PipeWrapper style={{ justifyContent: "space-between" }}>
-              {((leak.sensor === 1 || leak.sensor >= 3) && (
+              {((leak.sensor === 1 || leak.sensor >= 3) && ( //???
                 <S.SensorBlockLeak isPause={isPause} ms={`${ms || 1000}ms`}>
                   FlexMate Sensor 1
                 </S.SensorBlockLeak>
@@ -643,20 +740,12 @@ export default function FftPage() {
                 size="small"
                 sticky={true}
                 scroll={{ y: 150 }}
-                style={{ width: "450px", minHeight: "150px" }}
+                style={{ width: "100%" }}
                 ref={sectorTableRef}
               />
             </S.TableWrapper>
             <S.TableWrapper>
-              <Table
-                columns={columnsLeak}
-                dataSource={dataLeak}
-                size="small"
-                sticky={true}
-                scroll={{ y: 150 }}
-                style={{ width: "350px", minHeight: "150px" }}
-                ref={leakTableRef}
-              />
+              <Table columns={columnsLeak} dataSource={dataLeak} size="small" sticky={true} scroll={{ y: 150 }} style={{ width: "100%" }} ref={leakTableRef} />
             </S.TableWrapper>
           </S.Wrapper>
         </S.LeftWrapper>

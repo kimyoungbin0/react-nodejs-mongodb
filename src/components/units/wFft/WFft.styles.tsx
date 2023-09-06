@@ -6,14 +6,15 @@ export const PageWrapper = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  min-width: 800px;
-  max-width: 100vw;
+  width: 100%;
+  height: 100%;
 `;
 
 export const LeftWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  min-width: 810px;
+  width: 50%;
+  height: 100%;
   padding-right: 10px;
   margin-bottom: 10px;
 `;
@@ -24,9 +25,8 @@ export const RightWrapper = styled.div`
   justify-content: space-between;
   align-items: space-between;
   flex-wrap: wrap;
-  width: 100%;
-  max-width: 800px;
-  min-height: 800px;
+  width: 50%
+  height: 100%
   /* max-height: 100vh; */
   border: solid 1px #cccccc;
   padding: 10px;
@@ -49,8 +49,6 @@ export const TableWrapper = styled.div`
   display: flex;
   flex-direction: column;
   /* min-width: 400px; */
-  min-height: 180px;
-  max-height: 230px;
   /* overflow: auto; */
   /* border: 1px solid #cccccc; */
 `;

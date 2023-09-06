@@ -13,6 +13,7 @@ const Wrapper = styled.div`
 
 const A = styled.a`
   text-decoration: none;
+  color: black;
 `;
 
 export default function LayoutFooter() {

@@ -1,5 +1,6 @@
 import { AppstoreTwoTone, BellOutlined, LoginOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
+import { useSession } from "next-auth/react";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -39,12 +40,14 @@ const LogoWrapper = styled.div`
   align-items: flex-start;
   padding-left: 10px;
   line-height: 16px;
+  color: black;
 `;
 
 const SpanLogo = styled.a`
   width: 200px;
   font-size: 1.5rem;
   font-weight: 900;
+  color: black;
 
   text-decoration: none;
 `;
@@ -56,6 +59,7 @@ const LoginWrapper = styled.div`
   align-items: flex-start;
   padding-right: 10px;
   line-height: 16px;
+  color: black;
 `;
 
 const LoginItemWrapper = styled.div`
@@ -70,6 +74,8 @@ const IconWrapper = styled.div`
 `;
 
 export default function LayoutHeader() {
+  const { data: session } = useSession();
+  const name = session?.user?.name ?? "";
   return (
     <>
       <Wrapper>
@@ -79,18 +85,11 @@ export default function LayoutHeader() {
               <AppstoreTwoTone />
             </IconWrapper>
             <LogoWrapper>
-              <SpanLogo href="/"> FlexReal v0.0.1</SpanLogo>
+              <SpanLogo href="/devices"> FlexReal v0.0.1</SpanLogo>
               <span>support@rinasolution.com</span>
             </LogoWrapper>
           </SiteWrapper>
-          <LoginWrapper>
-            <LoginItemWrapper>
-              <BellOutlined />
-            </LoginItemWrapper>
-            <LoginItemWrapper>
-              <LoginOutlined />
-            </LoginItemWrapper>
-          </LoginWrapper>
+          <LoginWrapper>{name}님 반갑습니다</LoginWrapper>
         </HomeWrapper>
       </Wrapper>
     </>

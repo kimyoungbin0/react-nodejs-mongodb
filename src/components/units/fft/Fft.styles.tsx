@@ -6,16 +6,22 @@ export const PageWrapper = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  min-width: 800px;
-  max-width: 100vw;
+  width: 100%;
+  height: 95%;
+  margin: 30px;
 `;
 
 export const LeftWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  min-width: 810px;
+  width: 50%;
+  height: 95%;
   padding-right: 10px;
   margin-bottom: 10px;
+`;
+
+export const CsvWrapper = styled.div`
+  width: "100%";
 `;
 
 export const RightWrapper = styled.div`
@@ -24,9 +30,8 @@ export const RightWrapper = styled.div`
   justify-content: space-between;
   align-items: space-between;
   flex-wrap: wrap;
-  width: 100%;
-  max-width: 800px;
-  min-height: 800px;
+  width: 50%;
+  height: 95%;
   /* max-height: 100vh; */
   border: solid 1px #cccccc;
   padding: 10px;
@@ -36,28 +41,28 @@ export const RightWrapper = styled.div`
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
+  width: 100%;
 `;
 
 export const ChartWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  min-width: 800px;
+  height: 100%;
   border: 1px solid #cccccc;
+  width: 100%;
 `;
 
 export const TableWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  /* min-width: 400px; */
-  min-height: 180px;
-  max-height: 230px;
+  height: 100%;
+  width: 50%;
   /* overflow: auto; */
   /* border: 1px solid #cccccc; */
 `;
 
 export const CycleWrapper = styled.div`
-  min-width: 300px;
-  min-height: 30px;
+  width: 20%;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -65,8 +70,7 @@ export const CycleWrapper = styled.div`
 `;
 
 export const SettingWrapper = styled.div`
-  min-width: 500px;
-  min-height: 30px;
+  width: 80%;
   padding: 0;
   display: flex;
   flex-direction: row;
@@ -102,7 +106,6 @@ export const RangeInput = styled.input`
 
 export const PipeWrapper = styled.div`
   width: 100%;
-  max-width: 800px;
   padding: 20px;
   border: 1px solid #cccccc;
   /* background-color: #bc960d; */
@@ -250,8 +253,6 @@ export const SectionRecentWrapper = styled.div`
   align-items: flex-start;
   width: 100%;
   height: 100%;
-  min-height: 620px;
-  max-height: 620px;
   padding: 10px;
   overflow: auto;
 `;
@@ -352,8 +353,7 @@ export const styles = {
     flexDirection: "column",
     // height: "100%",
     width: "100%",
-    maxWidth: "800px",
-    height: "100px",
+    height: "40px",
     justifyContent: "center",
     // margin: 10,
   },
