@@ -103,36 +103,38 @@ const UbadgeManage: React.FC<any> = (props) => {
   return (
     <>
       <S.StyledSpace>
-        {props.devices &&
-          props.devices
-            .filter((device) => device.location === props.value && device.email === email)
-            .map((device, index) => (
-              <S.BadgeWrapper key={index}>
-                {props.isMapVisible ? (
-                  <>
-                    <a key={index} onClick={() => onClickBadgeButton(device, props.value, props.setValue)}>
-                      {device.name.includes("#") ? (
-                        <FontAwesomeIcon icon={faSatelliteDish} size="3x" style={{ color: "#e00b0b" }} />
-                      ) : (
-                        <FontAwesomeIcon icon={faFolder} size="3x" />
-                      )}
-                    </a>
-                    <span>{device.name}</span>
-                  </>
-                ) : (
-                  <>
-                    <a key={index} onClick={() => onClickBadgeButton(device, props.value, props.setValue)}>
-                      {device.name.includes("#") ? (
-                        <FontAwesomeIcon icon={faSatelliteDish} size="3x" style={{ color: "#e00b0b" }} />
-                      ) : (
-                        <FontAwesomeIcon icon={faFolder} size="3x" />
-                      )}
-                    </a>
-                    <S.DeviceName>{device.name}</S.DeviceName>
-                  </>
-                )}
-              </S.BadgeWrapper>
-            ))}
+        <S.ColumnWrapper>
+          {props.devices &&
+            props.devices
+              .filter((device) => device.location === props.value && device.email === email)
+              .map((device, index) => (
+                <S.BadgeWrapper key={index}>
+                  {props.isMapVisible ? (
+                    <>
+                      <a key={index} onClick={() => onClickBadgeButton(device, props.value, props.setValue)}>
+                        {device.name.includes("#") ? (
+                          <FontAwesomeIcon icon={faSatelliteDish} size="3x" style={{ color: "#e00b0b" }} />
+                        ) : (
+                          <FontAwesomeIcon icon={faFolder} size="3x" />
+                        )}
+                      </a>
+                      <span>{device.name}</span>
+                    </>
+                  ) : (
+                    <>
+                      <a key={index} onClick={() => onClickBadgeButton(device, props.value, props.setValue)}>
+                        {device.name.includes("#") ? (
+                          <FontAwesomeIcon icon={faSatelliteDish} size="3x" style={{ color: "#e00b0b" }} />
+                        ) : (
+                          <FontAwesomeIcon icon={faFolder} size="3x" />
+                        )}
+                      </a>
+                      <S.DeviceName>{device.name}</S.DeviceName>
+                    </>
+                  )}
+                </S.BadgeWrapper>
+              ))}
+        </S.ColumnWrapper>
       </S.StyledSpace>
 
       <Drawer title="Folder&Sensor 수정" placement="right" closable={false} onClose={onClose} open={visible}>

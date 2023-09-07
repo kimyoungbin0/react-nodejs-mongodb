@@ -1,4 +1,4 @@
-import AmpFft from "../../chart/ampFft";
+import AmpFft from "../../chart/ampFftSmall";
 import * as S from "./Chart.style";
 
 const Chart0: React.FC<any> = (props) => {

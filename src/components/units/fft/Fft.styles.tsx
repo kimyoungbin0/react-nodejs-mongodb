@@ -7,7 +7,7 @@ export const PageWrapper = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   width: 100%;
-  height: 95%;
+  height: 93%;
   margin: 30px;
 `;
 

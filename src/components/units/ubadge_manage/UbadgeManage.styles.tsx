@@ -1,12 +1,19 @@
 import { css, styled } from "styled-components";
 
+export const ColumnWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`;
+
 export const BadgeWrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 15px;
   text-align: center;
   flex-basis: 10%;
+
   margin: 10px;
+  height: auto; /* 자식 요소의 높이를 자동으로 설정합니다. */
 `;
 
 export const Avatar = styled.div`
@@ -30,6 +37,7 @@ export const StyledSpace = styled.div`
   margin: 10px;
   color: #217af4;
   border-radius: 5px;
+  align-items: flex-start; /* Align items to the top */
 
   ${({ theme }) => {
     return css`
