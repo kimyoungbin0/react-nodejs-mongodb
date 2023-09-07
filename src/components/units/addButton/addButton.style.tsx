@@ -1,13 +1,13 @@
 import styled from "@emotion/styled";
 
 export const PlusWrapper = styled.button`
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   padding: 10px;
   border-radius: 50%;
   position: absolute;
   right: 20px;
-  bottom: 55px;
+  bottom: 20px;
   background-color: #1677ff;
   color: #000;
   border: 1px solid #40a9ff;

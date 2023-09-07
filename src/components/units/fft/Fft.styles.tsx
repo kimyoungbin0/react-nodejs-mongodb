@@ -1,41 +1,46 @@
-import styled from "@emotion/styled";
 import { InputNumber } from "antd";
 import { lightenDarkenColor } from "react-papaparse";
+import { css, styled } from "styled-components";
 
 export const PageWrapper = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: wrap;
   width: 100%;
-  height: 93%;
-  margin: 30px;
+  height: 100%;
+  padding: 60px;
 `;
 
 export const LeftWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 50%;
-  height: 95%;
-  padding-right: 10px;
-  margin-bottom: 10px;
+  height: 100%;
+  margin-right: 20px;
 `;
 
 export const CsvWrapper = styled.div`
-  width: "100%";
+  width: 100%;
+  height: 10%;
 `;
 
 export const RightWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  align-items: space-between;
   flex-wrap: wrap;
   width: 50%;
-  height: 95%;
-  /* max-height: 100vh; */
-  border: solid 1px #cccccc;
+  height: 100%;
   padding: 10px;
-  margin-bottom: 10px;
+
+  border-radius: 5px;
+
+  ${({ theme }) => {
+    return css`
+      background-color: ${(props) => props.theme.rightMenu};
+      border: 1px solid ${(props) => props.theme.border};
+      color: ${(props) => props.theme.text};
+    `;
+  }}
 `;
 
 export const Wrapper = styled.div`
@@ -47,9 +52,20 @@ export const Wrapper = styled.div`
 export const ChartWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
-  border: 1px solid #cccccc;
+  height: 45%;
   width: 100%;
+
+  justify-content: center; /* 추가 */
+  align-items: center; /* 추가 */
+
+  border-radius: 5px;
+  ${({ theme }) => {
+    return css`
+      background-color: ${(props) => props.theme.rightMenu};
+      border: 1px solid ${(props) => props.theme.border};
+      color: ${(props) => props.theme.text};
+    `;
+  }}
 `;
 
 export const TableWrapper = styled.div`
@@ -62,7 +78,7 @@ export const TableWrapper = styled.div`
 `;
 
 export const CycleWrapper = styled.div`
-  width: 20%;
+  width: 40%;
   display: flex;
   flex-direction: row;
   align-items: center;

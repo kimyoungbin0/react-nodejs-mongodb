@@ -16,7 +16,7 @@ export default function AmpFft(props: any) {
     responsive: true,
     plugins: {
       legend: {
-        position: "top",
+        display: false,
       },
 
       annotation: {

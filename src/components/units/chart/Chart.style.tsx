@@ -9,6 +9,7 @@ export const StyledSpace = styled.div`
   height: 100%;
   width: 100%;
   margin: 10px;
+  padding: 5px;
   justify-content: center;
   align-items: center;
   border-radius: 5px;

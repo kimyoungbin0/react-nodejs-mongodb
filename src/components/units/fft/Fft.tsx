@@ -7,16 +7,12 @@ import _, { set } from "lodash";
 import { addCommas, getRandomInt } from "../../../commons/libraries/utils";
 import { getDateTime, setDateTime } from "../../../commons/libraries/date";
 import { averageByColumn, textToNumArray, getThresholdData, reduceMaxArray, roundArray } from "../../../commons/libraries/array";
-import ModalBasic from "../../commons/modals/ModalBasic";
 import { Button, ConfigProvider, DatePicker, InputNumber, Select, Space, Table } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
-import koKR from "antd/lib/locale/ko_KR";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
 // import locale from "antd/es/date-picker/locale/ko_KR";
 
-import { collection, addDoc, getDocs, deleteDoc, getFirestore } from "firebase/firestore/lite";
-import { firebaseApp } from "../../../../src/commons/libraries/firebase";
 import { calculateMeanFrequency, calculatePeakFrequency } from "../../../commons/libraries/flexreal";
 
 function useInterval(callback: any, delay: any) {
@@ -144,32 +140,6 @@ export default function FftPage() {
       setIsRecent(false);
     }
   }, ms);
-
-  const insertDB = (cycle: number, ampData: number[]) => {
-    console.log("insertDB:", cycle);
-    const ampDataDB = collection(getFirestore(firebaseApp), "ampData");
-    void addDoc(ampDataDB, {
-      cycle: cycle,
-      plots: ampData,
-    });
-  };
-
-  const fetchDB = async () => {
-    console.log("fetchDB");
-    const ampDataDB = collection(getFirestore(firebaseApp), "ampData");
-    const result = await getDocs(ampDataDB);
-    const data = result.docs.map((doc) => doc.data()).sort((a, b) => a.cycle - b.cycle);
-    console.log("fetchDB:", data);
-  };
-
-  const deleteDB = async () => {
-    console.log("deleteAllDocuments");
-    const ampDataDB = collection(getFirestore(firebaseApp), "ampData");
-    const querySnapshot = await getDocs(ampDataDB);
-    for (const doc of querySnapshot.docs) {
-      await deleteDoc(doc.ref);
-    }
-  };
 
   const setAvgData = (data: any[], leakPoint: number) => {
     console.log("resetAverageData:", leakPoint);
@@ -552,62 +522,6 @@ export default function FftPage() {
     setChartKind(value);
   };
 
-  const columnsSector = [
-    {
-      title: "Sector",
-      dataIndex: "sector",
-      key: "sector",
-      align: "center",
-    },
-    {
-      title: "Freq",
-      dataIndex: "maxIndex",
-      key: "maxIndex",
-      align: "center",
-    },
-    {
-      title: "Max",
-      dataIndex: "maxValue",
-      key: "maxValue",
-      align: "center",
-    },
-    {
-      title: "Avg",
-      dataIndex: "maxAverage",
-      key: "maxAverage",
-      align: "center",
-    },
-  ];
-
-  const dataSector = threshold.map((data: any) => ({
-    key: `${data.sector}-${data.maxValue}`,
-    sector: data.sector,
-    maxIndex: data.maxIndex,
-    maxValue: data.maxValue,
-    maxAverage: data.maxAverage,
-  }));
-
-  const columnsLeak = [
-    {
-      title: "Freq",
-      dataIndex: "freq",
-      key: "freq",
-      align: "center",
-    },
-    {
-      title: "Total",
-      dataIndex: "totalCnt",
-      key: "totalCnt",
-      align: "center",
-    },
-    {
-      title: "Seq",
-      dataIndex: "conCnt",
-      key: "conCnt",
-      align: "center",
-    },
-  ];
-
   const dataLeak = tvIndexTop.map(({ freq, totalCnt, conCnt }: { freq: number; totalCnt: number; conCnt: number }) => ({
     key: freq,
     freq,
@@ -624,93 +538,40 @@ export default function FftPage() {
             <S.CycleWrapper>
               cycle: {cycle} / {cycles} plots: {addCommas(plotCount)}
             </S.CycleWrapper>
-            <S.SettingWrapper>
-              <Select
-                defaultValue="fft"
-                size="small"
-                style={{ width: 120 }}
-                onChange={handleChartKindChange}
-                options={[
-                  { value: "fft", label: "FFT" },
-                  { value: "meanFreq", label: "Mean Frequency" },
-                  { value: "peakFreq", label: "Peak Frequency" },
-                  // { value: "1000", label: "최근 1000건", disabled: true },
-                ]}
-              />
-              ms: <S.AntdInputNumber id={"ms"} type={"number"} size={"small"} defaultValue={ms} min={80} max={1000} ref={msInputRef} />
-              tv: <S.AntdInputNumber id={"tv"} type={"number"} size={"small"} defaultValue={tv} min={0} max={100} ref={tvInputRef} />
-              min: <S.AntdInputNumber id={"minFreq"} type={"number"} size={"small"} defaultValue={minFreq} min={0} max={100} ref={minInputRef} />
-              max: <S.AntdInputNumber id={"maxFreq"} type={"number"} size={"small"} defaultValue={maxFreq} min={0} max={100} ref={maxInputRef} />
-              1/scale: <S.AntdInputNumber id={"scale"} type={"number"} size={"small"} defaultValue={scale} min={1} max={8192} ref={scaleInputRef} />
-              <S.ControlButton onClick={onClickApply}>Apply</S.ControlButton>
-            </S.SettingWrapper>
-          </S.Wrapper>
-          <S.Wrapper>
-            <S.ChartWrapper>
-              {chartKind === "fft" && <AmpFft index={ampIndex} count={cycle} plots={ampData} tv={_.mean(ampData)} minY={minY} maxY={maxY} />}
-              {chartKind === "meanFreq" && (
-                <AmpFft
-                  index={_.map(_.takeRight(_.range(vMeanFreq.length), vCycle), (ev) => ev + vStartFreq)}
-                  count={cycle}
-                  plots={_.takeRight(vMeanFreq, vCycle)}
-                  tv={_.mean(vMeanFreq)}
-                  minY={(_.min(vMeanFreq) ?? 1) - 1}
-                  maxY={(_.max(vMeanFreq) ?? 99) + 1}
-                />
-              )}
-              {chartKind === "peakFreq" && (
-                <AmpFft
-                  index={_.map(_.takeRight(_.range(vPeakFreq.length), vCycle), (ev) => ev + vStartFreq)}
-                  count={cycle}
-                  plots={_.takeRight(vPeakFreq, vCycle)}
-                  tv={_.mean(vPeakFreq)}
-                  minY={(_.min(vPeakFreq) ?? 1) - 1}
-                  maxY={(_.max(vPeakFreq) ?? 99) + 1}
-                />
-              )}
-              {cycle > -1 && (
-                <S.ControlWrapper>
-                  <S.RangeInput
-                    id="cycleRange"
-                    type="range"
-                    max={cycles - 1}
-                    value={cycle}
-                    onChange={(e) => {
-                      onChangeCycle(Number(e.target.value));
-                    }}
-                  />
-                </S.ControlWrapper>
-              )}
-              <S.ControlWrapper>
-                {cycle > -1 && !isPause && <S.ControlButton onClick={onClickPause}>Pause</S.ControlButton>}
-                {cycle > -1 && isPause && (
-                  <>
-                    <S.ControlButton onClick={onClickPause}>Resume</S.ControlButton>
-                    <S.ControlButton onClick={onClickPrev}>Prev</S.ControlButton>
-                    <S.ControlButton onClick={onClickNext}>Next</S.ControlButton>
-                    <S.ControlButton onClick={onClickReset}>Reset</S.ControlButton>
-                  </>
-                )}
-              </S.ControlWrapper>
-            </S.ChartWrapper>
           </S.Wrapper>
 
-          <S.Wrapper>
-            <S.TableWrapper>
-              <Table
-                columns={columnsSector}
-                dataSource={dataSector}
-                size="small"
-                sticky={true}
-                scroll={{ y: 150 }}
-                style={{ width: "100%" }}
-                ref={sectorTableRef}
+          <S.ChartWrapper style={{ marginBottom: "10px" }}>
+            {chartKind === "fft" && <AmpFft index={ampIndex} count={cycle} plots={ampData} tv={_.mean(ampData)} minY={minY} maxY={maxY} />}
+          </S.ChartWrapper>
+
+          {cycle > -1 && (
+            <S.ControlWrapper>
+              <S.RangeInput
+                id="cycleRange"
+                type="range"
+                max={cycles - 1}
+                value={cycle}
+                onChange={(e) => {
+                  onChangeCycle(Number(e.target.value));
+                }}
               />
-            </S.TableWrapper>
-            <S.TableWrapper>
-              <Table columns={columnsLeak} dataSource={dataLeak} size="small" sticky={true} scroll={{ y: 150 }} style={{ width: "100%" }} ref={leakTableRef} />
-            </S.TableWrapper>
-          </S.Wrapper>
+            </S.ControlWrapper>
+          )}
+          <S.ControlWrapper>
+            {cycle > -1 && !isPause && <S.ControlButton onClick={onClickPause}>Pause</S.ControlButton>}
+            {cycle > -1 && isPause && (
+              <>
+                <S.ControlButton onClick={onClickPause}>Resume</S.ControlButton>
+                <S.ControlButton onClick={onClickPrev}>Prev</S.ControlButton>
+                <S.ControlButton onClick={onClickNext}>Next</S.ControlButton>
+                <S.ControlButton onClick={onClickReset}>Reset</S.ControlButton>
+              </>
+            )}
+          </S.ControlWrapper>
+
+          <S.ChartWrapper>
+            {chartKind === "fft" && <AmpFft index={ampIndex} count={cycle} plots={ampData} tv={_.mean(ampData)} minY={minY} maxY={maxY} />}
+          </S.ChartWrapper>
         </S.LeftWrapper>
         <S.RightWrapper>
           <S.SectionTitleWrapper>
