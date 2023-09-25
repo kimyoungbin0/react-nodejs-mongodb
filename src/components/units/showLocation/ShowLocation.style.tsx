@@ -1,6 +1,4 @@
 import { css, styled } from "styled-components";
-import { light, dark } from "../../../commons/styles/themes"; // Update the path accordingly
-import { TreeSelect, Button } from "antd";
 
 export const LeftWrapper = styled.div`
   display: flex;
@@ -21,9 +19,9 @@ export const LocationWrapper = styled.div`
   height: 95%;
   width: 100%;
 
-  display: flex; /* 추가 */
-  justify-content: center; /* 추가 */
-  align-items: center; /* 추가 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   border-radius: 5px;
 
@@ -40,9 +38,9 @@ export const StyledButton = styled.button`
   height: 100%;
   width: 4%;
 
-  display: flex; /* 추가 */
-  justify-content: center; /* 추가 */
-  align-items: center; /* 추가 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   border-radius: 5px;
   transition: all 0.3s;

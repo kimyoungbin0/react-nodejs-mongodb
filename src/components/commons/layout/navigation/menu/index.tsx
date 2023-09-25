@@ -152,10 +152,9 @@ export default function MenuLeft() {
     getItem(<a href="/fft">FFT</a>, "sub2", <DashboardOutlined />),
     getItem(<a href="/manage">Manage</a>, "sub3", <ApiOutlined />),
     getItem(<a href="/devices">Devices</a>, "sub4", <ApartmentOutlined />),
-    getItem("Message", "sub5", <MessageOutlined />),
-    getItem("Statistics", "sub6", <ProjectOutlined />),
-    getItem("Account", "sub7", <UserOutlined />),
-    getItem(<a href="/setting">Setting</a>, "sub8", <SettingOutlined />),
+    getItem("Statistics", "sub5", <ProjectOutlined />),
+    getItem("Account", "sub6", <UserOutlined />),
+    getItem(<a href="/setting">Setting</a>, "sub7", <SettingOutlined />),
   ];
 
   const items2: MenuProps["items"] = [

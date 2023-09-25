@@ -79,14 +79,6 @@ export default function FftPage() {
 
   const [chartKind, setChartKind] = useState("fft");
 
-  const msInputRef = useRef(null);
-  const tvInputRef = useRef(null);
-  const minInputRef = useRef(null);
-  const maxInputRef = useRef(null);
-  const scaleInputRef = useRef(null);
-  const sectorTableRef = useRef(null);
-  const leakTableRef = useRef(null);
-
   const chunk = (data: any[]) => {
     const dataCount = data[0].length;
     const unzipIndex = _.unzip(data)[0];
@@ -353,10 +345,6 @@ export default function FftPage() {
     }
   };
 
-  const onClickApply = () => {
-    reset(cycle);
-  };
-
   const onClickReset = () => {
     reset(-1);
   };
@@ -518,46 +506,34 @@ export default function FftPage() {
     // }
   };
 
-  const handleChartKindChange = (value: string) => {
-    setChartKind(value);
-  };
-
-  const dataLeak = tvIndexTop.map(({ freq, totalCnt, conCnt }: { freq: number; totalCnt: number; conCnt: number }) => ({
-    key: freq,
-    freq,
-    totalCnt,
-    conCnt,
-  }));
-
   return (
     <>
       <S.PageWrapper>
         <S.LeftWrapper>
-          <S.CsvWrapper>{cycle < 0 && <CsvReader handleResults={handleResults} />}</S.CsvWrapper>
-          <S.Wrapper>
+          <S.CsvWrapper>
+            <CsvReader handleResults={handleResults} />
+          </S.CsvWrapper>
+
+          <S.ChartWrapper>
+            <AmpFft index={ampIndex} count={cycle} plots={ampData} tv={_.mean(ampData)} minY={minY} maxY={maxY} />
+          </S.ChartWrapper>
+
+          <S.ControlWrapper>
+            <S.RangeInput
+              id="cycleRange"
+              type="range"
+              max={cycles - 1}
+              value={cycle}
+              onChange={(e) => {
+                onChangeCycle(Number(e.target.value));
+              }}
+            />
+          </S.ControlWrapper>
+
+          <S.ControlWrapper>
             <S.CycleWrapper>
               cycle: {cycle} / {cycles} plots: {addCommas(plotCount)}
             </S.CycleWrapper>
-          </S.Wrapper>
-
-          <S.ChartWrapper style={{ marginBottom: "10px" }}>
-            {chartKind === "fft" && <AmpFft index={ampIndex} count={cycle} plots={ampData} tv={_.mean(ampData)} minY={minY} maxY={maxY} />}
-          </S.ChartWrapper>
-
-          {cycle > -1 && (
-            <S.ControlWrapper>
-              <S.RangeInput
-                id="cycleRange"
-                type="range"
-                max={cycles - 1}
-                value={cycle}
-                onChange={(e) => {
-                  onChangeCycle(Number(e.target.value));
-                }}
-              />
-            </S.ControlWrapper>
-          )}
-          <S.ControlWrapper>
             {cycle > -1 && !isPause && <S.ControlButton onClick={onClickPause}>Pause</S.ControlButton>}
             {cycle > -1 && isPause && (
               <>
@@ -570,67 +546,108 @@ export default function FftPage() {
           </S.ControlWrapper>
 
           <S.ChartWrapper>
-            {chartKind === "fft" && <AmpFft index={ampIndex} count={cycle} plots={ampData} tv={_.mean(ampData)} minY={minY} maxY={maxY} />}
+            <AmpFft index={ampIndex} count={cycle} plots={ampData} tv={_.mean(ampData)} minY={minY} maxY={maxY} />
           </S.ChartWrapper>
         </S.LeftWrapper>
         <S.RightWrapper>
-          <S.SectionTitleWrapper>
-            <S.SectionTitle>Recent Activity</S.SectionTitle>
-            <S.RecentControlWrapper>
-              <DatePicker defaultValue={dayjs(getDateTime(0), "YYYY-MM-DD")} size={"small"} allowClear={false} />
-              <Space wrap>
-                <Select
-                  defaultValue="10"
-                  size="small"
-                  style={{ width: 120 }}
-                  onChange={handleRecentCntChange}
-                  options={[
-                    { value: "10", label: "최근 10건" },
-                    { value: "100", label: "최근 100건" },
-                    { value: "500", label: "최근 500건" },
-                    { value: "-1", label: "전체" },
-                    // { value: "1000", label: "최근 1000건", disabled: true },
-                  ]}
-                />
-              </Space>
-            </S.RecentControlWrapper>
-          </S.SectionTitleWrapper>
+          <S.ResultWrapper>
+            <S.ResultRow>
+              <S.ResultBox>
+                <S.Box>
+                  <S.Result>Mean value</S.Result>
+                </S.Box>
+              </S.ResultBox>
+              <S.ResultBox>
+                <S.Box>
+                  <S.Result>Standard deviation</S.Result>
+                </S.Box>
+              </S.ResultBox>
+              <S.ResultBox>
+                <S.Box>
+                  <S.Result>RMS value</S.Result>
+                </S.Box>
+              </S.ResultBox>
+              <S.ResultBox>
+                <S.Box>
+                  <S.Result>Peak value</S.Result>
+                </S.Box>
+              </S.ResultBox>
+            </S.ResultRow>
+            <S.ResultRow>
+              <S.ResultBox>
+                <S.Box>
+                  <S.Result>Frequency centroid</S.Result>
+                </S.Box>
+              </S.ResultBox>
+              <S.ResultBox>
+                <S.Box>
+                  <S.Result>Peak frequency</S.Result>
+                </S.Box>
+              </S.ResultBox>
+              <S.ResultBox>
+                <S.Box>
+                  <S.Result>Average frequency</S.Result>
+                </S.Box>
+              </S.ResultBox>
+              <S.ResultBox>
+                <S.Box>
+                  <S.Result>Energy</S.Result>
+                </S.Box>
+              </S.ResultBox>
+            </S.ResultRow>
+          </S.ResultWrapper>
 
-          <S.SectionRecentWrapper>
-            {recent
-              .slice()
-              .reverse()
-              .slice(0, recentCnt < 0 ? undefined : recentCnt)
-              .map((el: any) => (
-                <S.RecentWrapper key={el.cycle} id={el.cycle} onClick={() => onClickRecent(el.cycle)}>
-                  <S.RecentItemWrapper>
-                    <S.LeakPositionWrapper>
-                      <S.LeakPosition>{el.position}</S.LeakPosition>
-                    </S.LeakPositionWrapper>
-                  </S.RecentItemWrapper>
-                  <S.RecentItemWrapper>
-                    <div>
-                      {" "}
-                      <div>
-                        <S.RecentType>Leak Detected [{el.time}]</S.RecentType>
+          <S.RecentActivity>
+            <S.SectionTitleWrapper>
+              <S.SectionTitle>Recent Activity</S.SectionTitle>
+              <S.RecentControlWrapper>
+                <DatePicker defaultValue={dayjs(getDateTime(0), "YYYY-MM-DD")} size={"small"} allowClear={false} />
+                <Space wrap>
+                  <S.StyledSelect
+                    defaultValue="10"
+                    size="small"
+                    style={{ width: 120 }}
+                    onChange={handleRecentCntChange}
+                    options={[
+                      { value: "10", label: "최근 10건" },
+                      { value: "100", label: "최근 100건" },
+                      { value: "500", label: "최근 500건" },
+                      { value: "-1", label: "전체" },
+                      // { value: "1000", label: "최근 1000건", disabled: true },
+                    ]}
+                  />
+                </Space>
+              </S.RecentControlWrapper>
+            </S.SectionTitleWrapper>
+
+            <S.SectionRecentWrapper>
+              {recent
+                .slice()
+                .reverse()
+                .slice(0, recentCnt < 0 ? undefined : recentCnt)
+                .map((el: any) => (
+                  <S.RecentWrapper key={el.cycle} id={el.cycle} onClick={() => onClickRecent(el.position)}>
+                    <S.RecentItemWrapper style={{ width: "25%" }}>
+                      <S.LeakPositionWrapper>
+                        <S.LeakPosition>센서#1</S.LeakPosition>
+                      </S.LeakPositionWrapper>
+                    </S.RecentItemWrapper>
+                    <S.RecentItemWrapper style={{ width: "50%" }}>
+                      <div style={{ display: "flex", flexDirection: "column" }}>
+                        <S.RecentType>[{el.time}]</S.RecentType>
+                        <S.RecentType style={{ marginTop: "10px" }}>[{el.time}]</S.RecentType>
                       </div>
-                      <div>
-                        <S.RecentItem>
-                          Cycle: {el.cycle} / {el.activity} KHz
-                        </S.RecentItem>
-                      </div>
-                    </div>
-                  </S.RecentItemWrapper>
-                  <S.RecentWarnWrapper>
-                    <S.RecentWarn>
-                      <InfoCircleOutlined />
-                    </S.RecentWarn>
-                    <S.RecentWarn>{el.warn}</S.RecentWarn>
-                  </S.RecentWarnWrapper>
-                </S.RecentWrapper>
-              ))}
-          </S.SectionRecentWrapper>
-          {/* <S.RecentButtonWrapper>
+                    </S.RecentItemWrapper>
+                    <S.RecentWarnWrapper style={{ width: "25%" }}>
+                      <S.RecentWarn>
+                        <InfoCircleOutlined />
+                        {el.warn}
+                      </S.RecentWarn>
+                    </S.RecentWarnWrapper>
+                  </S.RecentWrapper>
+                ))}
+            </S.SectionRecentWrapper>
+            {/* <S.RecentButtonWrapper>
             <Button type="primary" onClick={onClickViewAllHistory} style={{ width: "100%", height: "60px", margin: "10px 0", padding: "10px" }}>
               <S.ButtonText>
                 {!isViewAllHistory && "View All Recent Activities"}
@@ -638,6 +655,7 @@ export default function FftPage() {
               </S.ButtonText>
             </Button>
           </S.RecentButtonWrapper> */}
+          </S.RecentActivity>
         </S.RightWrapper>
       </S.PageWrapper>
     </>

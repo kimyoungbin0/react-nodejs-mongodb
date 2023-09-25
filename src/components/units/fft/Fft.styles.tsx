@@ -1,6 +1,7 @@
 import { InputNumber } from "antd";
 import { lightenDarkenColor } from "react-papaparse";
 import { css, styled } from "styled-components";
+import { Select } from "antd";
 
 export const PageWrapper = styled.div`
   display: flex;
@@ -12,7 +13,7 @@ export const PageWrapper = styled.div`
 `;
 
 export const LeftWrapper = styled.div`
-  display: flex;
+  display: relative;
   flex-direction: column;
   width: 50%;
   height: 100%;
@@ -22,25 +23,21 @@ export const LeftWrapper = styled.div`
 export const CsvWrapper = styled.div`
   width: 100%;
   height: 10%;
+  margin-bottom: 20px;
+
+  ${({ theme }) => {
+    return css`
+      color: ${(props) => props.theme.text};
+    `;
+  }}
 `;
 
 export const RightWrapper = styled.div`
-  display: flex;
+  display: relative;
   flex-direction: row;
   flex-wrap: wrap;
   width: 50%;
   height: 100%;
-  padding: 10px;
-
-  border-radius: 5px;
-
-  ${({ theme }) => {
-    return css`
-      background-color: ${(props) => props.theme.rightMenu};
-      border: 1px solid ${(props) => props.theme.border};
-      color: ${(props) => props.theme.text};
-    `;
-  }}
 `;
 
 export const Wrapper = styled.div`
@@ -52,8 +49,10 @@ export const Wrapper = styled.div`
 export const ChartWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: 45%;
+  height: 40%;
   width: 100%;
+  justify-content: center;
+  align-items: center;
 
   justify-content: center; /* 추가 */
   align-items: center; /* 추가 */
@@ -78,7 +77,7 @@ export const TableWrapper = styled.div`
 `;
 
 export const CycleWrapper = styled.div`
-  width: 40%;
+  margin-right: 5%;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -95,8 +94,7 @@ export const SettingWrapper = styled.div`
 `;
 
 export const ControlWrapper = styled.div`
-  min-width: 500px;
-  min-height: 30px;
+  height: 5%;
   padding: 0;
   display: flex;
   flex-direction: row;
@@ -106,6 +104,13 @@ export const ControlWrapper = styled.div`
 
 export const ControlButton = styled.button`
   margin: 0 5px;
+  ${({ theme }) => {
+    return css`
+      background-color: ${(props) => props.theme.ContentContainer};
+      color: ${(props) => props.theme.text};
+      border: 1px solid ${(props) => props.theme.border};
+    `;
+  }}
 `;
 
 // export const NumberInput = styled.input`
@@ -245,12 +250,11 @@ export const SectionTitleWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
   flex-wrap: wrap;
   width: 100%;
-  height: 80px;
+  height: 20%;
   padding: 10px;
-  border-bottom: 1px solid #cccccc;
-  overflow: auto;
 `;
 
 export const RecentControlWrapper = styled.div`
@@ -259,18 +263,47 @@ export const RecentControlWrapper = styled.div`
   justify-content: flex-end;
   align-items: center;
   padding: 10px;
-  margin-bottom: 10px;
+`;
+
+export const StyledSelect = styled(Select)`
+  margin-left: 10px;
+`;
+
+export const DatePicker = styled(Select)`
+  &&& .ant-select-selector {
+    ${({ theme }) => {
+      return css`
+        background-color: ${(props) => props.theme.select};
+        color: ${(props) => props.theme.text};
+      `;
+    }}
+  }
 `;
 
 export const SectionRecentWrapper = styled.div`
   display: flex;
+  overflow-x: hidden;
+  overflow-y: auto;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
+  align-items: center;
   width: 100%;
-  height: 100%;
-  padding: 10px;
-  overflow: auto;
+  height: 78%; // 수정된 값
+
+
+  /* 커스텀 스크롤바 스타일 */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    height: 30%;
+    background: #217af4;
+    border-radius: 10px;
+
+
+  ::-webkit-scrollbar-track {
+    background: rgba(33, 122, 244, 0.1);
+  }
 `;
 
 export const RecentButtonWrapper = styled.div`
@@ -282,26 +315,64 @@ export const RecentButtonWrapper = styled.div`
 `;
 
 export const SectionTitle = styled.h2`
+  display: flex;
   font-size: 1.5rem;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px;
+
+  @media (max-width: 1400px) {
+    /* When the screen width is between 768px and 1024px */
+    font-size: 0.9rem;
+    margin-bottom: 0px;
+  }
+
+  @media (max-width: 768px) {
+    /* 화면 너비가 768px 이하인 경우 */
+    font-size: 0.6rem;
+    margin-bottom: 0px;
+  }
 `;
 
 export const RecentWrapper = styled.div`
   display: flex;
+  border-radius: 5px;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 60px;
+
+  width: 96%;
+  height: 20%;
   border-bottom: 1px solid #cccccc;
+  margin: 2px !important;
+
+  ${({ theme }) => {
+    return css`
+      background-color: ${(props) => props.theme.RecentWrapper};
+      border: 1px solid ${(props) => props.theme.border};
+      &:hover {
+        background-color: ${(props) => props.theme.hover};
+    `;
+  }}
+
+  &:active {
+    background-color: #096dd9;
+  }
+  cursor: pointer;
 `;
 
 export const RecentItemWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
-  height: 60px;
-  padding: 10px 20px;
+  align-items: center;
+  height: 100%;
+  padding: 10px 15px;
+
+  @media (max-width: 768px) {
+    padding: 0px;
+  }
 `;
 
 export const LeakPositionWrapper = styled.div`
@@ -309,32 +380,132 @@ export const LeakPositionWrapper = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  width: 40px;
-  height: 40px;
+  width: 100%;
+  height: 100%;
   padding: 10px;
-  border-radius: 50%;
-  background-color: red;
+  border-radius: 10%;
+
+  @media (max-width: 768px) {
+    margin: 5px;
+  }
 `;
 
 export const RecentWarnWrapper = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  width: 280px;
-  height: 60px;
-  padding: 10px 50px;
+  height: 100%;
+  padding: 10px 15px;
+
+  @media (max-width: 768px) {
+    justify-content: center;
+
+    margin-right: 3px;
+  }
 `;
 
+export const RecentActivity = styled.div`
+  display: relative;
+  height: 50%;
+  width: 100%;
+  border-radius: 5px;
+  margin-top: 15px;
+  ${({ theme }) => {
+    return css`
+      background-color: ${(props) => props.theme.rightMenu};
+      border: 1px solid ${(props) => props.theme.border};
+      color: ${(props) => props.theme.text};
+    `;
+  }}
+`;
+
+export const ResultWrapper = styled.div`
+  display: relative;
+  height: 50%;
+  width: 100%;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  ${({ theme }) => {
+    return css`
+      background-color: ${(props) => props.theme.rightMenu};
+      border: 1px solid ${(props) => props.theme.border};
+      color: ${(props) => props.theme.text};
+    `;
+  }}
+`;
+
+export const ResultBox = styled.div`
+  height: 100%;
+  width: 50%;
+  border-radius: 5px;
+  padding: 3%;
+`;
+
+export const ResultRow = styled.div`
+  display: flex;
+  height: 50%;
+  width: 100%;
+`;
+
+export const Box = styled.div`
+  height: 100%;
+  width: 100%;
+  border-radius: 5px;
+
+  ${({ theme }) => {
+    return css`
+      background-color: ${(props) => props.theme.RecentWrapper};
+      border: 1px solid ${(props) => props.theme.border};
+    `;
+  }}
+`;
+
+export const Result = styled.div`
+  position: relative;
+  top: 5%;
+  left: 0%;
+  text-align: center;
+  margin-bottom: -10%; /* This will position the text above the upper border */
+  font-size: 1rem;
+  font-weight: bold;
+
+  @media (max-width: 1400px) {
+    /* When the screen width is between 768px and 1024px */
+    font-size: 0.9rem;
+    margin-bottom: 0px;
+  }
+
+  ${({ theme }) => {
+    return css`
+      color: ${(props) => props.theme.text};
+    `;
+  }}
+`;
 export const LeakPosition = styled.span`
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   line-height: 1.5rem;
-  color: white;
+  font-weight: 500;
+
+  @media (max-width: 1400px) {
+    /* When the screen width is between 768px and 1024px */
+    font-size: 0.9rem;
+    margin-bottom: 0px;
+  }
 `;
 
 export const RecentType = styled.span`
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   font-weight: 500;
+
+  @media (max-width: 1400px) {
+    font-size: 0.5rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.5rem;
+    margin: 5px;
+  }
 `;
 
 export const RecentItem = styled.span`
@@ -343,9 +514,20 @@ export const RecentItem = styled.span`
 `;
 
 export const RecentWarn = styled.span`
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   line-height: 1.5rem;
   font-weight: 700;
+  color: red;
+
+  @media (max-width: 1400px) {
+    /* When the screen width is between 768px and 1024px */
+    font-size: 0.9rem;
+    margin-bottom: 0px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+  }
 `;
 
 export const ButtonText = styled.span`
@@ -367,9 +549,8 @@ export const styles = {
     borderRadius: 20,
     display: "flex",
     flexDirection: "column",
-    // height: "100%",
+    height: "100%",
     width: "100%",
-    height: "40px",
     justifyContent: "center",
     // margin: 10,
   },

@@ -98,9 +98,15 @@ export const SectionTitle = styled.h2`
   font-size: 1.5rem;
   align-items: center;
 
+  @media (max-width: 1400px) {
+    /* When the screen width is between 768px and 1024px */
+    font-size: 0.9rem;
+    margin-bottom: 0px;
+  }
+
   @media (max-width: 768px) {
     /* 화면 너비가 768px 이하인 경우 */
-    font-size: 1.2rem;
+    font-size: 0.6rem;
     margin-bottom: 0px;
   }
 `;
@@ -178,11 +184,21 @@ export const LeakPosition = styled.span`
   font-size: 1.2rem;
   line-height: 1.5rem;
   font-weight: 500;
+
+  @media (max-width: 1400px) {
+    /* When the screen width is between 768px and 1024px */
+    font-size: 0.9rem;
+    margin-bottom: 0px;
+  }
 `;
 
 export const RecentType = styled.span`
   font-size: 0.8rem;
   font-weight: 500;
+
+  @media (max-width: 1400px) {
+    font-size: 0.5rem;
+  }
 
   @media (max-width: 768px) {
     font-size: 0.5rem;
@@ -200,6 +216,12 @@ export const RecentWarn = styled.span`
   line-height: 1.5rem;
   font-weight: 700;
   color: red;
+
+  @media (max-width: 1400px) {
+    /* When the screen width is between 768px and 1024px */
+    font-size: 0.9rem;
+    margin-bottom: 0px;
+  }
 
   @media (max-width: 768px) {
     font-size: 1.2rem;

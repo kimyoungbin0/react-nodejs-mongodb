@@ -33,8 +33,6 @@ export default NextAuth({
         if (!passwordMatch) {
           throw new Error("Invalid password");
         }
-        console.log("1");
-        console.log(user.theme);
 
         // Any user object returned here will be saved in the JSON Web Token
         return { email: user.email, name: user.name, theme: user.theme };

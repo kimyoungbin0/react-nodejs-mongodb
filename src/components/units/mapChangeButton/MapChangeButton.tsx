@@ -58,7 +58,7 @@ const MapChangeButton: React.FC<any> = (props) => {
   return (
     <>
       <S.PlusWrapper onClick={showDrawer}>
-        <FontAwesomeIcon icon={faRetweet} size="xl" />
+        <FontAwesomeIcon icon={faRetweet} size="1x" />
       </S.PlusWrapper>
       <Drawer title="Map 변경" placement="right" closable={false} onClose={onClose} open={visible}>
         <Form layout="vertical" form={form} onFinish={onFinish}>

@@ -3,24 +3,13 @@ import * as L from "./login.style";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { Alert, Space } from "antd";
-import { gql, useQuery } from "@apollo/client";
-const FETCH_USERS = gql`
-  query fetchUsers {
-    fetchUsers {
-      userId
-      name
-    }
-  }
-`;
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { data: session, status } = useSession();
   const router = useRouter();
-
-  const query_data = useQuery(FETCH_USERS, {});
-  console.log("FETCH_USERS: ", query_data.data?.fetchUsers);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

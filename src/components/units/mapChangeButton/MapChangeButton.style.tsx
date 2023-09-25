@@ -1,13 +1,13 @@
 import styled from "@emotion/styled";
 
 export const PlusWrapper = styled.button`
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   padding: 10px;
   border-radius: 50%;
   position: fixed; /* 화면에 고정된 위치 */
-  top: 50%; /* 상단에서 50% 위치 */
-  left: 73%; /* 왼쪽에서 50% 위치 */
+  top: 90%; /* 상단에서 50% 위치 */
+  left: 95%; /* 왼쪽에서 50% 위치 */
   transform: translate(-50%, -50%); /* 요소의 중심을 화면의 중심으로 이동 */
   background-color: #1677ff;
   color: #000;

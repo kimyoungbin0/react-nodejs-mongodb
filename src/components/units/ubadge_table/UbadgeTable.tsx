@@ -9,8 +9,6 @@ const UbadgeTable: React.FC<any> = (props) => {
   const { data: session } = useSession();
   const email = session?.user?.email ?? "";
 
-  const localThemeMode = window.localStorage.getItem("theme");
-
   const onClickBadgeButton = (item, preValue, setValue) => {
     if (props.isMapVisible === true) {
       //
@@ -114,12 +112,9 @@ const UbadgeTable: React.FC<any> = (props) => {
       };
     });
 
-  const selectedColumns = localThemeMode === "darkTheme" ? columnsDark : columns;
-
   return (
     <>
       <Table
-        columns={selectedColumns}
         dataSource={data}
         pagination={false}
         components={{
@@ -135,8 +130,8 @@ const UbadgeTable: React.FC<any> = (props) => {
               <td
                 {...props}
                 style={{
-                  background: localThemeMode === "darkTheme" ? "black" : "#f8f9fd",
-                  color: localThemeMode === "darkTheme" ? "white" : "black",
+                  background: "#f8f9fd",
+                  color: "black",
                 }}
               >
                 {props.children}
