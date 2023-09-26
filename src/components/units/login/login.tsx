@@ -1,8 +1,8 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as L from "./login.style";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { Alert, Space } from "antd";
+import { Alert } from "antd";
 
 export default function Login() {
   const [email, setEmail] = useState("");

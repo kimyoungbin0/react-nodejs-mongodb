@@ -5,10 +5,10 @@ export const PlusWrapper = styled.button`
   height: 70px;
   padding: 10px;
   border-radius: 50%;
-  position: fixed; /* 화면에 고정된 위치 */
-  top: 90%; /* 상단에서 50% 위치 */
-  left: 95%; /* 왼쪽에서 50% 위치 */
-  transform: translate(-50%, -50%); /* 요소의 중심을 화면의 중심으로 이동 */
+  position: fixed;
+  top: 90%;
+  left: 95%;
+  transform: translate(-50%, -50%);
   background-color: #1677ff;
   color: #000;
   border: 1px solid #1677ff;

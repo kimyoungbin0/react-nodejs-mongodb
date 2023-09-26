@@ -13,7 +13,7 @@ export const BadgeWrapper = styled.div`
   flex-basis: 10%;
 
   margin: 10px;
-  height: auto; /* 자식 요소의 높이를 자동으로 설정합니다. */
+  height: auto;
 `;
 
 export const Avatar = styled.div`
@@ -31,13 +31,13 @@ export const DeviceName = styled.span`
 export const StyledSpace = styled.div`
   display: flex;
   flex-wrap: wrap;
-  overflow-y: auto; /* 세로 스크롤을 가능하게 합니다. */
+  overflow-y: auto;
   height: 100%;
   width: 100%;
   margin: 10px;
   color: #217af4;
   border-radius: 5px;
-  align-items: flex-start; /* Align items to the top */
+  align-items: flex-start;
 
   ${({ theme }) => {
     return css`

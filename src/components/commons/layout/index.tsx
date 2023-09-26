@@ -7,8 +7,38 @@ import { useSession } from "next-auth/react";
 import { ThemeProvider } from "styled-components";
 import { ThemeModeButton } from "../../units/darkButton/DarkButton";
 
-const HIDDEN_BANNERS = ["/", "/daq", "/os", "/fft", "/fftos", "/fftos2", "/wfft", "/devices", "/manage", "/setting", "/home", "/mobile", "dashboard"];
-const HIDDEN_MENUS = ["/", "/daq", "/os", "/fft", "/fftos", "/fftos2", "/wfft", "/devices", "/manage", "/setting", "/home", "/mobile", "dashboard"];
+const HIDDEN_BANNERS = [
+  "/",
+  "/daq",
+  "/os",
+  "/fft",
+  "/fftos",
+  "/fftos2",
+  "/wfft",
+  "/devices",
+  "/manage",
+  "/setting",
+  "/home",
+  "/mobile",
+  "/statistics",
+  "dashboard",
+];
+const HIDDEN_MENUS = [
+  "/",
+  "/daq",
+  "/os",
+  "/fft",
+  "/fftos",
+  "/fftos2",
+  "/wfft",
+  "/devices",
+  "/manage",
+  "/setting",
+  "/home",
+  "/mobile",
+  "/statistics",
+  "dashboard",
+];
 const HIDDEN_LMENUS = ["/"];
 
 const StyledLayout = styled.div<{ layoutheight: number }>`
@@ -36,14 +66,6 @@ const ContentContainer = styled.div`
 interface ILayoutProps {
   children: JSX.Element;
 }
-
-export const themeChoice = (userId) => {
-  if (userId === "rina") {
-    return dark; // "rina"인 경우 dark 테마 반환
-  } else {
-    return light; // 그 외 경우 light 테마 반환
-  }
-};
 
 export default function Layout(props: ILayoutProps) {
   const router = useRouter();
@@ -88,10 +110,7 @@ export default function Layout(props: ILayoutProps) {
   useEffect(() => {
     const fetchData = async () => {
       if (!session) {
-        await new Promise((resolve) => setTimeout(resolve, 100));
-      } else {
-        const email = session?.user?.email ?? "";
-        const selectedTheme = themeChoice(email);
+        await new Promise((resolve) => setTimeout(resolve, 50));
       }
       setWaitingForSession(false);
     };
@@ -106,7 +125,7 @@ export default function Layout(props: ILayoutProps) {
   const layoutHeight = (!isHiddenBanner ? 100 : 0) + (!isHiddenMenu && !isMobile ? 50 : 0);
 
   if (waitingForSession) {
-    return <div>Loading...</div>;
+    return;
   }
 
   return (

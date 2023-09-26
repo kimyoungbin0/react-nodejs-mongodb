@@ -49,7 +49,7 @@ export const Wrapper = styled.div`
 export const ChartWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: 40%;
+  height: 47%;
   width: 100%;
   justify-content: center;
   align-items: center;
@@ -84,9 +84,15 @@ export const CycleWrapper = styled.div`
   justify-content: flex-start;
 `;
 
+export const ControlButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
 export const SettingWrapper = styled.div`
   width: 80%;
-  padding: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -94,12 +100,16 @@ export const SettingWrapper = styled.div`
 `;
 
 export const ControlWrapper = styled.div`
-  height: 5%;
-  padding: 0;
+  height: 50%;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
+`;
+
+export const ControlsWrapper = styled.div`
+  height: 6%;
+  padding: 0.5%;
 `;
 
 export const ControlButton = styled.button`
@@ -406,12 +416,14 @@ export const RecentWarnWrapper = styled.div`
   }
 `;
 
+export const empty = styled.div`
+  height: 6%;
+`;
+
 export const RecentActivity = styled.div`
-  display: relative;
-  height: 50%;
+  height: 47%;
   width: 100%;
   border-radius: 5px;
-  margin-top: 15px;
   ${({ theme }) => {
     return css`
       background-color: ${(props) => props.theme.rightMenu};
@@ -422,10 +434,8 @@ export const RecentActivity = styled.div`
 `;
 
 export const ResultWrapper = styled.div`
-  display: relative;
-  height: 50%;
+  height: 47%;
   width: 100%;
-  margin-bottom: 20px;
   border-radius: 5px;
   ${({ theme }) => {
     return css`
@@ -467,14 +477,12 @@ export const Result = styled.div`
   top: 5%;
   left: 0%;
   text-align: center;
-  margin-bottom: -10%; /* This will position the text above the upper border */
   font-size: 1rem;
   font-weight: bold;
 
   @media (max-width: 1400px) {
     /* When the screen width is between 768px and 1024px */
     font-size: 0.9rem;
-    margin-bottom: 0px;
   }
 
   ${({ theme }) => {
@@ -491,7 +499,6 @@ export const LeakPosition = styled.span`
   @media (max-width: 1400px) {
     /* When the screen width is between 768px and 1024px */
     font-size: 0.9rem;
-    margin-bottom: 0px;
   }
 `;
 
@@ -505,7 +512,6 @@ export const RecentType = styled.span`
 
   @media (max-width: 768px) {
     font-size: 0.5rem;
-    margin: 5px;
   }
 `;
 

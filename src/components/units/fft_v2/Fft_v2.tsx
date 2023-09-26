@@ -105,9 +105,14 @@ export default function FftPage() {
         setDateTime();
         setStartDate(getDateTime(0));
         setRecent([]);
+        // fetchDB();
+        // deleteDB();
       }
       setCycleChartArr(cycle);
 
+      // const temp = getTdAmp(waveData[cycle % cycles]);
+      // setAmpIndex(temp.frequencies);
+      // setAmpData(temp.fdAmp);
       if (!isRecent) {
         if (cycle + 1 < cycles) {
           setCycle((prev) => (prev + 1) % cycles);
@@ -116,6 +121,13 @@ export default function FftPage() {
           setPauseCycle(cycles - 1);
         }
       }
+      // checkLeak((cycle + 1) % cycles);
+
+      // average data reset 주석처리
+      // if (recent.length === 1) {
+      //   const result = setAvgData(waveData, cycle - 2);
+      //   setAverageData(result);
+      // }
 
       setIsRecent(false);
     }
@@ -489,7 +501,6 @@ export default function FftPage() {
     const recentCnt = parseInt(value);
     // if (recentCnt > 0) {
     setRecentCnt(recentCnt);
-
     // } else {
     //   setIsViewAllHistory(true);
     // }
@@ -499,40 +510,36 @@ export default function FftPage() {
     <>
       <S.PageWrapper>
         <S.LeftWrapper>
-          <S.CsvWrapper>
-            <CsvReader handleResults={handleResults} />
-          </S.CsvWrapper>
-
           <S.ChartWrapper>
             <AmpFft index={ampIndex} count={cycle} plots={ampData} tv={_.mean(ampData)} minY={minY} maxY={maxY} />
           </S.ChartWrapper>
 
-          <S.ControlWrapper>
-            <S.RangeInput
-              id="cycleRange"
-              type="range"
-              max={cycles - 1}
-              value={cycle}
-              onChange={(e) => {
-                onChangeCycle(Number(e.target.value));
-              }}
-            />
-          </S.ControlWrapper>
+          <S.ControlsWrapper>
+            <S.ControlWrapper>
+              <S.RangeInput
+                id="cycleRange"
+                type="range"
+                max={cycles - 1}
+                value={cycle}
+                onChange={(e) => {
+                  onChangeCycle(Number(e.target.value));
+                }}
+              />
+            </S.ControlWrapper>
 
-          <S.ControlWrapper>
-            <S.CycleWrapper>
-              cycle: {cycle} / {cycles} plots: {addCommas(plotCount)}
-            </S.CycleWrapper>
-            {cycle > -1 && !isPause && <S.ControlButton onClick={onClickPause}>Pause</S.ControlButton>}
-            {cycle > -1 && isPause && (
-              <>
+            <S.ControlWrapper>
+              <S.CycleWrapper>
+                cycle: {cycle} / {cycles} plots: {addCommas(plotCount)}
+              </S.CycleWrapper>
+
+              <S.ControlButtonWrapper>
+                <S.ControlButton onClick={onClickPause}>Pause</S.ControlButton>
                 <S.ControlButton onClick={onClickPause}>Resume</S.ControlButton>
                 <S.ControlButton onClick={onClickPrev}>Prev</S.ControlButton>
                 <S.ControlButton onClick={onClickNext}>Next</S.ControlButton>
-                <S.ControlButton onClick={onClickReset}>Reset</S.ControlButton>
-              </>
-            )}
-          </S.ControlWrapper>
+              </S.ControlButtonWrapper>
+            </S.ControlWrapper>
+          </S.ControlsWrapper>
 
           <S.ChartWrapper>
             <AmpFft index={ampIndex} count={cycle} plots={ampData} tv={_.mean(ampData)} minY={minY} maxY={maxY} />
@@ -585,6 +592,7 @@ export default function FftPage() {
               </S.ResultBox>
             </S.ResultRow>
           </S.ResultWrapper>
+          <S.empty></S.empty>
 
           <S.RecentActivity>
             <S.SectionTitleWrapper>

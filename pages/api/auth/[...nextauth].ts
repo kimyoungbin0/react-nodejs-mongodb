@@ -1,5 +1,4 @@
 import NextAuth from "next-auth";
-import Providers from "next-auth/providers";
 import bcrypt from "bcrypt";
 import loginModel from "../../../src/commons/libraries/login.model";
 import { dbConnectLogin } from "../../../src/commons/libraries/dbConnect";

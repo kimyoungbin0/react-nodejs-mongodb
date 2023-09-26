@@ -12,7 +12,9 @@ export const LeftWrapper = styled.div`
 `;
 
 export const SwitchWrapper = styled.div`
-  margin-top: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export const LocationWrapper = styled.div`

@@ -9,6 +9,8 @@ const UbadgeTable: React.FC<any> = (props) => {
   const { data: session } = useSession();
   const email = session?.user?.email ?? "";
 
+  const localThemeMode = window.localStorage.getItem("theme");
+
   const onClickBadgeButton = (item, preValue, setValue) => {
     if (props.isMapVisible === true) {
       //
@@ -43,21 +45,21 @@ const UbadgeTable: React.FC<any> = (props) => {
           </S.BadgeWrapper>
         </a>
       ),
-      style: { backgroundColor: "#3e4146" }, // Background color for the column header
+      style: { backgroundColor: "#3e4146" },
     },
     {
       title: "Location",
       dataIndex: "location",
       key: "location",
       render: (text) => <span style={{ color: "black" }}>{text}</span>,
-      style: { backgroundColor: "#3e4146" }, // Background color for the column header
+      style: { backgroundColor: "#3e4146" },
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
       render: (text) => <span style={{ color: "black" }}>{text}</span>,
-      style: { backgroundColor: "#3e4146" }, // Background color for the column header
+      style: { backgroundColor: "#3e4146" },
     },
   ];
 
@@ -83,21 +85,21 @@ const UbadgeTable: React.FC<any> = (props) => {
           </S.BadgeWrapper>
         </a>
       ),
-      style: { backgroundColor: "#3e4146" }, // Background color for the column header
+      style: { backgroundColor: "#3e4146" },
     },
     {
       title: "Location",
       dataIndex: "location",
       key: "location",
       render: (text) => <span style={{ color: "white" }}>{text}</span>,
-      style: { backgroundColor: "#3e4146" }, // Background color for the column header
+      style: { backgroundColor: "#3e4146" },
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
       render: (text) => <span style={{ color: "white" }}>{text}</span>,
-      style: { backgroundColor: "#3e4146" }, // Background color for the column header
+      style: { backgroundColor: "#3e4146" },
     },
   ];
 
@@ -108,13 +110,16 @@ const UbadgeTable: React.FC<any> = (props) => {
         key: device.name,
         name: device.name,
         location: device.location,
-        status: "Some Status", // Replace this with the actual status data
+        status: "Some Status",
       };
     });
+
+  const selectedColumns = localThemeMode === "darkTheme" ? columnsDark : columns;
 
   return (
     <>
       <Table
+        columns={selectedColumns}
         dataSource={data}
         pagination={false}
         components={{
@@ -130,8 +135,8 @@ const UbadgeTable: React.FC<any> = (props) => {
               <td
                 {...props}
                 style={{
-                  background: "#f8f9fd",
-                  color: "black",
+                  background: localThemeMode === "darkTheme" ? "black" : "#f8f9fd",
+                  color: localThemeMode === "darkTheme" ? "white" : "black",
                 }}
               >
                 {props.children}

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import RecentActivity from "../../src/components/units/recentActivity/RecentActivity";
-import StreeManage from "../../src/components/units/treeSelect_manage/TreeSelect";
 import axios from "axios";
 import { Switch } from "antd";
 import UbadgeTable from "../../src/components/units/ubadge_table/UbadgeTable";

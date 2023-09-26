@@ -152,7 +152,7 @@ export default function MenuLeft() {
     getItem(<a href="/fft">FFT</a>, "sub2", <DashboardOutlined />),
     getItem(<a href="/manage">Manage</a>, "sub3", <ApiOutlined />),
     getItem(<a href="/devices">Devices</a>, "sub4", <ApartmentOutlined />),
-    getItem("Statistics", "sub5", <ProjectOutlined />),
+    getItem(<a href="/statistics">Statistics</a>, "sub5", <ProjectOutlined />),
     getItem("Account", "sub6", <UserOutlined />),
     getItem(<a href="/setting">Setting</a>, "sub7", <SettingOutlined />),
   ];

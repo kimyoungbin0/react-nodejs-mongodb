@@ -4,12 +4,12 @@ import { css, styled } from "styled-components";
 export const ImageWrapper = styled.div`
   position: relative;
 
-  max-width: 100%; /* 이미지의 최대 너비를 컨테이너의 너비로 설정합니다. */
-  max-height: 100%; /* 이미지의 최대 높이를 컨테이너의 높이로 설정합니다. */
+  max-width: 100%;
+  max-height: 100%;
 
-  display: flex; /* 추가 */
-  justify-content: center; /* 추가 */
-  align-items: center; /* 추가 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export const ImageWrapper2 = styled.div`
@@ -20,9 +20,9 @@ export const ImageWrapper2 = styled.div`
   margin-right: 10px;
   border-radius: 5px;
 
-  display: flex; /* 추가 */
-  justify-content: center; /* 추가 */
-  align-items: center; /* 추가 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   ${({ theme }) => {
     return css`
@@ -49,7 +49,7 @@ export const RedDot = styled.div`
 export const PositionedButton = styled.button`
   position: absolute;
   font-size: ${(props) => props.fontSize};
-  font-weight: bold; // Add this line
+  font-weight: bold;
   border-radius: 10px;
   transition: all 0.3s;
   cursor: pointer;

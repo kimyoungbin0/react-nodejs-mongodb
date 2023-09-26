@@ -25,12 +25,11 @@ const ShowLocation: React.FC<any> = (props) => {
 
       <S.LocationWrapper>{props.value}</S.LocationWrapper>
 
-      {isClient &&
-        window.location.pathname === "/manage" && ( // 클라이언트 측에서 현재 URL이 '/manage'인지 확인합니다.
-          <S.SwitchWrapper>
-            <Switch defaultChecked={false} onChange={props.handleSwitchChange} />
-          </S.SwitchWrapper>
-        )}
+      {isClient && window.location.pathname === "/manage" && (
+        <S.SwitchWrapper>
+          <Switch defaultChecked={false} onChange={props.handleSwitchChange} />
+        </S.SwitchWrapper>
+      )}
     </S.LeftWrapper>
   );
 };

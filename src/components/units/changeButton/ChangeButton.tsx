@@ -12,7 +12,6 @@ const ChangeButton: React.FC<any> = (props) => {
     <>
       <S.PlusWrapper onClick={props.handleSwitchChange}>
         {props.isMapVisible ? <FontAwesomeIcon icon={faFolder} size="xl" /> : <FontAwesomeIcon icon={faLocationDot} size="xl" />}{" "}
-        {/* isMapVisible 상태에 따라 "-" 또는 "+"를 표시 */}
       </S.PlusWrapper>
     </>
   );

@@ -6,23 +6,21 @@ import ShowLocation from "../../src/components/units/showLocation/ShowLocation";
 
 export default function DevicesPage() {
   const [value, setValue] = useState<any>("All");
-  const [isMapVisible, setMapVisible] = useState(false); // 상태 추가
-  const [devices, setDevices] = useState([]); // Add this state for devices
+  const [isMapVisible, setMapVisible] = useState(false);
+  const [devices, setDevices] = useState([]);
 
   const handleSwitchChange = (checked: boolean) => {
-    // Switch 변경 이벤트 핸들러
     setMapVisible(checked);
   };
 
   useEffect(() => {
-    // Add this useEffect to fetch data when the component is mounted
     const fetchData = async () => {
       const response = await axios.get(`/api/devices?location=${value}`);
       setDevices(response.data);
     };
 
     fetchData();
-  }, [value]); // Add the dependencies here
+  }, [value]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", width: "98%", height: "100%", padding: "30px" }}>

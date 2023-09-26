@@ -22,7 +22,7 @@ const calculateButtonPosition = (mapTopLeft, mapBottomRight, buttonCoords) => {
 const calculateButtonSize = (mapWidth, mapHeight) => {
   const buttonWidth = mapWidth * 0.1;
   const buttonHeight = mapHeight * 0.07;
-  const fontSize = Math.min(buttonWidth, buttonHeight) * 0.35; // 30% of the smaller dimension
+  const fontSize = Math.min(buttonWidth, buttonHeight) * 0.35;
 
   return { width: `${buttonWidth}px`, height: `${buttonHeight}px`, fontSize: `${fontSize}px` };
 };
@@ -39,7 +39,7 @@ export default function Map(props) {
   const [mapBottomRight, setMapBottomRight] = useState(null);
   const { data: session } = useSession();
   const [email, setEmail] = useState(session?.user?.email ?? "");
-  const imageWrapperRef = useRef(null); // Ref 생성
+  const imageWrapperRef = useRef(null);
   const imageWrapper2Ref = useRef(null);
 
   const handleClick = (buttonText) => {
@@ -72,11 +72,10 @@ export default function Map(props) {
   }
 
   useEffect(() => {
-    // props.value가 변경될 때마다 이 코드가 실행됩니다.
     const fetchImageData = async () => {
       const splitValue = props.value.split("/");
-      const name = splitValue.pop(); // 마지막 원소를 name으로 설정
-      const location = splitValue.join("/"); // 나머지 원소들을 합쳐 location으로 설정
+      const name = splitValue.pop();
+      const location = splitValue.join("/");
 
       const response = await fetch(`/api/devices?location=${location}&name=${name}`);
       const data = await response.json();
@@ -87,7 +86,6 @@ export default function Map(props) {
       } else if (data[0] && data[0]._id) {
         setImageSrc(`/uploads/${data[0]._id}.png?timestamp=${new Date().getTime()}`);
       } else {
-        // 데이터가 없거나 오류가 발생한 경우의 기본 이미지
         setImageSrc("/images/default.png");
       }
     };
@@ -96,11 +94,10 @@ export default function Map(props) {
   }, [props.value, props.refreshImage]);
 
   useEffect(() => {
-    // 비동기 함수를 정의합니다.
     async function loadCoords() {
       const splitValue = props.value.split("/");
-      const name = splitValue.pop(); // 마지막 원소를 name으로 설정
-      const location = splitValue.join("/"); // 나머지 원소들을 합쳐 location으로 설정
+      const name = splitValue.pop();
+      const location = splitValue.join("/");
 
       const data = await fetchData(location, name);
 
@@ -168,12 +165,9 @@ export default function Map(props) {
         {showButton && (
           <>
             {Object.keys(buttonCoords).map((key) => {
-              // key 값이 "#"을 포함하면 <L.RedDot>을 렌더링합니다.
               if (key.includes("#")) {
                 return <L.RedDot key={key} style={{ ...buttonPositions[key], ...pointSize }} onClick={() => handleClick(key)} />;
               }
-
-              // 그렇지 않으면 <L.PositionedButton>을 렌더링합니다.
               return (
                 <L.PositionedButton key={key} style={{ ...buttonPositions[key], ...buttonSize, fontSize: buttonFontSize }} onClick={() => handleClick(key)}>
                   {key}

@@ -25,9 +25,9 @@ export const titleWrap = styled.div`
   color: #262626;
   text-align: center;
   background-image: url("/images/logo.jpg");
-  background-size: cover; /* 배경 이미지를 요소에 맞게 조정 */
-  background-repeat: no-repeat; /* 배경 이미지 반복 제거 */
-  background-position: center; /* 배경 이미지를 가운데 정렬 */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 `;
 
 export const contentWrap = styled.div`

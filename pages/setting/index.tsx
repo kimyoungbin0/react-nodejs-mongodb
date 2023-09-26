@@ -9,9 +9,8 @@ export default function LoginPage() {
     setMapVisible(checked);
 
     try {
-      // API 엔드포인트 URL을 적절하게 수정해주세요.
       const response = await axios.post("/api/login", {
-        email: "rina", // 해당 사용자의 이메일
+        email: "rina",
         theme: checked ? "dark" : "white",
       });
 

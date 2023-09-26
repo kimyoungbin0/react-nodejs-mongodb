@@ -8,30 +8,27 @@ import ShowLocation from "../../src/components/units/showLocation/ShowLocation";
 
 export default function ManagePage() {
   const [value, setValue] = useState<any>("All");
-  const [isMapVisible, setMapVisible] = useState(false); // 상태 추가
-  const [devices, setDevices] = useState([]); // Add this state for devices
+  const [isMapVisible, setMapVisible] = useState(false);
+  const [devices, setDevices] = useState([]);
   const [refreshImage, setRefreshImage] = useState(false);
 
   const handleSwitchChange = (checked: boolean) => {
-    // Switch 변경 이벤트 핸들러
     setMapVisible(checked);
   };
 
   const fetchData = async () => {
-    // Change this to a normal function (not inside useEffect) so we can call it from other components
     const response = await axios.get(`/api/devices?location=${value}`);
     setDevices(response.data);
   };
 
   useEffect(() => {
-    // Add this useEffect to fetch data when the component is mounted
     const fetchData = async () => {
       const response = await axios.get(`/api/devices?location=${value}`);
       setDevices(response.data);
     };
 
     fetchData();
-  }, [value]); // Add the dependencies here
+  }, [value]);
 
   return (
     <>

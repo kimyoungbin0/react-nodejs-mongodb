@@ -1,7 +1,7 @@
 import * as S from "./addButton.style";
 import { Button, Drawer, Form, Input } from "antd";
 import { Segmented } from "antd";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { Row, Col } from "antd";
@@ -22,18 +22,17 @@ const AddButton: React.FC<any> = (props) => {
       size: { latitude_L, longitude_L, latitude_R, longitude_R },
       email: email,
     };
-    console.log("Data sent to server:", data); // 서버로 전송되는 데이터 로그 출력
+    console.log("Data sent to server:", data);
     try {
       const response = await axios.post("/api/devices", data);
       if (response.status === 200) {
         console.log("Data successfully saved");
-        await props.fetchData(); // fetch the data again after a new device is added
+        await props.fetchData();
         form.resetFields();
       }
     } catch (error) {
       if (error.response && error.response.status === 400) {
-        // Show an error message to the user
-        alert(error.response.data); // or use a more user-friendly notification system
+        alert(error.response.data);
       }
     }
   };

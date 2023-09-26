@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     const device = new Device(req.body);
 
     try {
-      const { name, location } = req.body; // 요청에서 name과 location을 추출
+      const { name, location } = req.body;
       const existingDevice = await Device.findOne({ name, location });
       if (existingDevice) {
         res.status(400).send("같은 이름의 파일이 이미 존재합니다");
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
       const savedDevice = await device.save();
       res.status(200).json(savedDevice);
     } catch (err) {
-      console.error("Error occurred:", err); // 에러 메시지를 로그에 출력
+      console.error("Error occurred:", err);
       res.status(500).json({ message: err.message });
     }
   } else if (req.method === "GET") {
@@ -30,7 +30,7 @@ export default async function handler(req, res) {
     } else if (req.query.email) {
       devices = await Device.find({ email: req.query.email }).exec();
     } else {
-      devices = await Device.find().exec(); // location이 없는 경우 모든 장치를 반환
+      devices = await Device.find().exec();
     }
 
     res.status(200).json(devices);
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
       const { email, location, name, latitude_L, longitude_L, latitude_R, longitude_R, latitude, longitude, originalName, originalLocation } = req.body;
 
       const updatedDevice = await Device.findOneAndUpdate(
-        { location: originalLocation, name: originalName }, // 원래의 location과 name 사용
+        { location: originalLocation, name: originalName },
         {
           email,
           location,
@@ -70,7 +70,7 @@ export default async function handler(req, res) {
     }
   } else if (req.method === "DELETE") {
     try {
-      const { name, location } = req.body; // 요청에서 name과 location을 추출
+      const { name, location } = req.body;
 
       const result = await Device.deleteOne({ name, location });
 
@@ -81,7 +81,7 @@ export default async function handler(req, res) {
 
       res.status(200).json({ message: "Device successfully deleted" });
     } catch (err) {
-      console.error("Error occurred:", err); // 에러 메시지를 로그에 출력
+      console.error("Error occurred:", err);
       res.status(500).json({ message: err.message });
     }
   } else {

@@ -9,7 +9,7 @@ const storage = multer.diskStorage({
     cb(null, "public/uploads/");
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname); // 일단 원본 파일명으로 저장
+    cb(null, file.originalname);
   },
 });
 
@@ -19,9 +19,7 @@ export default async function handler(req, res) {
   try {
     if (req.method === "POST") {
       upload.single("file")(req, res, async (err) => {
-        console.log("1");
         if (err) {
-          console.log("2");
           console.error("File upload error:", err);
           res.status(500).json({ message: "File upload failed." });
           return;
@@ -47,7 +45,6 @@ export default async function handler(req, res) {
           console.log(newFileName);
           fs.renameSync(path.join("public/uploads/", req.file.originalname), path.join("public/uploads/", newFileName));
           res.status(200).json({ message: "File uploaded and renamed successfully", fileName: newFileName });
-          console.log("4");
         } catch (fsErr) {
           console.error("File renaming error:", fsErr);
           res.status(500).json({ message: "Failed to rename the file." });

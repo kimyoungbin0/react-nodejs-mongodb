@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Avatar, Badge, Space, Button, Drawer, Form, Input, Row, Col } from "antd";
 import * as S from "./UbadgeManage.styles";
-import axios from "axios"; // 필요한 경우 적절한 경로로 수정해야 합니다.
+import axios from "axios";
 import { useSession } from "next-auth/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolder, faSatelliteDish } from "@fortawesome/free-solid-svg-icons";
@@ -35,7 +35,6 @@ const UbadgeManage: React.FC<any> = (props) => {
       } catch (error) {
         console.error("device 데이터를 가져오는 중 에러:", error);
       }
-      console.log("성공");
       showDrawer();
     } else {
       if (item.name.includes("#")) {
@@ -58,7 +57,6 @@ const UbadgeManage: React.FC<any> = (props) => {
   };
   const onFinish = async (values) => {
     try {
-      // 원래의 name과 location 값을 originalName과 originalLocation으로 보내기
       const response = await axios.put(`/api/devices`, {
         ...values,
         originalName: selectedDevice.name,
@@ -67,7 +65,7 @@ const UbadgeManage: React.FC<any> = (props) => {
 
       if (response.status === 200) {
         console.log("Update successful!");
-        await props.fetchData(); // Update 후 데이터 다시 가져오기
+        await props.fetchData();
         form.resetFields();
         onClose();
       } else {
