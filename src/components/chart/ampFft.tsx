@@ -4,11 +4,17 @@ import { Line } from "react-chartjs-2";
 import annotationPlugin from "chartjs-plugin-annotation";
 
 export default function AmpFft(props: any) {
-  const labels = props.index;
-  const plots = props.plots;
-  const tv = props.tv;
-  const minY = props.minY;
-  const maxY = props.maxY;
+  const labels = props.index; // x축
+  const plots = props.plots; // 값
+  const tv = props.tv; // 평균
+  const minY = props.minY; // y축 최소값
+  const maxY = props.maxY; // y축 최대값
+
+  console.log(labels);
+  console.log(plots);
+  console.log(tv);
+  console.log(minY);
+  console.log(maxY);
 
   ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, annotationPlugin);
 

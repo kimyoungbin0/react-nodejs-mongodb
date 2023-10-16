@@ -77,8 +77,6 @@ export default function FftPage() {
   const [recentCnt, setRecentCnt] = useState(10);
   // const [isViewAllHistory, setIsViewAllHistory] = useState(false);
 
-  const [chartKind, setChartKind] = useState("fft");
-
   const chunk = (data: any[]) => {
     const dataCount = data[0].length;
     const unzipIndex = _.unzip(data)[0];
@@ -447,21 +445,14 @@ export default function FftPage() {
   };
 
   const setLeakStatus = (cycle: number) => {
-    // console.log(cycle);
     const selectedLeak = recent.find((el: any) => el.cycle === cycle);
 
     if (selectedLeak) {
-      // do something with the found element, e.g. console.log(foundElement)
       setLeak({ leak: selectedLeak.position, sensor: 1, distance: selectedLeak.position, time: selectedLeak.time });
     } else {
-      // handle the case when no element with cycle === n was found
       setLeak({ leak: 0, sensor: 0, distance: 0, time: "" });
     }
   };
-
-  // const onClickViewAllHistory = (event: any) => {
-  //   setIsViewAllHistory(!isViewAllHistory);
-  // };
 
   const handleResults = (results: any) => {
     setWaveIndex([]);
@@ -471,15 +462,15 @@ export default function FftPage() {
     let indexData = csvData.indexData;
     let chunkedData = csvData.offsetData;
     let averageData = csvData.averageData;
-    // console.log(indexData);
-    // console.log(chunkedData);
-    // console.log(averageData);
 
     setWaveIndex(indexData);
-    // const adjustedData = subtractArrays(chunkedData, averageData, 2);
+
     setAverageData(averageData);
     setWaveData(chunkedData);
     setCycles(chunkedData.length);
+    //console.log(averageData);
+    //console.log(chunkedData);
+    //console.log(chunkedData.length);
 
     setCycle(0);
     setIsPause(false);
@@ -487,12 +478,7 @@ export default function FftPage() {
 
   const handleRecentCntChange = (value: string) => {
     const recentCnt = parseInt(value);
-    // if (recentCnt > 0) {
     setRecentCnt(recentCnt);
-
-    // } else {
-    //   setIsViewAllHistory(true);
-    // }
   };
 
   return (
@@ -520,9 +506,7 @@ export default function FftPage() {
           </S.ControlWrapper>
 
           <S.ControlWrapper>
-            <S.CycleWrapper>
-              cycle: {cycle} / {cycles} plots: {addCommas(plotCount)}
-            </S.CycleWrapper>
+            <S.CycleWrapper>time:</S.CycleWrapper>
             {cycle > -1 && !isPause && <S.ControlButton onClick={onClickPause}>Pause</S.ControlButton>}
             {cycle > -1 && isPause && (
               <>

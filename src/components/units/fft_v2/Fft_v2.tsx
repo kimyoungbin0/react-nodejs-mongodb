@@ -7,9 +7,10 @@ import _, { set } from "lodash";
 import { addCommas, getRandomInt } from "../../../commons/libraries/utils";
 import { getDateTime, setDateTime } from "../../../commons/libraries/date";
 import { averageByColumn, textToNumArray, getThresholdData, reduceMaxArray, roundArray } from "../../../commons/libraries/array";
-import { Button, ConfigProvider, DatePicker, InputNumber, Select, Space, Table } from "antd";
+import { Button, ConfigProvider, DatePicker, Empty, InputNumber, Select, Space, Table } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
+
 import "dayjs/locale/ko";
 // import locale from "antd/es/date-picker/locale/ko_KR";
 
@@ -77,7 +78,32 @@ export default function FftPage() {
   const [recentCnt, setRecentCnt] = useState(10);
   // const [isViewAllHistory, setIsViewAllHistory] = useState(false);
 
-  const [chartKind, setChartKind] = useState("fft");
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 10000); // Updates every second
+
+    return () => clearInterval(interval); // Cleanup on component unmount
+  }, []);
+
+  const handleRecentCntChange = (value: string) => {
+    const recentCnt = parseInt(value);
+    setRecentCnt(recentCnt);
+  };
+
+  const formatDateTime = (date) => {
+    handleRecentCntChange;
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  };
 
   const chunk = (data: any[]) => {
     const dataCount = data[0].length;
@@ -497,55 +523,43 @@ export default function FftPage() {
     setIsPause(false);
   };
 
-  const handleRecentCntChange = (value: string) => {
-    const recentCnt = parseInt(value);
-    // if (recentCnt > 0) {
-    setRecentCnt(recentCnt);
-    // } else {
-    //   setIsViewAllHistory(true);
-    // }
-  };
-
   return (
     <>
       <S.PageWrapper>
         <S.LeftWrapper>
+          <S.ControlsWrapper>
+            <S.LControlBorder>
+              <S.TimeSelectWrapper>
+                <S.ControlButtonWrapper>
+                  <S.ControlButton onClick={onClickPause}>Pause</S.ControlButton>
+                  <S.ControlButton onClick={onClickPause}>Resume</S.ControlButton>
+                  <S.CycleWrapper>{formatDateTime(currentTime)}</S.CycleWrapper>
+                  <S.ControlButton onClick={onClickPrev}>Prev</S.ControlButton>
+                  <S.ControlButton onClick={onClickNext}>Next</S.ControlButton>
+                </S.ControlButtonWrapper>
+              </S.TimeSelectWrapper>
+            </S.LControlBorder>
+          </S.ControlsWrapper>
           <S.ChartWrapper>
             <AmpFft index={ampIndex} count={cycle} plots={ampData} tv={_.mean(ampData)} minY={minY} maxY={maxY} />
           </S.ChartWrapper>
 
-          <S.ControlsWrapper>
-            <S.ControlWrapper>
-              <S.RangeInput
-                id="cycleRange"
-                type="range"
-                max={cycles - 1}
-                value={cycle}
-                onChange={(e) => {
-                  onChangeCycle(Number(e.target.value));
-                }}
-              />
-            </S.ControlWrapper>
-
-            <S.ControlWrapper>
-              <S.CycleWrapper>
-                cycle: {cycle} / {cycles} plots: {addCommas(plotCount)}
-              </S.CycleWrapper>
-
-              <S.ControlButtonWrapper>
-                <S.ControlButton onClick={onClickPause}>Pause</S.ControlButton>
-                <S.ControlButton onClick={onClickPause}>Resume</S.ControlButton>
-                <S.ControlButton onClick={onClickPrev}>Prev</S.ControlButton>
-                <S.ControlButton onClick={onClickNext}>Next</S.ControlButton>
-              </S.ControlButtonWrapper>
-            </S.ControlWrapper>
-          </S.ControlsWrapper>
+          <S.empty></S.empty>
 
           <S.ChartWrapper>
             <AmpFft index={ampIndex} count={cycle} plots={ampData} tv={_.mean(ampData)} minY={minY} maxY={maxY} />
           </S.ChartWrapper>
         </S.LeftWrapper>
         <S.RightWrapper>
+          <S.ControlsWrapper>
+            <S.RControlBorder>
+              <S.DeviceNameWrapper>#1032523</S.DeviceNameWrapper>
+              <S.LeakSelectWrapper>
+                <S.SensitiveWrapper>Leak Sensitive</S.SensitiveWrapper>
+                <S.SensitiveInput value="68%"></S.SensitiveInput>
+              </S.LeakSelectWrapper>
+            </S.RControlBorder>
+          </S.ControlsWrapper>
           <S.ResultWrapper>
             <S.ResultRow>
               <S.ResultBox>
@@ -592,6 +606,7 @@ export default function FftPage() {
               </S.ResultBox>
             </S.ResultRow>
           </S.ResultWrapper>
+
           <S.empty></S.empty>
 
           <S.RecentActivity>

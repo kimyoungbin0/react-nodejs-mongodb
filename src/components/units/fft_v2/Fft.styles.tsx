@@ -54,9 +54,6 @@ export const ChartWrapper = styled.div`
   justify-content: center;
   align-items: center;
 
-  justify-content: center; /* 추가 */
-  align-items: center; /* 추가 */
-
   border-radius: 5px;
   ${({ theme }) => {
     return css`
@@ -76,19 +73,15 @@ export const TableWrapper = styled.div`
   /* border: 1px solid #cccccc; */
 `;
 
-export const CycleWrapper = styled.div`
-  margin-right: 5%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-`;
-
 export const ControlButtonWrapper = styled.div`
   display: flex;
+  width: 100%;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
 `;
 
 export const SettingWrapper = styled.div`
@@ -99,17 +92,59 @@ export const SettingWrapper = styled.div`
   justify-content: flex-end;
 `;
 
-export const ControlWrapper = styled.div`
-  height: 50%;
+export const CycleWrapper = styled.div`
   display: flex;
+  margin-left: 10%;
+  margin-right: 10%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const TimeWrapper = styled.div`
+  display: flex;
+  height: 100%;
+  width: 50%;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
 `;
 
+export const TimeSelectWrapper = styled.div`
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const RangeInput = styled.input`
+  width: 100%;
+`;
+
 export const ControlsWrapper = styled.div`
-  height: 6%;
-  padding: 0.5%;
+  display: flex;
+  flex-direction: column;
+  height: 5%;
+  width: 100%;
+  padding-top: 0.5%;
+  padding-bottom: 0.5%;
+`;
+
+export const LControlBorder = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+
+  border-radius: 5px;
+  ${({ theme }) => {
+    return css`
+      background-color: ${(props) => props.theme.rightMenu};
+      border: 1px solid ${(props) => props.theme.border};
+      color: ${(props) => props.theme.text};
+    `;
+  }}
 `;
 
 export const ControlButton = styled.button`
@@ -124,16 +159,99 @@ export const ControlButton = styled.button`
   }}
 `;
 
+export const RControlBorder = styled.div`
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+`;
+
+export const DeviceNameWrapper = styled.div`
+  display: flex;
+  height: 100%;
+  width: 50%;
+  margin-right: 1%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+
+  border-radius: 5px;
+  ${({ theme }) => {
+    return css`
+      background-color: ${(props) => props.theme.rightMenu};
+      border: 1px solid ${(props) => props.theme.border};
+      color: ${(props) => props.theme.text};
+    `;
+  }}
+`;
+
+export const SensitiveWrapper = styled.div`
+  display: flex;
+  height: 100%;
+  width: 50%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+`;
+export const SensitiveInput = styled.input`
+  display: flex;
+  height: 80%;
+  width: 45%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+  border: 1px solid #ccc; // Input box의 테두리 추가
+  padding: 0.5rem; // Input box의 패딩 추가
+  outline: none; // Input box에 포커스 시 기본 아웃라인 제거
+  border-radius: 5px;
+
+  // 사용자가 input에 호버하거나 포커스할 때의 스타일 변경 (옵션)
+  &:hover {
+    border-color: #aaa;
+  }
+
+  &:focus {
+    border-color: #007bff;
+  }
+
+  ${({ theme }) => {
+    return css`
+      background-color: ${(props) => props.theme.RecentWrapper};
+      border: 1px solid ${(props) => props.theme.border};
+      color: ${(props) => props.theme.text};
+    `;
+  }}
+`;
+
+export const LeakSelectWrapper = styled.div`
+  display: flex;
+  height: 100%;
+  width: 50%;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 5px;
+  ${({ theme }) => {
+    return css`
+      background-color: ${(props) => props.theme.rightMenu};
+      border: 1px solid ${(props) => props.theme.border};
+      color: ${(props) => props.theme.text};
+    `;
+  }}
+`;
+
 // export const NumberInput = styled.input`
 //   max-width: 55px;
 // `;
 
 export const AntdInputNumber = styled(InputNumber)`
   max-width: 55px;
-`;
-
-export const RangeInput = styled.input`
-  width: 100%;
 `;
 
 export const PipeWrapper = styled.div`
@@ -417,7 +535,7 @@ export const RecentWarnWrapper = styled.div`
 `;
 
 export const empty = styled.div`
-  height: 6%;
+  height: 1%;
 `;
 
 export const RecentActivity = styled.div`

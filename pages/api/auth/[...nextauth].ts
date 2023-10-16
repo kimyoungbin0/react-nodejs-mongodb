@@ -7,7 +7,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 export default NextAuth({
   providers: [
     CredentialsProvider({
-      // The name to display on the sign-in form (e.g., 'Sign in with...')
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "text" },
@@ -32,13 +31,10 @@ export default NextAuth({
         if (!passwordMatch) {
           throw new Error("Invalid password");
         }
-
-        // Any user object returned here will be saved in the JSON Web Token
         return { email: user.email, name: user.name, theme: user.theme };
       },
     }),
   ],
-  // Add session, JWT and database options here if necessary
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
