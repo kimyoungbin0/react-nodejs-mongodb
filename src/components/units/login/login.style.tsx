@@ -41,6 +41,14 @@ export const inputTitle = styled.div`
   color: #262626;
 `;
 
+export const registerTitle = styled.div`
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #262626;
+  margin-top: 15px;
+`;
+
 export const inputWrap = styled.div`
   display: flex;
   border-radius: 8px;

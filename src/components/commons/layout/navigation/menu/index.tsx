@@ -18,6 +18,7 @@ import {
   CustomerServiceOutlined,
   HomeOutlined,
   ApartmentOutlined,
+  TableOutlined,
 } from "@ant-design/icons";
 
 import { Menu, Button, MenuProps } from "antd";
@@ -118,7 +119,7 @@ export const StyledButton = styled(Button)`
 
 const handleLogout = (e) => {
   e.preventDefault();
-  signOut({ callbackUrl: "http://localhost:3000" });
+  signOut({ callbackUrl: "/" });
 };
 
 export default function MenuLeft() {
@@ -148,13 +149,8 @@ export default function MenuLeft() {
   // };
 
   const items: MenuProps["items"] = [
-    getItem(<a href="/home">Home</a>, "sub1", <HomeOutlined />),
-    getItem(<a href="/fft">FFT</a>, "sub2", <DashboardOutlined />),
-    getItem(<a href="/manage">Manage</a>, "sub3", <ApiOutlined />),
-    getItem(<a href="/devices">Devices</a>, "sub4", <ApartmentOutlined />),
-    getItem(<a href="/statistics">Statistics</a>, "sub5", <ProjectOutlined />),
-    getItem("Account", "sub6", <UserOutlined />),
-    getItem(<a href="/setting">Setting</a>, "sub7", <SettingOutlined />),
+    getItem(<a href="/board">Board</a>, "sub1", <TableOutlined />),
+    getItem(<a href="/account">Account</a>, "sub2", <UserOutlined />),
   ];
 
   const items2: MenuProps["items"] = [

@@ -13,7 +13,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <SessionProvider>
       <ConfigProvider locale={koKR}>
-        <Global styles={globalStyles} />
+        <Global styles={globalStyles(true)} />
         <Layout>
           <Component {...pageProps} />
         </Layout>

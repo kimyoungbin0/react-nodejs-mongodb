@@ -31,9 +31,14 @@ export default function Login() {
   };
   useEffect(() => {
     if (status === "authenticated") {
-      router.push("/home");
+      router.push("/board");
     }
   }, [status, router]);
+
+  const onClickRegister = () => {
+    router.push("/register");
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <L.page>
@@ -51,6 +56,7 @@ export default function Login() {
         ​
         <div>
           <L.bottomButton type="submit">확인</L.bottomButton>
+          <L.registerTitle onClick={onClickRegister}>회원가입</L.registerTitle>
         </div>
         <L.alertWrap>{errorMessage && <Alert type="error" message="잘못된 정보입니다" banner />}</L.alertWrap>
       </L.page>

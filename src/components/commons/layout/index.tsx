@@ -7,39 +7,8 @@ import { useSession } from "next-auth/react";
 import { ThemeProvider } from "styled-components";
 import { ThemeModeButton } from "../../units/darkButton/DarkButton";
 
-const HIDDEN_BANNERS = [
-  "/",
-  "/daq",
-  "/os",
-  "/fft",
-  "/fftos",
-  "/fftos2",
-  "/wfft",
-  "/devices",
-  "/manage",
-  "/setting",
-  "/home",
-  "/mobile",
-  "/statistics",
-  "dashboard",
-];
-const HIDDEN_MENUS = [
-  "/",
-  "/daq",
-  "/os",
-  "/fft",
-  "/fftos",
-  "/fftos2",
-  "/wfft",
-  "/devices",
-  "/manage",
-  "/setting",
-  "/home",
-  "/mobile",
-  "/statistics",
-  "dashboard",
-];
-const HIDDEN_LMENUS = ["/"];
+const HIDDEN_MENUS = [""];
+const HIDDEN_LMENUS = ["/", "/register"];
 
 const StyledLayout = styled.div<{ layoutheight: number }>`
   // layoutHeight prop을 받도록 타입 정의 수정
@@ -118,14 +87,13 @@ export default function Layout(props: ILayoutProps) {
     fetchData();
   }, [session]);
 
-  const isHiddenBanner = HIDDEN_BANNERS.includes(router.asPath);
   const isHiddenMenu = HIDDEN_MENUS.includes(router.asPath);
   const isHiddenLMENUS = HIDDEN_LMENUS.includes(router.asPath);
 
-  const layoutHeight = (!isHiddenBanner ? 100 : 0) + (!isHiddenMenu && !isMobile ? 50 : 0);
+  const layoutHeight = isHiddenMenu && !isMobile ? 50 : 0;
 
   if (waitingForSession) {
-    return;
+    return null;
   }
 
   return (
